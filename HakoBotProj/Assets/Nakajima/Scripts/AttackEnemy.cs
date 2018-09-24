@@ -94,7 +94,6 @@ public class AttackEnemy : EnemyBase, Character
     {
         hasItem = false;
         itemObj = null;
-        targetObj = null;
 
         // ターゲットの設定
         SetTarget();
@@ -105,6 +104,8 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
+        targetObj = null;
+
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
 
@@ -117,14 +118,12 @@ public class AttackEnemy : EnemyBase, Character
                 if (Vector3.Distance(GetCharacter()[i].transform.position, transform.position) < minDistance)
                 {
                     var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
-                    if (character.item == false)
+                    if (character.item == true)
                     {
-                        break;
+                        // 最短距離の格納
+                        minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
+                        targetObj = GetCharacter()[i].gameObject;
                     }
-
-                    // 最短距離の格納
-                    minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
-                    targetObj = GetCharacter()[i].gameObject;
                 }
             }
 
@@ -174,6 +173,17 @@ public class AttackEnemy : EnemyBase, Character
             myAnim.SetInteger("PlayAnimNum", 4);
         }
 
+        // ターゲットがアイテムを持っていないならターゲット変更
+        if(targetObj.tag == "Character")
+        {
+            var character = targetObj.GetComponent(typeof(Character)) as Character;
+            if(character.item == false)
+            {
+                SetTarget();
+                return;
+            }
+        }
+
         // ターゲットとの距離が近づいたら
         if (Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
         {
@@ -200,6 +210,7 @@ public class AttackEnemy : EnemyBase, Character
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             isAttack = false;
+            ResetTarget();
         }).AddTo(this);
     }
 
