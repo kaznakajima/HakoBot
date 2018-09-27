@@ -15,11 +15,11 @@ public abstract class EnemyBase : MonoBehaviour
     // ターゲットとするGameObject
     public GameObject targetObj;
 
-    // 最短距離
+    // ターゲットとの最短距離
     [HideInInspector]
     public float minDistance = 100;
 
-    // アイテムを所持するための座標
+    // アイテムを持つ位置
     public Transform pointPos;
 
     // 攻撃判定

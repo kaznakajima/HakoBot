@@ -8,30 +8,39 @@ using System;
 public class AttackEnemy : EnemyBase, Character
 {
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    public int charaNum;
+    public int _myNumber;
 
-    public int number
+    public int myNumber
     {
         set { }
-        get { return charaNum; }
+        get { return _myNumber; }
+    }
+
+    // チャージ段階
+    private int _chargeLevel;
+
+    public int chargeLevel
+    {
+        set { }
+        get { return _chargeLevel; }
     }
 
     // アイテムを所持しているか
-    private bool hasItem;
+    private bool _hasItem;
 
-    public bool item
+    public bool hasItem
     {
         set
         {
-            hasItem = value;
+            _hasItem = value;
 
             // アイテムを持っていないなら
-            if (hasItem == false)
+            if (_hasItem == false)
             {
                 ResetTarget();
             }
         }
-        get { return hasItem; }
+        get { return _hasItem; }
     }
 
     // 自身のAnimator
@@ -92,7 +101,7 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public override void ResetTarget()
     {
-        hasItem = false;
+        _hasItem = false;
         itemObj = null;
 
         // ターゲットの設定
@@ -118,7 +127,7 @@ public class AttackEnemy : EnemyBase, Character
                 if (Vector3.Distance(GetCharacter()[i].transform.position, transform.position) < minDistance)
                 {
                     var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
-                    if (character.item == true)
+                    if (character.hasItem == true)
                     {
                         // 最短距離の格納
                         minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
@@ -177,7 +186,7 @@ public class AttackEnemy : EnemyBase, Character
         if(targetObj.tag == "Character")
         {
             var character = targetObj.GetComponent(typeof(Character)) as Character;
-            if(character.item == false)
+            if(character.hasItem == false)
             {
                 SetTarget();
                 return;
@@ -280,7 +289,7 @@ public class AttackEnemy : EnemyBase, Character
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
-            if (character.item == false)
+            if (character.hasItem == false)
             {
                 return;
             }

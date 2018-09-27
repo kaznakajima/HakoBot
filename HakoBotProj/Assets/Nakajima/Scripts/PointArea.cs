@@ -22,8 +22,8 @@ public class PointArea : MonoBehaviour
         if(col.gameObject.name == "Item(Clone)")
         {
             var character = col.gameObject.GetComponentInParent(typeof(Character)) as Character;
-            character.item = false;
-            score.AddScore(character.number);
+            character.hasItem = false;
+            score.AddScore(character.myNumber);
             Destroy(col.gameObject);
         }
     }

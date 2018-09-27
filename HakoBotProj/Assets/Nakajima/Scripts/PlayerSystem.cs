@@ -58,6 +58,23 @@ public class PlayerSystem : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Aボタンを離したかどうか
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool ButtonUp_A(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].B_up;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
 		
