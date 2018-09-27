@@ -60,21 +60,38 @@ public class TransportEnemy : EnemyBase, Character
 	
 	// Update is called once per frame
 	void Update () {
-		if(targetObj != null)
+        switch (state)
         {
-            // アイテムが入手不可能ならターゲット再設定
-            if(targetObj.GetComponent<Item>() != null && targetObj.GetComponent<Item>().isCatch == false)
-            {
-                ResetTarget();
-                return;
-            }
+            case ENEMY_STATE.PATROL:
+                // 目標地点との距離が縮まったら
+                float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
+                if (distance < 2.0f)
+                {
+                    // 巡回座標を初期化
+                    patrolPos = Vector3.zero;
+                }
+                PatrolMove(patrolPos);
+                SetTarget();
+                break;
+            case ENEMY_STATE.TARGETMOVE:
+                if (targetObj != null)
+                {
+                    // アイテムが入手不可能ならターゲット再設定
+                    if (targetObj.GetComponent<Item>() != null && targetObj.GetComponent<Item>().isCatch == false)
+                    {
+                        ResetTarget();
+                        return;
+                    }
 
-            Move(targetObj.transform.position);
+                    Move(targetObj.transform.position);
+                }
+                else
+                {
+                    ResetTarget();
+                }
+                break;
         }
-        else
-        {
-            ResetTarget();
-        }
+        
 	}
 
     /// <summary>
@@ -119,34 +136,59 @@ public class TransportEnemy : EnemyBase, Character
         // アイテムを所持していないとき
         if (itemObj == null)
         {
-            // ステージ上のアイテムすべてにアクセス
-            for (int i = 0; i < GetItems().Length; i++)
-            {
-                // 最短距離のアイテムをターゲットに設定
-                if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch)
-                {
-                    // 最短距離の格納
-                    minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
-                    targetObj = GetItems()[i].gameObject;
-                }
-            }
+            SearchTarget();
         }
         // アイテムを所持しているとき
         else
         {
-            // ステージ上のゴールすべてにアクセス
-            for (int i = 0; i < GetPointArea().Length; i++)
+            SearchPointArea();
+        }
+    }
+
+    /// <summary>
+    /// アイテムとの距離を取得
+    /// </summary>
+    public override void SearchTarget()
+    {
+        // ステージ上のアイテムすべてにアクセス
+        for (int i = 0; i < GetItems().Length; i++)
+        {
+            // 最短距離のアイテムをターゲットに設定
+            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch)
             {
-                // 最短距離のゴールをターゲットに設定
-                if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
-                {
-                    // 最短距離の格納
-                    minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
-                    targetObj = GetPointArea()[i].gameObject;
-                }
+                // 最短距離の格納
+                minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                targetObj = GetItems()[i].gameObject;
             }
         }
-        
+
+        // ターゲットが設定されたらリターン
+        if (minDistance != 100)
+        {
+            state = ENEMY_STATE.TARGETMOVE;
+            return;
+        }
+
+        // ターゲットが見つからなかったら巡回
+        state = ENEMY_STATE.PATROL;
+    }
+
+    /// <summary>
+    /// ポイントエリアとの距離を取得
+    /// </summary>
+    public override void SearchPointArea()
+    {
+        // ステージ上のゴールすべてにアクセス
+        for (int i = 0; i < GetPointArea().Length; i++)
+        {
+            // 最短距離のゴールをターゲットに設定
+            if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
+            {
+                // 最短距離の格納
+                minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                targetObj = GetPointArea()[i].gameObject;
+            }
+        }
     }
 
     /// <summary>
@@ -161,6 +203,23 @@ public class TransportEnemy : EnemyBase, Character
         }
 
         //transform.rotation = Quaternion.LookRotation(transform.forward);
+        agent.SetDestination(vec);
+    }
+
+    public override void PatrolMove(Vector3 vec)
+    {
+        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        {
+            myAnim.SetInteger("PlayAnimNum", 4);
+        }
+
+        // 巡回座標が初期化されていたら
+        // 再度設定
+        if (patrolPos == Vector3.zero)
+        {
+            GetRandomPosition();
+        }
+
         agent.SetDestination(vec);
     }
 
@@ -221,6 +280,19 @@ public class TransportEnemy : EnemyBase, Character
     public void Charge()
     {
 
+    }
+
+    /// <summary>
+    /// 巡回地点の取得
+    /// </summary>
+    /// <returns>ステージ上のランダム座標</returns>
+    public override Vector3 GetRandomPosition()
+    {
+        // ステージのサイズ
+        float stageSize = 6.0f;
+        // 巡回用の座標を保存
+        patrolPos = new Vector3(UnityEngine.Random.Range(-stageSize, stageSize), transform.position.y, UnityEngine.Random.Range(-stageSize, stageSize));
+        return patrolPos;
     }
 
     // 当たり判定

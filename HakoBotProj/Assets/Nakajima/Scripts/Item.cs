@@ -51,9 +51,9 @@ public class Item : MonoBehaviour
         myRig.useGravity = true;
 
         // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-8.0f, 8.0f), 0.0f, Random.Range(-8.0f, 8.0f));
+        Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.0f, Random.Range(-4.0f, 4.0f));
         // 射出角度、方向を取得
-        float angle = 45.0f;
+        float angle = 70.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
 
         // 射出

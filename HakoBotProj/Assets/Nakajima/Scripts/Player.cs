@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
-using DG.Tweening;
 
 /// <summary>
 /// プレイヤークラス
@@ -30,7 +29,7 @@ public class Player : MonoBehaviour, Character
     public int chargeLevel
     {
         set { }
-        get { return chargeLevel; }
+        get { return _chargeLevel; }
     }
 
     // アイテムを所持しているか
@@ -144,17 +143,15 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
-        myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
 
-        
-        //myRig.AddForce(transform.forward * 300.0f * chargeLevel);
+        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
 
         // 1.5秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             // チャージ段階を初期化
-            chargeLevel = 0;
+            _chargeLevel = 0;
             isAttack = false;
 
         }).AddTo(this);
@@ -188,7 +185,7 @@ public class Player : MonoBehaviour, Character
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        hasItem = true;
+        _hasItem = true;
     }
 
     // アイテムを放棄
@@ -201,6 +198,7 @@ public class Player : MonoBehaviour, Character
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
         itemObj = null;
+        _hasItem = false;
     }
 
     // 充電
@@ -211,13 +209,13 @@ public class Player : MonoBehaviour, Character
         disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
-            if (chargeLevel >= 2 || isAttack)
+            if (_chargeLevel >= 2 || isAttack)
             {
                 disposable.Dispose();
             }
 
             // チャージ段階上昇
-            chargeLevel += 10;
+            _chargeLevel++;
             Debug.Log(chargeLevel);
 
         }).AddTo(this);
