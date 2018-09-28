@@ -143,12 +143,14 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
+        myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
 
-        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
+        //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
+        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
 
-        // 1.5秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        // 1秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             // チャージ段階を初期化
             _chargeLevel = 0;
@@ -216,7 +218,7 @@ public class Player : MonoBehaviour, Character
 
             // チャージ段階上昇
             _chargeLevel++;
-            Debug.Log(chargeLevel);
+            Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);
     }
