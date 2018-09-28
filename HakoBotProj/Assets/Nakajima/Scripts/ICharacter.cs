@@ -5,15 +5,23 @@
 /// </summary>
 public interface Character
 {
-    int number { get; set; }
+    // プレイヤー番号
+    int myNumber { get; set; }
 
-    bool item { get; set; }
+    // チャージ段階
+    int chargeLevel { get; set; }
 
+    // アイテムを所持しているか
+    bool hasItem { get; set; }
+    
     /// <summary>
     /// 移動メソッド
     /// </summary>
     /// <param name="vec">移動方向</param>
     void Move(Vector3 vec);
+
+    // チャージ
+    void Charge();
 
     // タックル
     void Attack();
@@ -32,7 +40,4 @@ public interface Character
 
     // アイテムを放棄
     void Release();
-
-    // 充電
-    void Charge();
 }

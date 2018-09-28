@@ -15,21 +15,30 @@ public class Player : MonoBehaviour, Character
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     [SerializeField]
-    private int charaNum;
+    private int _myNumber;
 
-    public int number
+    public int myNumber
     {
         set { }
-        get { return charaNum; }
+        get { return _myNumber; }
+    }
+
+    // チャージ段階
+    private int _chargeLevel;
+
+    public int chargeLevel
+    {
+        set { }
+        get { return _chargeLevel; }
     }
 
     // アイテムを所持しているか
-    private bool hasItem;
+    private bool _hasItem;
 
-    public bool item
+    public bool hasItem
     {
-        set { hasItem = value; }
-        get { return hasItem; }
+        set { _hasItem = value; }
+        get { return _hasItem; }
     }
 
     // 自身のAnimator
@@ -73,20 +82,24 @@ public class Player : MonoBehaviour, Character
     void PlayerInput()
     {
         /* ここから移動量判定 */
-        if (system.LeftStickAxis(number) != Vector2.zero)
+        if (system.LeftStickAxis(myNumber) != Vector2.zero)
         {
-            inputVec = new Vector3(system.LeftStickAxis(number).x, 0, system.LeftStickAxis(number).y);
+            inputVec = new Vector3(system.LeftStickAxis(myNumber).x, 0, system.LeftStickAxis(myNumber).y);
             Move(inputVec);
         }
         else
         {
-            if (myAnim.GetInteger("PlayAnimNum") != 8)
+            if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
             {
                 myAnim.SetInteger("PlayAnimNum", 8);
             }
         }
 
-        if (system.Button_A(number))
+        if (system.Button_A(myNumber))
+        {
+            Charge();
+        }
+        if(system.ButtonUp_A(myNumber))
         {
             Attack();
         }
@@ -130,13 +143,17 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
-        myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
+
+        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
 
         // 1.5秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
+            // チャージ段階を初期化
+            _chargeLevel = 0;
             isAttack = false;
+
         }).AddTo(this);
     }
 
@@ -168,7 +185,7 @@ public class Player : MonoBehaviour, Character
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        hasItem = true;
+        _hasItem = true;
     }
 
     // アイテムを放棄
@@ -181,12 +198,27 @@ public class Player : MonoBehaviour, Character
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
         itemObj = null;
+        _hasItem = false;
     }
 
     // 充電
     public void Charge()
     {
+        var disposable = new SingleAssignmentDisposable();
+        // 1.0秒ごとにチャージ
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        {
+            // 3段階上昇、または攻撃で終了
+            if (_chargeLevel >= 2 || isAttack)
+            {
+                disposable.Dispose();
+            }
 
+            // チャージ段階上昇
+            _chargeLevel++;
+            Debug.Log(chargeLevel);
+
+        }).AddTo(this);
     }
 
     // 当たり判定
@@ -204,7 +236,7 @@ public class Player : MonoBehaviour, Character
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
-            if (character.item == false)
+            if (character.hasItem == false)
             {
                 return;
             }

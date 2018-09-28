@@ -345,6 +345,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114414835027230000, guid: 8b6416bb7d0b4e24abb14929f4d164c2,
+        type: 2}
+      propertyPath: _myNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 54232923283085008, guid: 8b6416bb7d0b4e24abb14929f4d164c2,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 116
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
   m_IsPrefabAsset: 0
@@ -442,7 +452,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 460090, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.2285254
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 460090, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
       propertyPath: m_LocalPosition.y
@@ -471,6 +481,16 @@ Prefab:
     - target: {fileID: 460090, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114874166521233220, guid: 574da1ad1487cf04da87918bf21c3091,
+        type: 2}
+      propertyPath: _myNumber
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 54571912531295420, guid: 574da1ad1487cf04da87918bf21c3091,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
@@ -592,6 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba7f3e52ff4635641ac60e9d477f99e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   agent: {fileID: 0}
   targetObj: {fileID: 0}
   minDistance: 100
@@ -599,7 +620,8 @@ MonoBehaviour:
   isAttack: 0
   myRig: {fileID: 0}
   itemObj: {fileID: 0}
-  charaNum: 2
+  patrolPos: {x: 0, y: 0, z: 0}
+  _myNumber: 0
 --- !u!195 &455373124
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -899,7 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charaNum: 3
+  _myNumber: 0
   pointPos: {fileID: 1972624120}
   isAttack: 0
   myRig: {fileID: 0}
@@ -1217,7 +1239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charaNum: 2
+  _myNumber: 0
   pointPos: {fileID: 1232213074}
   isAttack: 0
   myRig: {fileID: 0}
@@ -1509,7 +1531,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 892097019}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e38087bebc61e249a9c2f87052c9f9a, type: 3}
   m_Name: 
@@ -1640,7 +1662,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 8.59548
+      value: 6.85
       objectReference: {fileID: 0}
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalPosition.y
@@ -1648,7 +1670,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -0.7565414
+      value: -0.618287
       objectReference: {fileID: 0}
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalRotation.x
@@ -1669,6 +1691,16 @@ Prefab:
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114600668450347958, guid: 3af55a5e539e6bf4da26358097092d37,
+        type: 2}
+      propertyPath: _myNumber
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 54044934112455338, guid: 3af55a5e539e6bf4da26358097092d37,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
@@ -2479,7 +2511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charaNum: 1
+  _myNumber: 0
   pointPos: {fileID: 1011256218}
   isAttack: 0
   myRig: {fileID: 0}
@@ -2826,7 +2858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charaNum: 4
+  _myNumber: 0
   pointPos: {fileID: 1682003619}
   isAttack: 0
   myRig: {fileID: 0}
@@ -2962,6 +2994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a03d168427dc1458e429d51f8a3db9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   agent: {fileID: 0}
   targetObj: {fileID: 0}
   minDistance: 100
@@ -2969,7 +3002,8 @@ MonoBehaviour:
   isAttack: 0
   myRig: {fileID: 0}
   itemObj: {fileID: 0}
-  charaNum: 4
+  patrolPos: {x: 0, y: 0, z: 0}
+  _myNumber: 0
 --- !u!54 &1588705066
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3492,7 +3526,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 456344, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.5184528
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 456344, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
       propertyPath: m_LocalPosition.y
@@ -3521,6 +3555,16 @@ Prefab:
     - target: {fileID: 456344, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381879426356474, guid: 6caa0d53573c42547bc66c5cea68a972,
+        type: 2}
+      propertyPath: _myNumber
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 54892089544974238, guid: 6caa0d53573c42547bc66c5cea68a972,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}

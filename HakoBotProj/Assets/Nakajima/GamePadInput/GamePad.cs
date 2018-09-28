@@ -11,7 +11,7 @@ namespace GamepadInput
     public static class GamePad
     {
 
-        public enum Button { A, B, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start }
+        public enum Button { A, B, B_up, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start }
         public enum Trigger { LeftTrigger, RightTrigger }
         public enum Axis { LeftStick, RightStick, Dpad }
         public enum Index { Any, One, Two, Three, Four }
@@ -201,7 +201,8 @@ namespace GamepadInput
             GamepadState state = new GamepadState();
 
             state.A = GetButton(Button.A, controlIndex);
-            state.B = GetButton(Button.B, controlIndex);
+            state.B = GetButtonDown(Button.B, controlIndex);
+            state.B_up = GetButtonUp(Button.B, controlIndex);
             state.Y = GetButton(Button.Y, controlIndex);
             state.X = GetButton(Button.X, controlIndex);
 
@@ -234,6 +235,7 @@ namespace GamepadInput
     {
         public bool A = false;
         public bool B = false;
+        public bool B_up = false;
         public bool X = false;
         public bool Y = false;
         public bool Start = false;
