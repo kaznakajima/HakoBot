@@ -29,7 +29,10 @@ public class Item : MonoBehaviour
 		
 	}
 
-    // 取得状態
+    /// <summary>
+    /// プレイヤーに所持される
+    /// </summary>
+    /// <param name="point">持っている位置</param>
     public void GetItem(Transform point)
     {
         if(isCatch == false)
@@ -44,7 +47,10 @@ public class Item : MonoBehaviour
         myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
     }
 
-    // 放棄状態
+    /// <summary>
+    /// 取得状態から放棄する
+    /// </summary>
+    /// <param name="playerPos">取得しているプレイヤー座標</param>
     public void ReleaseItem(Vector3 playerPos)
     {
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -53,7 +59,7 @@ public class Item : MonoBehaviour
         // 目標地点
         Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.0f, Random.Range(-4.0f, 4.0f));
         // 射出角度、方向を取得
-        float angle = 70.0f;
+        float angle = 60.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
 
         // 射出
@@ -63,6 +69,13 @@ public class Item : MonoBehaviour
         myCol.isTrigger = false;
     }
 
+    /// <summary>
+    /// オブジェクトを飛ばす座標の計算
+    /// </summary>
+    /// <param name="pointA">初期座標</param>
+    /// <param name="pointB">目標座標</param>
+    /// <param name="angle">打ち出す角度</param>
+    /// <returns></returns>
     public Vector3 CalculateVeclocity(Vector3 pointA, Vector3 pointB, float angle)
     {
         // 射出角をラジアンに変換

@@ -258,7 +258,7 @@ public class TransportEnemy : EnemyBase, Character
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        hasItem = true;
+        _hasItem = true;
         SetTarget();
     }
 

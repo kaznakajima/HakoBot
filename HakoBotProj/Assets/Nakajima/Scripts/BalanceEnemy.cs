@@ -5,7 +5,7 @@ using UnityEngine.AI;
 using UniRx;
 using System;
 
-public class AttackEnemy : EnemyBase, Character
+public class BalanceEnemy : EnemyBase, Character
 {
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     public int _myNumber;
@@ -55,13 +55,14 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         switch (state)
         {
             case ENEMY_STATE.PATROL:
                 // 目標地点との距離が縮まったら
                 float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
-                if(distance < 2.0f)
+                if (distance < 2.0f)
                 {
                     // 巡回座標を初期化
                     patrolPos = Vector3.zero;
@@ -79,11 +80,14 @@ public class AttackEnemy : EnemyBase, Character
                     if (targetObj.transform.parent != null && targetObj.transform.parent != this)
                         SetTarget();
 
+                    if(targetObj.GetComponent<Item>() != null && targetObj.GetComponent<Item>().isCatch == false)
+                        SetTarget();
+
                     Move(targetObj.transform.position);
                 }
                 break;
         }
-	}
+    }
 
     /// <summary>
     /// ステージ上のすべてのプレイヤーを取得
@@ -134,7 +138,7 @@ public class AttackEnemy : EnemyBase, Character
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
 
-        if(itemObj == null)
+        if (itemObj == null)
         {
             SearchTarget();
         }
@@ -165,19 +169,12 @@ public class AttackEnemy : EnemyBase, Character
             }
         }
 
-        // ターゲットが設定されたらリターン
-        if (minDistance != 100)
-        {
-            state = ENEMY_STATE.TARGETMOVE;
-            return;
-        }
-
         // 誰もアイテムを所持していないなら
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch)
+            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) > minDistance && GetItems()[i].isCatch)
             {
                 // 最短距離の格納
                 minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
@@ -252,11 +249,11 @@ public class AttackEnemy : EnemyBase, Character
             Charge();
 
             // 攻撃範囲に入ったら攻撃
-            if(Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
+            if (Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
             {
                 Attack();
             }
-           
+
         }
 
         //transform.rotation = Quaternion.LookRotation(transform.forward);
@@ -276,7 +273,7 @@ public class AttackEnemy : EnemyBase, Character
 
         // 巡回座標が初期化されていたら
         // 再度設定
-        if(patrolPos == Vector3.zero)
+        if (patrolPos == Vector3.zero)
         {
             GetRandomPosition();
         }
@@ -413,7 +410,7 @@ public class AttackEnemy : EnemyBase, Character
             {
                 return;
             }
-            
+
             character.Release();
 
             ResetTarget();
