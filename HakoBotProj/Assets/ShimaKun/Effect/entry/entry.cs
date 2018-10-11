@@ -47,6 +47,6 @@ public class entry : MonoBehaviour {
             Instantiate(obj4p, new Vector3(0.0f, 6.0f, 0.0f), Quaternion.identity);
         }
 
-        //？？秒後にゲームを始めるかのログを出して、誰かがキーを入力したら開始　
+        //？？秒後にゲームを始めるかのログを出して、誰かがキーを入力したら開始を作る予定
     }
 }
