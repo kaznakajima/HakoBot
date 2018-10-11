@@ -39,7 +39,6 @@ public class TransportEnemy : EnemyBase, Character
         {
             _hasItem = value;
 
-            // アイテムを持っていないなら
             if(_hasItem == false)
             {
                 ResetTarget();
@@ -85,7 +84,7 @@ public class TransportEnemy : EnemyBase, Character
 
                     Move(targetObj.transform.position);
                 }
-                else
+                else if(targetObj == null)
                 {
                     ResetTarget();
                 }
@@ -117,7 +116,6 @@ public class TransportEnemy : EnemyBase, Character
     /// </summary>
     public override void ResetTarget()
     {
-        _hasItem = false;
         itemObj = null;
         targetObj = null;
 
@@ -154,7 +152,7 @@ public class TransportEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch)
+            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
                 minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
@@ -247,18 +245,17 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-
-        itemObj = obj;
-        if (itemObj.GetComponent<Item>().isCatch == false)
+        if (obj.GetComponent<Item>().isCatch == false)
         {
-            itemObj = null;
             return;
         }
+
+        itemObj = obj;
 
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        _hasItem = true;
+        hasItem = true;
         SetTarget();
     }
 
@@ -273,7 +270,7 @@ public class TransportEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
         // ターゲットの再設定
-        ResetTarget();
+        hasItem = false;
     }
 
     // 充電
@@ -299,7 +296,7 @@ public class TransportEnemy : EnemyBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.name == "Item(Clone)")
+        if (col.gameObject.name == "Item(Clone)" && hasItem == false)
         {
             Catch(col.gameObject);
         }

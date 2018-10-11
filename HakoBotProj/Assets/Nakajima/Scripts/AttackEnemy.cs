@@ -34,7 +34,6 @@ public class AttackEnemy : EnemyBase, Character
         {
             _hasItem = value;
 
-            // アイテムを持っていないなら
             if (_hasItem == false)
             {
                 ResetTarget();
@@ -74,7 +73,7 @@ public class AttackEnemy : EnemyBase, Character
                 {
                     SetTarget();
                 }
-                else
+                else if(targetObj != null)
                 {
                     if (targetObj.transform.parent != null && targetObj.transform.parent != this)
                         SetTarget();
@@ -117,8 +116,8 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public override void ResetTarget()
     {
-        _hasItem = false;
         itemObj = null;
+        targetObj = null;
 
         // ターゲットの設定
         SetTarget();
@@ -129,8 +128,6 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
-        targetObj = null;
-
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
 
@@ -177,7 +174,7 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch)
+            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
                 minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
@@ -239,6 +236,8 @@ public class AttackEnemy : EnemyBase, Character
             }
         }
 
+        agent.SetDestination(vec);
+
         // ターゲットとの距離が近づいたら
         if (Vector3.Distance(targetObj.transform.position, transform.position) < 5.0f)
         {
@@ -258,9 +257,6 @@ public class AttackEnemy : EnemyBase, Character
             }
            
         }
-
-        //transform.rotation = Quaternion.LookRotation(transform.forward);
-        agent.SetDestination(vec);
     }
 
     /// <summary>
@@ -303,7 +299,7 @@ public class AttackEnemy : EnemyBase, Character
         {
             _chargeLevel = 0;
             isAttack = false;
-            ResetTarget();
+            SetTarget();
         }).AddTo(this);
     }
 
@@ -323,18 +319,17 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-
-        itemObj = obj;
-        if (itemObj.GetComponent<Item>().isCatch == false)
+        if (obj.GetComponent<Item>().isCatch == false)
         {
-            itemObj = null;
             return;
         }
+
+        itemObj = obj;
 
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        _hasItem = true;
+        hasItem = true;
         SetTarget();
     }
 
@@ -351,7 +346,7 @@ public class AttackEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
         // ターゲットの再設定
-        ResetTarget();
+        hasItem = false;
     }
 
     /// <summary>
@@ -390,7 +385,7 @@ public class AttackEnemy : EnemyBase, Character
         // ステージのサイズ
         float stageSize = 6.0f;
         // 巡回用の座標を保存
-        patrolPos = new Vector3(UnityEngine.Random.Range(-stageSize * 1.5f, stageSize * 1.5f), transform.position.y, UnityEngine.Random.Range(-stageSize, stageSize));
+        patrolPos = new Vector3(UnityEngine.Random.Range(-stageSize, stageSize), transform.position.y, UnityEngine.Random.Range(-stageSize, stageSize));
         return patrolPos;
     }
 
@@ -398,7 +393,7 @@ public class AttackEnemy : EnemyBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.name == "Item(Clone)")
+        if (col.gameObject.name == "Item(Clone)" && hasItem == false)
         {
             Catch(col.gameObject);
         }
@@ -416,7 +411,7 @@ public class AttackEnemy : EnemyBase, Character
             
             character.Release();
 
-            ResetTarget();
+            hasItem = false;
         }
     }
 }

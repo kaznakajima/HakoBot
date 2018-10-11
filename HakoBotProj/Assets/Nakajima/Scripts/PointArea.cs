@@ -23,6 +23,7 @@ public class PointArea : MonoBehaviour
         {
             var character = col.gameObject.GetComponentInParent(typeof(Character)) as Character;
             character.hasItem = false;
+            
             score.AddScore(character.myNumber);
             Destroy(col.gameObject);
         }
