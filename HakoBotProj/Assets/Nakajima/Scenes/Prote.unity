@@ -355,6 +355,12 @@ Prefab:
       propertyPath: m_Constraints
       value: 116
       objectReference: {fileID: 0}
+    - target: {fileID: 114414835027230000, guid: 8b6416bb7d0b4e24abb14929f4d164c2,
+        type: 2}
+      propertyPath: _attackEffect
+      value: 
+      objectReference: {fileID: 1465825191538528, guid: da7929b34f76b6046a75de287c9e95d1,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
   m_IsPrefabAsset: 0
@@ -632,6 +638,7 @@ MonoBehaviour:
   itemObj: {fileID: 0}
   patrolPos: {x: 0, y: 0, z: 0}
   _myNumber: 0
+  _attackEffect: {fileID: 0}
 --- !u!195 &455373124
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -899,6 +906,49 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 566163226}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &577673659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 577673661}
+  - component: {fileID: 577673660}
+  m_Layer: 0
+  m_Name: Lazer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &577673660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 577673659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50091075b6bce714bbcd73abc4eee722, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectName: Test
+  playOnStart: 1
+  loop: 1
+--- !u!4 &577673661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 577673659}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.41, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &581517381
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,6 +982,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
+  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1972624120}
   isAttack: 0
   myRig: {fileID: 0}
@@ -1250,6 +1301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
+  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1232213074}
   isAttack: 0
   myRig: {fileID: 0}
@@ -2545,6 +2597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
+  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1011256218}
   isAttack: 0
   myRig: {fileID: 0}
@@ -2892,6 +2945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
+  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1682003619}
   isAttack: 0
   myRig: {fileID: 0}
@@ -3037,6 +3091,7 @@ MonoBehaviour:
   itemObj: {fileID: 0}
   patrolPos: {x: 0, y: 0, z: 0}
   _myNumber: 0
+  _attackEffect: {fileID: 0}
 --- !u!54 &1588705066
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3340,7 +3395,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 65.298004, y: 0, z: 0}
 --- !u!1 &1920707456
 GameObject:
@@ -3704,7 +3759,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 456344, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114381879426356474, guid: 6caa0d53573c42547bc66c5cea68a972,
         type: 2}

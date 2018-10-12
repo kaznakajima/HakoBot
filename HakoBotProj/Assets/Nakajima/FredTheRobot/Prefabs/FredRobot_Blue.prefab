@@ -1378,6 +1378,8 @@ MonoBehaviour:
   itemObj: {fileID: 0}
   patrolPos: {x: 0, y: 0, z: 0}
   _myNumber: 0
+  _attackEffect: {fileID: 1465825191538528, guid: da7929b34f76b6046a75de287c9e95d1,
+    type: 2}
 --- !u!195 &195570869076013054
 NavMeshAgent:
   m_ObjectHideFlags: 1

@@ -1369,6 +1369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
+  _attackEffect: {fileID: 1465825191538528, guid: da7929b34f76b6046a75de287c9e95d1,
+    type: 2}
   pointPos: {fileID: 4881611256980084}
   isAttack: 0
   myRig: {fileID: 0}

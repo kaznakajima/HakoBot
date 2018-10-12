@@ -16,6 +16,16 @@ public class BalanceEnemy : EnemyBase, Character
         get { return _myNumber; }
     }
 
+    // タックルエフェクト
+    [SerializeField]
+    GameObject _attackEffect;
+
+    public GameObject attackEffect
+    {
+        set { }
+        get { return _attackEffect; }
+    }
+
     // チャージ段階
     private int _chargeLevel;
 
@@ -288,6 +298,8 @@ public class BalanceEnemy : EnemyBase, Character
     {
         if (isAttack)
             return;
+        
+        Instantiate(attackEffect, pointPos);
 
         myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
@@ -296,7 +308,7 @@ public class BalanceEnemy : EnemyBase, Character
         myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             _chargeLevel = 0;
             isAttack = false;

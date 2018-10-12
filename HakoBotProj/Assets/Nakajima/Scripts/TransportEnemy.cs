@@ -21,6 +21,16 @@ public class TransportEnemy : EnemyBase, Character
         get { return _myNumber; }
     }
 
+    // タックルエフェクト
+    [SerializeField]
+    GameObject _attackEffect;
+
+    public GameObject attackEffect
+    {
+        set { }
+        get { return _attackEffect; }
+    }
+
     // チャージ段階
     private int _chargeLevel;
 

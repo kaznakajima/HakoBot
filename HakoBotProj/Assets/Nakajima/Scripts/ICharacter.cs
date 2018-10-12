@@ -8,6 +8,9 @@ public interface Character
     // プレイヤー番号
     int myNumber { get; set; }
 
+    // タックルエフェクト
+    GameObject attackEffect { get; set; }
+
     // チャージ段階
     int chargeLevel { get; set; }
 

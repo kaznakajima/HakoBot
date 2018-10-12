@@ -23,6 +23,16 @@ public class Player : MonoBehaviour, Character
         get { return _myNumber; }
     }
 
+    // タックルエフェクト
+    [SerializeField]
+    GameObject _attackEffect;
+
+    public GameObject attackEffect
+    {
+        set { }
+        get { return _attackEffect; }
+    }
+
     // チャージ段階
     private int _chargeLevel;
 
@@ -143,6 +153,8 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
+        Instantiate(attackEffect, pointPos);
+
         myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
 
@@ -150,7 +162,7 @@ public class Player : MonoBehaviour, Character
         myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             // チャージ段階を初期化
             _chargeLevel = 0;
@@ -177,17 +189,17 @@ public class Player : MonoBehaviour, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        itemObj = obj;
-        if (itemObj.GetComponent<Item>().isCatch == false)
+        if(obj.GetComponent<Item>().isCatch == false)
         {
-            itemObj = null;
             return;
         }
+
+        itemObj = obj;
 
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
-        _hasItem = true;
+        hasItem = true;
     }
 
     // アイテムを放棄
@@ -200,7 +212,7 @@ public class Player : MonoBehaviour, Character
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
         itemObj = null;
-        _hasItem = false;
+        hasItem = false;
     }
 
     // 充電
@@ -242,8 +254,7 @@ public class Player : MonoBehaviour, Character
             {
                 return;
             }
-
-            Debug.Log("Release");
+            
             character.Release();
         }
     }
