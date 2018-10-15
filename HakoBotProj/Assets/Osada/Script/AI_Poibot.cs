@@ -8,6 +8,10 @@ using UniRx.Triggers;
 
 public class AI_Poibot : MonoBehaviour
 {
+    //荷物投げ仮Script（絶対後で改良する）
+    [SerializeField]
+    private Test test;
+
     //移動方向
     public enum Direction
     {
@@ -16,14 +20,20 @@ public class AI_Poibot : MonoBehaviour
     }
     public Direction direction;
     //移動範囲
+    [SerializeField]
     private float moveRange;
     //移動速度
+    [SerializeField]
     private float speed;
     //移動中かの判断
     private BoolReactiveProperty actionEnd = new BoolReactiveProperty(false);
 
     //荷物プレハブ
+    [SerializeField]
     private GameObject baggagePre;
+    //投てき発射位置と目標位置
+    [SerializeField]
+    private Transform shootPoint, targetPoint;
 
     //移動開始位置と目標位置
     private Vector3 startPos, endPos;
@@ -49,7 +59,10 @@ public class AI_Poibot : MonoBehaviour
         actionEnd.Where(c => c)
             .Subscribe(c =>
             {
-
+                //荷物を投げさせる
+                test.Shoot(shootPoint, targetPoint, baggagePre);
+                //荷物投げ完了、移動を開始
+                actionEnd.Value = false;
             }).AddTo(this);
     }
 

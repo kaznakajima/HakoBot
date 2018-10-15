@@ -4,30 +4,20 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField]
     private Transform m_shootPoint = null;
-    [SerializeField]
     private Transform m_target = null;
-    [SerializeField]
     private GameObject m_shootObject = null;
 
 
-    private void Update()
+
+
+    public void Shoot(Transform i_shootPoint, Transform i_targetPosition, GameObject i_shootObject)
     {
-        if (Input.GetMouseButtonDown(0) && m_target != null)
-        {
-            Shoot(m_target.position);
-        }
-    }
-
-
-
-
-
-    private void Shoot(Vector3 i_targetPosition)
-    {
+        m_shootPoint = i_shootPoint;
+        m_target = i_targetPosition;
+        m_shootObject = i_shootObject;
         // とりあえず適当に60度でかっ飛ばすとするよ！
-        ShootFixedAngle(i_targetPosition, 60.0f);
+        ShootFixedAngle(m_target.position, 60.0f);
     }
 
     private void ShootFixedAngle(Vector3 i_targetPosition, float i_angle)
@@ -40,7 +30,8 @@ public class Test : MonoBehaviour
             Debug.LogWarning("!!");
             return;
         }
-
+        //最初の速さベクトル　最初の角度　目標地点を送る
+        //おそらく速さをもらっている？
         Vector3 vec = ConvertVectorToVector3(speedVec, i_angle, i_targetPosition);
         InstantiateShootObject(vec);
     }
@@ -77,7 +68,8 @@ public class Test : MonoBehaviour
         float v0 = Mathf.Sqrt(v0Square);
         return v0;
     }
-
+    
+    //速さを返しているかな？
     private Vector3 ConvertVectorToVector3(float i_v0, float i_angle, Vector3 i_targetPosition)
     {
         //おそらく発射位置
@@ -91,9 +83,9 @@ public class Test : MonoBehaviour
         Vector3 dir = (targetPos - startPos).normalized;
         //開始位置から目標位置に向くための回転を求める
         Quaternion yawRot = Quaternion.FromToRotation(Vector3.right, dir);
-
+        //最初の移動ベクトルかな？
         Vector3 vec = i_v0 * Vector3.right;
-
+        //速さを求める　目標地点を向く角度×最初に飛ばす角度×最初の移動ベクトルかな？
         vec = yawRot * Quaternion.AngleAxis(i_angle, Vector3.forward) * vec;
 
         return vec;
@@ -102,6 +94,7 @@ public class Test : MonoBehaviour
     //球の発射
     private void InstantiateShootObject(Vector3 i_shootVector)
     {
+        //エラー回避
         if (m_shootObject == null)
         {
             throw new System.NullReferenceException("m_shootObject");
