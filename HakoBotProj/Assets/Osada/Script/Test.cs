@@ -69,7 +69,7 @@ public class Test : MonoBehaviour
         return v0;
     }
     
-    //速さを返しているかな？
+    //速さを返しているかな？ (もしかしたらｘ方向とｙ方向のベクトルを返しているのかも？)
     private Vector3 ConvertVectorToVector3(float i_v0, float i_angle, Vector3 i_targetPosition)
     {
         //おそらく発射位置
@@ -79,7 +79,7 @@ public class Test : MonoBehaviour
         startPos.y = 0.0f;
         targetPos.y = 0.0f;
 
-        //目標に向かうためのベクトル
+        //目標に向かうための平面ベクトル 
         Vector3 dir = (targetPos - startPos).normalized;
         //開始位置から目標位置に向くための回転を求める
         Quaternion yawRot = Quaternion.FromToRotation(Vector3.right, dir);
