@@ -8,6 +8,9 @@ public interface Character
     // プレイヤー番号
     int myNumber { get; set; }
 
+    // エネルギー残量
+    int myEnergy { get; set; }
+
     // タックルエフェクト
     GameObject attackEffect { get; set; }
 

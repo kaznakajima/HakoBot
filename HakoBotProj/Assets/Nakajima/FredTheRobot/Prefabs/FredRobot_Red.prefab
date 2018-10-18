@@ -965,7 +965,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 107002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.85, y: 1.6474476e-17, z: -0.618287}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4881611256980084}
@@ -1298,6 +1298,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4881611256980084}
+  - component: {fileID: 114380500044545544}
   m_Layer: 0
   m_Name: Point
   m_TagString: Untagged
@@ -1331,7 +1332,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!65 &65005577939235156
 BoxCollider:
@@ -1357,6 +1358,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.1, z: 0.1}
   m_Center: {x: -0.15, y: 0, z: 0}
+--- !u!114 &114380500044545544
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1929844980845316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50091075b6bce714bbcd73abc4eee722, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectName: Attack_Lv
+  playOnStart: 0
+  loop: 0
 --- !u!114 &114414835027230000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1368,9 +1383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _myNumber: 0
-  _attackEffect: {fileID: 1465825191538528, guid: da7929b34f76b6046a75de287c9e95d1,
-    type: 2}
+  _myNumber: 1
+  _attackEffect: {fileID: 0}
   pointPos: {fileID: 4881611256980084}
   isAttack: 0
   myRig: {fileID: 0}

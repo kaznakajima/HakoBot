@@ -13,6 +13,9 @@ public class Player : MonoBehaviour, Character
     // インプット処理
     PlayerSystem system;
 
+    // エフェクト再生
+    EffekseerEmitter emitter;
+
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     [SerializeField]
     private int _myNumber;
@@ -22,6 +25,16 @@ public class Player : MonoBehaviour, Character
         set { }
         get { return _myNumber; }
     }
+
+    // 自身のエネルギー残量
+    private int _myEnergy = 100;
+
+    public int myEnergy
+    {
+        set { }
+        get { return _myEnergy; }
+    }
+
 
     // タックルエフェクト
     [SerializeField]
@@ -81,6 +94,7 @@ public class Player : MonoBehaviour, Character
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
+        emitter = GetComponentInChildren<EffekseerEmitter>();
 	}
 	
 	// Update is called once per frame
@@ -153,9 +167,10 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
-        Instantiate(attackEffect, pointPos);
+        // エフェクト再生
+        emitter.Play();
 
-        myAnim.SetInteger("PlayAnimNum", 2);
+        //myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
 
         //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
@@ -215,9 +230,15 @@ public class Player : MonoBehaviour, Character
         hasItem = false;
     }
 
-    // 充電
+    // パワーチャージ
     public void Charge()
     {
+        if (_chargeLevel != 0)
+            return;
+
+        _chargeLevel = 1;
+        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
         disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
@@ -230,6 +251,7 @@ public class Player : MonoBehaviour, Character
 
             // チャージ段階上昇
             _chargeLevel++;
+            emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
             Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);

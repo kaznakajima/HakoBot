@@ -50,6 +50,33 @@ public abstract class EnemyBase : MonoBehaviour
     public Vector3 patrolPos;
 
     /// <summary>
+    /// ステージ上のすべてのプレイヤーを取得
+    /// </summary>
+    /// <returns>Playerクラスの配列</returns>
+    public virtual GameObject[] GetCharacter()
+    {
+        return GameObject.FindGameObjectsWithTag("Character");
+    }
+
+    /// <summary>
+    /// ステージ上のすべてのアイテムを取得
+    /// </summary>
+    /// <returns>Itemクラスの配列</returns>
+    public virtual Item[] GetItems()
+    {
+        return FindObjectsOfType<Item>();
+    }
+
+    /// <summary>
+    /// ステージ上のすべてのゴールを取得
+    /// </summary>
+    /// <returns>PointAreaクラスの配列</returns>
+    public virtual PointArea[] GetPointArea()
+    {
+        return FindObjectsOfType<PointArea>();
+    }
+
+    /// <summary>
     /// ターゲットのリセット
     /// </summary>
     public virtual void ResetTarget()

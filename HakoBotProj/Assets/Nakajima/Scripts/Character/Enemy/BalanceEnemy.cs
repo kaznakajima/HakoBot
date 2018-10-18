@@ -7,6 +7,9 @@ using System;
 
 public class BalanceEnemy : EnemyBase, Character
 {
+    // エフェクト再生
+    EffekseerEmitter emitter;
+
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     public int _myNumber;
 
@@ -14,6 +17,15 @@ public class BalanceEnemy : EnemyBase, Character
     {
         set { }
         get { return _myNumber; }
+    }
+
+    // 自身のエネルギー残量
+    private int _myEnergy = 100;
+
+    public int myEnergy
+    {
+        set { }
+        get { return _myEnergy; }
     }
 
     // タックルエフェクト
@@ -58,9 +70,11 @@ public class BalanceEnemy : EnemyBase, Character
     // Use this for initialization
     void Start()
     {
+        pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
+        emitter = GetComponentInChildren<EffekseerEmitter>();
     }
 
     // Update is called once per frame
@@ -95,32 +109,32 @@ public class BalanceEnemy : EnemyBase, Character
         }
     }
 
-    /// <summary>
-    /// ステージ上のすべてのプレイヤーを取得
-    /// </summary>
-    /// <returns>Playerクラスの配列</returns>
-    private GameObject[] GetCharacter()
-    {
-        return GameObject.FindGameObjectsWithTag("Character");
-    }
+    ///// <summary>
+    ///// ステージ上のすべてのプレイヤーを取得
+    ///// </summary>
+    ///// <returns>Playerクラスの配列</returns>
+    //public override GameObject[] GetCharacter()
+    //{
+    //    return base.GetCharacter();
+    //}
 
-    /// <summary>
-    /// ステージ上のすべてのアイテムを取得
-    /// </summary>
-    /// <returns>Itemクラスの配列</returns>
-    private Item[] GetItems()
-    {
-        return FindObjectsOfType<Item>();
-    }
+    ///// <summary>
+    ///// ステージ上のすべてのアイテムを取得
+    ///// </summary>
+    ///// <returns>Itemクラスの配列</returns>
+    //public override Item[] GetItems()
+    //{
+    //    return base.GetItems();
+    //}
 
-    /// <summary>
-    /// ステージ上のすべてのゴールを取得
-    /// </summary>
-    /// <returns>PointAreaクラスの配列</returns>
-    private PointArea[] GetPointArea()
-    {
-        return FindObjectsOfType<PointArea>();
-    }
+    ///// <summary>
+    ///// ステージ上のすべてのゴールを取得
+    ///// </summary>
+    ///// <returns>PointAreaクラスの配列</returns>
+    //public override PointArea[] GetPointArea()
+    //{
+    //    return base.GetPointArea();
+    //}
 
     /// <summary>
     /// ターゲットのリセット
@@ -298,10 +312,11 @@ public class BalanceEnemy : EnemyBase, Character
     {
         if (isAttack)
             return;
-        
-        Instantiate(attackEffect, pointPos);
 
-        myAnim.SetInteger("PlayAnimNum", 2);
+        // エフェクト再生
+        emitter.Play();
+
+        //myAnim.SetInteger("PlayAnimNum", 2);
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
@@ -310,6 +325,7 @@ public class BalanceEnemy : EnemyBase, Character
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
+            // チャージ段階を初期化
             _chargeLevel = 0;
             isAttack = false;
             SetTarget();
@@ -371,6 +387,7 @@ public class BalanceEnemy : EnemyBase, Character
             return;
 
         _chargeLevel = 1;
+        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
@@ -384,6 +401,7 @@ public class BalanceEnemy : EnemyBase, Character
 
             // チャージ段階上昇
             _chargeLevel++;
+            emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
             Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);

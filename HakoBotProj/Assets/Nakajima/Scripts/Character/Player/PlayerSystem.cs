@@ -6,13 +6,20 @@ using GamepadInput;
 using UniRx;
 using UniRx.Triggers;
 
-public class PlayerSystem : MonoBehaviour
+public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 {
     // 4人のプレイヤー用の入力状態の保存変数
     private GamepadState[] state = new GamepadState[5];
 
+    // 操作キャラクターのリスト
+    public List<GameObject> playerList;
+
+    // プレイヤーがアクティブかどうか
+    public bool[] isActive;
+
 	// Use this for initialization
 	void Start () {
+        DontDestroyOnLoad(this);
         // Update
         this.UpdateAsObservable().Subscribe(c =>
         {
