@@ -418,8 +418,6 @@ GameObject:
   - component: {fileID: 13674616}
   - component: {fileID: 54044934112455338}
   - component: {fileID: 195201733999675620}
-  - component: {fileID: 114110580170199318}
-  - component: {fileID: 114185268807351758}
   m_Layer: 0
   m_Name: FredRobot_Green
   m_TagString: Character
@@ -1359,45 +1357,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.1, z: 0.1}
   m_Center: {x: 0.15, y: 0, z: 0}
---- !u!114 &114110580170199318
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6cfc23ffe15c9047bfc449e23be0f2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  agent: {fileID: 0}
-  targetObj: {fileID: 0}
-  minDistance: 100
-  pointPos: {fileID: 4491799842995110}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
-  patrolPos: {x: 0, y: 0, z: 0}
-  _myNumber: 4
-  _attackEffect: {fileID: 0}
---- !u!114 &114185268807351758
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187418}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _myNumber: 0
-  _attackEffect: {fileID: 0}
-  pointPos: {fileID: 4491799842995110}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
 --- !u!114 &114617154352019284
 MonoBehaviour:
   m_ObjectHideFlags: 1

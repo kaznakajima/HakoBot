@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// エントリー機能(仮実装)
+/// </summary>
 public class PlayerEntry : MonoBehaviour
 {
 
@@ -12,6 +15,9 @@ public class PlayerEntry : MonoBehaviour
 
     // プレイヤーがエントリーしたかどうか
     public bool[] playerActive;
+
+    // プレイヤーが存在するか
+    bool isEntry;
 
     // Use this for initialization
 	void Start () {
@@ -32,16 +38,17 @@ public class PlayerEntry : MonoBehaviour
         {
             if (PlayerSystem.Instance.Button_A(i + 1))
             {
+                if (isEntry)
+                {
+                    SceneManager.LoadScene("Prote");
+                }
                 Debug.Log("player" + i + 1 + "参加");
                 PlayerSystem.Instance.isActive[i] = true;
+                isEntry = true;
                 foreach(bool active in playerActive)
                 {
                     Debug.Log(active);
                 }
-            }
-            if (PlayerSystem.Instance.ButtonUp_A(i + 1))
-            {
-                SceneManager.LoadScene("Prote");
             }
         }
     }

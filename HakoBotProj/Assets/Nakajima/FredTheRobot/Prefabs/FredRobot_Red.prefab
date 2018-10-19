@@ -27,7 +27,6 @@ GameObject:
   - component: {fileID: 13660338}
   - component: {fileID: 54232923283085008}
   - component: {fileID: 208250632050674246}
-  - component: {fileID: 114414835027230000}
   m_Layer: 0
   m_Name: FredRobot_Red
   m_TagString: Character
@@ -965,7 +964,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 107002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.85, y: 1.6474476e-17, z: -0.618287}
+  m_LocalPosition: {x: -6.85, y: 0.1594603, z: -0.618287}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4881611256980084}
@@ -1372,23 +1371,6 @@ MonoBehaviour:
   effectName: Attack_Lv
   playOnStart: 0
   loop: 0
---- !u!114 &114414835027230000
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 107002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _myNumber: 1
-  _attackEffect: {fileID: 0}
-  pointPos: {fileID: 4881611256980084}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
 --- !u!208 &208250632050674246
 NavMeshObstacle:
   m_ObjectHideFlags: 1

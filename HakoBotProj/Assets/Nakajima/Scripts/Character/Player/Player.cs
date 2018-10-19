@@ -17,12 +17,11 @@ public class Player : MonoBehaviour, Character
     EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    [SerializeField]
-    private int _myNumber;
+    public int _myNumber;
 
     public int myNumber
     {
-        set { }
+        set { _myNumber = value; }
         get { return _myNumber; }
     }
 
@@ -33,17 +32,6 @@ public class Player : MonoBehaviour, Character
     {
         set { }
         get { return _myEnergy; }
-    }
-
-
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
     }
 
     // チャージ段階
@@ -91,6 +79,7 @@ public class Player : MonoBehaviour, Character
 
     // Use this for initialization
     void Start () {
+        pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();

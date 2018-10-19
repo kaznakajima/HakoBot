@@ -600,8 +600,6 @@ GameObject:
   - component: {fileID: 13697418}
   - component: {fileID: 54571912531295420}
   - component: {fileID: 195570869076013054}
-  - component: {fileID: 114874166521233220}
-  - component: {fileID: 114652073868993248}
   m_Layer: 0
   m_Name: FredRobot_Blue
   m_TagString: Character
@@ -1373,45 +1371,6 @@ MonoBehaviour:
   effectName: Attack_Lv
   playOnStart: 0
   loop: 0
---- !u!114 &114652073868993248
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _myNumber: 0
-  _attackEffect: {fileID: 0}
-  pointPos: {fileID: 4036478713785406}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
---- !u!114 &114874166521233220
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7f3e52ff4635641ac60e9d477f99e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  agent: {fileID: 0}
-  targetObj: {fileID: 0}
-  minDistance: 100
-  pointPos: {fileID: 4036478713785406}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
-  patrolPos: {x: 0, y: 0, z: 0}
-  _myNumber: 2
-  _attackEffect: {fileID: 0}
 --- !u!195 &195570869076013054
 NavMeshAgent:
   m_ObjectHideFlags: 1

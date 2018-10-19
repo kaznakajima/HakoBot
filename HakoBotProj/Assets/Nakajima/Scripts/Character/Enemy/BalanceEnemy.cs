@@ -28,16 +28,6 @@ public class BalanceEnemy : EnemyBase, Character
         get { return _myEnergy; }
     }
 
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
-    }
-
     // チャージ段階
     private int _chargeLevel;
 

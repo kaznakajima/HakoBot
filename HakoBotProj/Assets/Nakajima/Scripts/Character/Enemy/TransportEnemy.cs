@@ -15,8 +15,7 @@ public class TransportEnemy : EnemyBase, Character
     EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    [SerializeField]
-    private int _myNumber;
+    public int _myNumber;
 
     public int myNumber
     {
@@ -31,16 +30,6 @@ public class TransportEnemy : EnemyBase, Character
     {
         set { }
         get { return _myEnergy; }
-    }
-
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
     }
 
     // チャージ段階
@@ -97,6 +86,7 @@ public class TransportEnemy : EnemyBase, Character
                 SetTarget();
                 break;
             case ENEMY_STATE.TARGETMOVE:
+                // ターゲットがいるなら追従
                 if (targetObj != null)
                 {
                     // アイテムが入手不可能ならターゲット再設定
@@ -108,6 +98,7 @@ public class TransportEnemy : EnemyBase, Character
 
                     Move(targetObj.transform.position);
                 }
+                // ターゲットがいないなら検索
                 else if(targetObj == null)
                 {
                     ResetTarget();
@@ -116,33 +107,6 @@ public class TransportEnemy : EnemyBase, Character
         }
         
 	}
-
-    ///// <summary>
-    ///// ステージ上のすべてのプレイヤーを取得
-    ///// </summary>
-    ///// <returns>Playerクラスの配列</returns>
-    //public override GameObject[] GetCharacter()
-    //{
-    //    return base.GetCharacter();
-    //}
-
-    ///// <summary>
-    ///// ステージ上のすべてのアイテムを取得
-    ///// </summary>
-    ///// <returns>Itemクラスの配列</returns>
-    //public override Item[] GetItems()
-    //{
-    //    return base.GetItems();
-    //}
-
-    ///// <summary>
-    ///// ステージ上のすべてのゴールを取得
-    ///// </summary>
-    ///// <returns>PointAreaクラスの配列</returns>
-    //public override PointArea[] GetPointArea()
-    //{
-    //    return base.GetPointArea();
-    //}
 
     /// <summary>
     /// ターゲットのリセット

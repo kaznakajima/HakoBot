@@ -217,7 +217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &118790865
 Transform:
   m_ObjectHideFlags: 0
@@ -353,7 +353,7 @@ Prefab:
         type: 2}
     - target: {fileID: 107002, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
@@ -490,7 +490,7 @@ Prefab:
         type: 2}
     - target: {fileID: 197136, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
@@ -676,7 +676,6 @@ MonoBehaviour:
   itemObj: {fileID: 0}
   patrolPos: {x: 0, y: 0, z: 0}
   _myNumber: 0
-  _attackEffect: {fileID: 0}
 --- !u!195 &455373124
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -977,7 +976,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
-  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1972624120}
   isAttack: 0
   myRig: {fileID: 0}
@@ -1296,7 +1294,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
-  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1232213074}
   isAttack: 0
   myRig: {fileID: 0}
@@ -1757,7 +1754,7 @@ Prefab:
         type: 2}
     - target: {fileID: 187418, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
@@ -2569,7 +2566,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
-  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1011256218}
   isAttack: 0
   myRig: {fileID: 0}
@@ -2712,6 +2708,10 @@ Prefab:
     - target: {fileID: 400006, guid: e7d13785316b13d42b111ae701eb29c6, type: 3}
       propertyPath: m_RootOrder
       value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: e7d13785316b13d42b111ae701eb29c6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d13785316b13d42b111ae701eb29c6, type: 3}
@@ -2959,7 +2959,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myNumber: 0
-  _attackEffect: {fileID: 0}
   pointPos: {fileID: 1682003619}
   isAttack: 0
   myRig: {fileID: 0}
@@ -3105,7 +3104,6 @@ MonoBehaviour:
   itemObj: {fileID: 0}
   patrolPos: {x: 0, y: 0, z: 0}
   _myNumber: 0
-  _attackEffect: {fileID: 0}
 --- !u!54 &1588705066
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3286,7 +3284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1593609331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3438,7 +3436,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -3841,7 +3839,7 @@ Prefab:
         type: 2}
     - target: {fileID: 185094, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}

@@ -28,16 +28,6 @@ public class AttackEnemy : EnemyBase, Character
         get { return _myEnergy; }
     }
 
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
-    }
-
     // チャージ段階
     private int _chargeLevel;
 
@@ -93,10 +83,12 @@ public class AttackEnemy : EnemyBase, Character
                 SetTarget();
                 break;
             case ENEMY_STATE.TARGETMOVE:
+                // ターゲットがいないならターゲット検索
                 if (targetObj == null)
                 {
                     SetTarget();
                 }
+                // ターゲットがいるなら追従
                 else if(targetObj != null)
                 {
                     if (targetObj.transform.parent != null && targetObj.transform.parent != this)
@@ -107,33 +99,6 @@ public class AttackEnemy : EnemyBase, Character
                 break;
         }
 	}
-
-    ///// <summary>
-    ///// ステージ上のすべてのプレイヤーを取得
-    ///// </summary>
-    ///// <returns>Playerクラスの配列</returns>
-    //public override GameObject[] GetCharacter()
-    //{
-    //    return base.GetCharacter();
-    //}
-
-    ///// <summary>
-    ///// ステージ上のすべてのアイテムを取得
-    ///// </summary>
-    ///// <returns>Itemクラスの配列</returns>
-    //public override Item[] GetItems()
-    //{
-    //    return base.GetItems();
-    //}
-
-    ///// <summary>
-    ///// ステージ上のすべてのゴールを取得
-    ///// </summary>
-    ///// <returns>PointAreaクラスの配列</returns>
-    //public override PointArea[] GetPointArea()
-    //{
-    //    return base.GetPointArea();
-    //}
 
     /// <summary>
     /// ターゲットのリセット
