@@ -1,35 +1,55 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UniRx;
 
-public class Throwing : MonoBehaviour
+public class Poibot_Throwing : MonoBehaviour
 {
-    // 投てきするオブジェクト
+    //投てき物
+    [SerializeField]
     private GameObject throwingObject;
-    // 標的のオブジェクト
-    private GameObject targetObject;
+    //投てき開始位置と目標位置
+    [SerializeField]
+    private Transform startPoint;
+    private Vector3 targetPoint;
     // 射出角度
-    private float ThrowingAngle;
+    private float angle = 60f;
+    //投てき範囲（現在は正方形バージョン）
+    [SerializeField]
+    private float range;
+
+
+    public void ThrowingsetUp(System.Action action)
+    {
+        targetPoint = SearchThrowingTarget();
+        Throwing();
+        action();
+    }
+
+    /// <summary>
+    /// 投てき目標地点の決定
+    /// </summary>
+    private Vector3 SearchThrowingTarget()
+    {
+        var posx = Random.Range(-range, range);
+        var posz = Random.Range(-range, range);
+        Vector3 pos = new Vector3(posx, 1, posz);
+        return pos;
+    }
 
     /// <summary>
     /// 投てきを開始させる
     /// </summary>
-    public void ThrowingStart()
+    private void Throwing()
     {
-        if (throwingObject == null || targetObject == null) return;
+        if (targetPoint == null || throwingObject == null) return;
 
-        GameObject obj = Instantiate(throwingObject, this.transform.position, Quaternion.identity);
+        Debug.Log(targetPoint);
+        GameObject obj = Instantiate(throwingObject, startPoint.position, Quaternion.identity);
         // 標的の座標
-        Vector3 targetPosition = targetObject.transform.position;
-
-        // 射出角度
-        float angle = ThrowingAngle;
+        Vector3 targetPosition = targetPoint;
 
         // 射出速度を算出
-        Vector3 velocity = CalculateVelocity(this.transform.position, targetPosition, angle);
+        Vector3 velocity = CalculateVelocity(startPoint.position, targetPosition, angle);
 
         // 射出
         Rigidbody rid = obj.GetComponent<Rigidbody>();
