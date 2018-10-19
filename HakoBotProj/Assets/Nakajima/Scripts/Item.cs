@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    [SerializeField]
-    GameObject target;
-
     // 自身のCollider
     Collider myCol;
 
@@ -14,7 +11,6 @@ public class Item : MonoBehaviour
     Rigidbody myRig;
 
     // 取得できるかどうか
-    [HideInInspector]
     public bool isCatch;
 
 	// Use this for initialization
