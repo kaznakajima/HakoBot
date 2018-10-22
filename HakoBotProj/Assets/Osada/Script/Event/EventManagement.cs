@@ -44,17 +44,4 @@ public class EventManagement : MonoBehaviour
               }).AddTo(this);
           }).AddTo(this);
     }
-
-    //[CustomEditor(typeof(EventManagement))]
-    //public class Editor_EventManagement : Editor
-    //{
-    //    bool open = false;
-    //    public override void OnInspectorGUI()
-    //    {
-    //        EventManagement eventManagement = target as EventManagement;
-
-    //        eventManagement.eventTime = EditorGUILayout.FloatField("イベント発生時間", eventManagement.eventTime);
-    //        eventManagement.eventInterval = EditorGUILayout.FloatField("インターバル時間", eventManagement.eventInterval);
-    //    }
-    //}
 }
