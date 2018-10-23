@@ -1,49 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UniRx;
+using UniRx.Triggers;
 
-public class Test : MonoBehaviour,Event
+//妨害AI
+//必要機能
+//ターゲット決定　移動　攻撃
+public class Test : MonoBehaviour
 {
-    private struct ObjectData
+    private Transform[] player = new Transform[4];
+    private Transform target;
+
+    private NavMeshAgent nav;
+
+    private void Start()
     {
-        public GameObject obj;
-        public float sizeX;
-        public float sizeZ;
-    }
-
-    private ObjectData[] objectData;
-
-    private float width = 10f;
-    private float length = 10f;
-
-    private FloatReactiveProperty time = new FloatReactiveProperty();
-
-    private CompositeDisposable disposables = new CompositeDisposable();
-
-    public void EventStart()
-    {
-        time.Value = Random.Range(1f, 3f);
-
-        time.Subscribe(c =>
-        {
-            Observable.Timer(System.TimeSpan.FromSeconds(c))
-            .Subscribe(x =>
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
             {
-                //ここ編集箇所
-                var posX = Random.Range(-width, width);
-                var posZ = Random.Range(-length, length);
-
-                var number = Random.Range(0, objectData.Length);
-                Instantiate(objectData[number].obj, new Vector3(posX, 5.0f, posZ), transform.rotation);
-
-                time.Value = Random.Range(1f, 3f);
-            }).AddTo(disposables);
-        }).AddTo(disposables);
+                var dis = Vector3.Distance(transform.position, target.position);
+            }).AddTo(this);
     }
 
-    public void EventEnd()
+    //ターゲット決定　ポイント差によって狙われる確率を変更させる予定
+    private void TargetSearch()
     {
-        disposables.Dispose();
+        var number = Random.Range(0, player.Length);
+        target = player[number];
+        Move();
+    }
+
+    //ターゲット付近まで移動
+    private void Move()
+    {
+        nav.SetDestination(target.position);
+    }
+
+    //ターゲットに対して攻撃を実行
+    private void Attack()
+    {
+
     }
 }
