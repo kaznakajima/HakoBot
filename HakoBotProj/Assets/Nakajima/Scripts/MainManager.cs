@@ -1,0 +1,57 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// ゲームの全体を管理するクラス
+/// </summary>
+public class MainManager : MonoBehaviour
+{
+
+	// Use this for initialization
+	void Start () {
+        // Character配置
+        for(int i = 0;i < 4; i++)
+        {
+            // キャラクター用オブジェクトのインスタンス
+            GameObject character = Instantiate(PlayerSystem.Instance.playerList[i]);
+
+            // プレイヤーがエントリーしているならプレイヤー操作にする
+            if (PlayerSystem.Instance.isActive[i])
+            {
+                character.AddComponent<Player>();
+                character.GetComponent<Player>()._myNumber = i + 1;
+            }
+            // エントリーがされていないなら敵とする
+            else
+            {
+                // ランダムで敵AIのタイプを決める
+                int enemyNum = Random.Range(0, 3);
+                switch (enemyNum)
+                {
+                    // 攻撃AI
+                    case 0:
+                        character.AddComponent<AttackEnemy>();
+                        character.GetComponent<AttackEnemy>()._myNumber = i + 1;
+                        break;
+                    // バランスAI
+                    case 1:
+                        character.AddComponent<BalanceEnemy>();
+                        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
+                        break;
+                    // 荷物優先AI
+                    case 2:
+                        character.AddComponent<TransportEnemy>();
+                        character.GetComponent<TransportEnemy>()._myNumber = i + 1;
+                        break;
+                }
+            }
+        }
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+}
