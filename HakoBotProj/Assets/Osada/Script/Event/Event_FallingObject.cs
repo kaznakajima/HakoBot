@@ -30,7 +30,7 @@ public class Event_FallingObject : MonoBehaviour,Event
         time.Subscribe(c =>
         {
             Observable.Timer(System.TimeSpan.FromSeconds(c))
-            .Subscribe(x =>
+            .Subscribe(_ =>
             {
                 var number = Random.Range(0, objectData.Length);
 
