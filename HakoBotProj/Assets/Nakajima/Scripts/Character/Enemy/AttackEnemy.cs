@@ -139,13 +139,13 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetCharacter().Length; i++)
         {
             // 最短距離のプレイヤーをターゲット設定
-            if (Vector3.Distance(GetCharacter()[i].transform.position, transform.position) < minDistance)
+            if (/*Vector3.Distance(GetCharacter()[i].transform.position, transform.position)*/GetTargetDistance(GetCharacter()[i].gameObject, gameObject) < minDistance)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
                     // 最短距離の格納
-                    minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
+                    minDistance = GetTargetDistance(GetCharacter()[i].gameObject, gameObject);//Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
                     targetObj = GetCharacter()[i].gameObject;
                 }
             }
@@ -163,10 +163,10 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
+            if (/*Vector3.Distance(GetItems()[i].transform.position, transform.position) */GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);//Vector3.Distance(GetItems()[i].transform.position, transform.position);
                 targetObj = GetItems()[i].gameObject;
             }
         }
@@ -191,10 +191,10 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetPointArea().Length; i++)
         {
             // 最短距離のゴールをターゲットに設定
-            if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
+            if (/*Vector3.Distance(GetPointArea()[i].transform.position, transform.position)*/GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);//Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
                 targetObj = GetPointArea()[i].gameObject;
             }
         }
@@ -228,7 +228,7 @@ public class AttackEnemy : EnemyBase, Character
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (Vector3.Distance(targetObj.transform.position, transform.position) < 5.0f)
+        if (/*Vector3.Distance(targetObj.transform.position, transform.position)*/GetTargetDistance(targetObj, gameObject) < 5.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
@@ -240,11 +240,11 @@ public class AttackEnemy : EnemyBase, Character
             Charge();
 
             // 攻撃範囲に入ったら攻撃
-            if(Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
+            if (/*Vector3.Distance(targetObj.transform.position, transform.position)*/GetTargetDistance(targetObj, gameObject) < 2.0f)
             {
                 Attack();
             }
-           
+
         }
     }
 

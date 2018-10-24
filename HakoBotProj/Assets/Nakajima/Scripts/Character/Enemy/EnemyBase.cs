@@ -27,6 +27,10 @@ public abstract class EnemyBase : MonoBehaviour
     [HideInInspector]
     public float minDistance = 100;
 
+    // ターゲットとの最長距離
+    [HideInInspector]
+    public float maxDistance = 0;
+
     // アイテムを持つ位置
     public Transform pointPos;
 
@@ -115,6 +119,18 @@ public abstract class EnemyBase : MonoBehaviour
     public virtual void PatrolMove(Vector3 vec)
     {
 
+    }
+
+    /// <summary>
+    /// 自身とターゲットとの距離を計算
+    /// </summary>
+    /// <param name="targetObj">ターゲットのオブジェクト</param>
+    /// <param name="myObj">自身のオブジェクト</param>
+    /// <returns></returns>
+    public float GetTargetDistance(GameObject targetObj, GameObject myObj)
+    {
+        float distance = Vector3.Distance(targetObj.transform.position, myObj.transform.position);
+        return distance;
     }
 
     /// <summary>
