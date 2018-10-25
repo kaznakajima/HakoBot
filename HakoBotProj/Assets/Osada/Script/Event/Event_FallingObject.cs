@@ -6,13 +6,14 @@ using UniRx.Triggers;
 
 public class Event_FallingObject : MonoBehaviour,Event
 {
+    [SerializeField]
     private struct ObjectData
     {
         public GameObject obj;
         public float sizeX;
         public float sizeZ;
     }
-
+    [SerializeField]
     private ObjectData[] objectData;
 
     //ステージの縦横の半径

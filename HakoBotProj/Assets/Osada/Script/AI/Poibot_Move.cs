@@ -5,12 +5,14 @@ using UnityEngine;
 public class Poibot_Move : MonoBehaviour
 {
     //移動方向
+    [SerializeField]
     public enum Direction
     {
         vertical,   //縦移動
         Horizontal, //横移動
         All         //全方向
     }
+    [SerializeField]
     public Direction direction;
     //移動範囲
     [SerializeField]

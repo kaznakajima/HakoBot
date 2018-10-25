@@ -8,6 +8,7 @@ using UniRx.Triggers;
 
 public class Event_GoalToClose : MonoBehaviour,Event
 {
+    [SerializeField]
     private Goal[] goal = new Goal[4];
 
     public void EventStart()

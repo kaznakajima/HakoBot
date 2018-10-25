@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Poibot_Throwing : MonoBehaviour
 {
-    //投てき物
+    //投てき物 通常荷物　高得点荷物
     [SerializeField]
-    private GameObject throwingObject;
+    private GameObject baggage;
+    [SerializeField]
+    private GameObject highPointBaggage;
+
     //投てき開始位置と目標位置
     [SerializeField]
     private Transform startPoint;
@@ -17,6 +20,7 @@ public class Poibot_Throwing : MonoBehaviour
     [SerializeField]
     private float range;
 
+    public bool playEvent = false;
 
     public void ThrowingsetUp(System.Action action)
     {
@@ -41,10 +45,15 @@ public class Poibot_Throwing : MonoBehaviour
     /// </summary>
     private void Throwing()
     {
-        if (targetPoint == null || throwingObject == null) return;
+        var throwingObj = baggage;
 
-        Debug.Log(targetPoint);
-        GameObject obj = Instantiate(throwingObject, startPoint.position, Quaternion.identity);
+        if (playEvent)
+        {
+            var t = Random.Range(0, 5);
+            if (t == 0) throwingObj = highPointBaggage;
+        }
+
+        var obj = Instantiate(throwingObj, startPoint.position, Quaternion.identity) as GameObject;
         // 標的の座標
         Vector3 targetPosition = targetPoint;
 
