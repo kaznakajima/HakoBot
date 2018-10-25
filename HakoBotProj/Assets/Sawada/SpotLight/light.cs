@@ -6,6 +6,7 @@ public class light : MonoBehaviour {
    
     public GameObject rbot;
     public Light spotlight;
+
 	// Use this for initialization
 	void Start () {
 
@@ -21,10 +22,12 @@ public class light : MonoBehaviour {
         {
             if (spotlight.enabled == true)
             {
+             spotlight.GetComponent<LightShafts>().enabled = false;
                 spotlight.enabled = false;
             }
            else if (spotlight.enabled == false)
             {
+               spotlight.GetComponent<LightShafts>().enabled =true;
                 spotlight.enabled = true;
             }
         }
