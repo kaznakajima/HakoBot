@@ -7,7 +7,6 @@ using UnityEngine;
 /// </summary>
 public class MainManager : MonoBehaviour
 {
-
 	// Use this for initialization
 	void Start () {
         // Character配置
@@ -43,6 +42,10 @@ public class MainManager : MonoBehaviour
                     case 2:
                         character.AddComponent<TransportEnemy>();
                         character.GetComponent<TransportEnemy>()._myNumber = i + 1;
+                        break;
+                    default:
+                        character.AddComponent<BalanceEnemy>();
+                        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
                         break;
                 }
             }

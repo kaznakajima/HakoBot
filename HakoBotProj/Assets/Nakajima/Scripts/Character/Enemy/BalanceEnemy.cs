@@ -161,39 +161,31 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchTarget()
     {
+        // ステージ上のアイテムすべてにアクセス
+        for (int i = 0; i < GetItems().Length; i++)
+        {
+            // 最短距離のアイテムをターゲットに設定
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance)
+            {
+                // 最短距離の格納
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
+                targetObj = GetItems()[i].gameObject;
+            }
+        }
+
         // ステージ上のすべてのプレイヤーにアクセス
         for (int i = 0; i < GetCharacter().Length; i++)
         {
             // 最短距離のプレイヤーをターゲット設定
-            if (/*Vector3.Distance(GetCharacter()[i].transform.position, transform.position)*/GetTargetDistance(GetCharacter()[i].gameObject, gameObject) < minDistance)
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
                     // 最短距離の格納
-                    minDistance = GetTargetDistance(GetCharacter()[i].gameObject, gameObject);//Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
-                    targetObj = GetCharacter()[i].gameObject;
+                    minDistance = GetTargetDistance(GetCharacter()[i], gameObject);
+                    targetObj = GetCharacter()[i];
                 }
-            }
-        }
-
-        // 誰もアイテムを所持していないなら
-        // ステージ上のアイテムすべてにアクセス
-        for (int i = 0; i < GetItems().Length; i++)
-        {
-            // 最短距離のアイテムをターゲットに設定
-            if (/*Vector3.Distance(GetItems()[i].transform.position, transform.position) */GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
-            {
-                // 最短距離の格納
-                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);//Vector3.Distance(GetItems()[i].transform.position, transform.position);
-                targetObj = GetItems()[i].gameObject;
-            }
-            // 距離が遠くても狙いに行く
-            if (GetItems()[i].isCatch == false && GetItems()[i].transform.parent == null)
-            {
-                // 最短距離の格納
-                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);//Vector3.Distance(GetItems()[i].transform.position, transform.position);
-                targetObj = GetItems()[i].gameObject;
             }
         }
 
@@ -217,10 +209,10 @@ public class BalanceEnemy : EnemyBase, Character
         for (int i = 0; i < GetPointArea().Length; i++)
         {
             // 最短距離のゴールをターゲットに設定
-            if (/*Vector3.Distance(GetPointArea()[i].transform.position, transform.position)*/GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
+            if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
                 // 最短距離の格納
-                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);//Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
                 targetObj = GetPointArea()[i].gameObject;
             }
         }
@@ -233,7 +225,10 @@ public class BalanceEnemy : EnemyBase, Character
     public void Move(Vector3 vec)
     {
         if (isAttack)
+        {
+            myAnim.SetInteger("PlayAnimNum", 8);
             return;
+        }
 
         if (myAnim.GetInteger("PlayAnimNum") != 4)
         {
@@ -254,7 +249,7 @@ public class BalanceEnemy : EnemyBase, Character
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (/*Vector3.Distance(targetObj.transform.position, transform.position)*/GetTargetDistance(targetObj, gameObject) < 5.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 5.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
@@ -266,7 +261,7 @@ public class BalanceEnemy : EnemyBase, Character
             Charge();
 
             // 攻撃範囲に入ったら攻撃
-            if (/*Vector3.Distance(targetObj.transform.position, transform.position)*/GetTargetDistance(targetObj, gameObject) < 2.0f)
+            if (GetTargetDistance(targetObj, gameObject) < 2.0f)
             {
                 Attack();
             }
@@ -301,12 +296,15 @@ public class BalanceEnemy : EnemyBase, Character
     public void Attack()
     {
         if (isAttack)
+        {
+            myAnim.SetInteger("PlayAnimNum", 8);
             return;
+        }
 
         // エフェクト再生
         emitter.Play();
 
-        //myAnim.SetInteger("PlayAnimNum", 2);
+        myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);

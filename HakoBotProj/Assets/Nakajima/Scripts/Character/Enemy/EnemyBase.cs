@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// 敵(エネミー)のベースクラス
+/// 敵AIのベースクラス
+/// 敵AIが共通でつ処理、変数はここに書く
 /// </summary>
 public abstract class EnemyBase : MonoBehaviour
 {

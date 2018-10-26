@@ -151,10 +151,10 @@ public class TransportEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (/*Vector3.Distance(GetItems()[i].transform.position, transform.position) */GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
-                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);//Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
             }
         }
@@ -188,34 +188,6 @@ public class TransportEnemy : EnemyBase, Character
                 minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
                 targetObj = GetPointArea()[i].gameObject;
             }
-        }
-        
-        for (int i = 0; i < GetCharacter().Length; i++)
-        {
-            // 他のプレイヤーの位置を調べる
-            if (GetCharacter()[i].gameObject == this)
-            {
-                return;
-            }
-
-            // 他のプライヤーとポイントエリアの距離を取得
-            distanceToPointArea = GetTargetDistance(targetObj, GetCharacter()[i].gameObject);
-            // なるべく遠いエリアを目指す
-            if (distanceToPointArea < minDistance)
-            {
-                for (int j = 0; j < GetPointArea().Length; j++)
-                {
-                    maxDistance = GetTargetDistance(GetPointArea()[j].gameObject, GetCharacter()[i].gameObject);
-                    if(maxDistance > minDistance)
-                    {
-                        // 最短距離の格納
-                        minDistance = GetTargetDistance(GetPointArea()[j].gameObject, gameObject);
-                        targetObj = GetPointArea()[j].gameObject;
-                    }
-                }
-            }
-           
-           
         }
     }
 
