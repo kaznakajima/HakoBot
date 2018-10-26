@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
-public class Event_FallingObject : MonoBehaviour,Event
+public class Event_FallingObject : Event
 {
     [SerializeField]
     private struct ObjectData
@@ -24,7 +24,7 @@ public class Event_FallingObject : MonoBehaviour,Event
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
-    public void EventStart()
+    public override void EventStart()
     {
         time.Value = Random.Range(1f, 3f);
 
@@ -46,7 +46,7 @@ public class Event_FallingObject : MonoBehaviour,Event
         }).AddTo(disposables);
     }
 
-    public void EventEnd()
+    public override void EventEnd()
     {
         disposables.Dispose();
     }
