@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerList:
-  - {fileID: 107002, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
+  - {fileID: 0}
   - {fileID: 197136, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
   - {fileID: 185094, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
   - {fileID: 187418, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
@@ -253,7 +253,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerList:
-  - {fileID: 107002, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
+  - {fileID: 1399121589349538, guid: 6fe485fd74b83f54780b7c9e6e07ac1e, type: 2}
+  - {fileID: 1271429513049688, guid: 0599988b659d22e459a2b1a7442a7581, type: 2}
+  - {fileID: 1281370902494210, guid: 2f6522f62144e484bb99e752385d0867, type: 2}
+  - {fileID: 1621396340935202, guid: a2cf31a2fea0f2d489d87beb95d83544, type: 2}
+  enemyList:
+  - {fileID: 1883406603049842, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
   - {fileID: 197136, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
   - {fileID: 185094, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
   - {fileID: 187418, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}

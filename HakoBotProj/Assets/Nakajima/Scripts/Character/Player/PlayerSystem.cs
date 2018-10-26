@@ -14,6 +14,8 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     // 操作キャラクターのリスト
     public List<GameObject> playerList;
 
+    public List<GameObject> enemyList;
+
     // プレイヤーがアクティブかどうか
     public bool[] isActive;
 
