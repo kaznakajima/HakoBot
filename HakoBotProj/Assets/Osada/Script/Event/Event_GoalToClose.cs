@@ -6,18 +6,18 @@ using UnityEditor;
 using UniRx;
 using UniRx.Triggers;
 
-public class Event_GoalToClose : MonoBehaviour,Event
+public class Event_GoalToClose : Event
 {
     [SerializeField]
     private Goal[] goal = new Goal[4];
 
-    public void EventStart()
+    public override void EventStart()
     {
         var t = Random.Range(0, goal.Length);
         goal[t].open = false;
     }
 
-    public void EventEnd()
+    public override void EventEnd()
     {
         foreach (Goal g in goal)
             g.open = true;
