@@ -54,6 +54,7 @@ public class Player : PlayerBase, Character
 
     // Use this for initialization
     void Start () {
+        isCharge = false;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
@@ -77,17 +78,21 @@ public class Player : PlayerBase, Character
         }
         else
         {
-            if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
+            if (_hasItem)
+            {
+                myAnim.SetInteger("PlayAnimNum", 12);
+            }
+            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
             {
                 myAnim.SetInteger("PlayAnimNum", 8);
             }
         }
 
-        if (system.Button_A(myNumber))
+        if (system.Button_B(myNumber))
         {
             Charge();
         }
-        if(system.ButtonUp_A(myNumber))
+        if(system.ButtonUp_B(myNumber))
         {
             Attack();
         }
@@ -105,7 +110,11 @@ public class Player : PlayerBase, Character
             return;
         }
 
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -183,6 +192,8 @@ public class Player : PlayerBase, Character
             return;
         }
 
+        myAnim.SetInteger("PlayAnimNum", 12);
+
         itemObj = obj;
 
         itemObj.transform.parent = transform;
@@ -199,6 +210,7 @@ public class Player : PlayerBase, Character
             return;
         }
 
+        myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
         itemObj = null;
         hasItem = false;

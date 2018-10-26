@@ -230,7 +230,11 @@ public class BalanceEnemy : EnemyBase, Character
             return;
         }
 
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -341,6 +345,8 @@ public class BalanceEnemy : EnemyBase, Character
             return;
         }
 
+        myAnim.SetInteger("PlayAnimNum", 12);
+
         itemObj = obj;
      
         itemObj.transform.parent = transform;
@@ -359,6 +365,8 @@ public class BalanceEnemy : EnemyBase, Character
         {
             return;
         }
+
+        myAnim.SetInteger("PlayAnimNum", 10);
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
