@@ -86,7 +86,7 @@ public class AttackEnemy : EnemyBase, Character
                 // ターゲットがいないならターゲット検索
                 if (targetObj == null)
                 {
-                    SetTarget();
+                    ResetTarget();
                 }
                 // ターゲットがいるなら追従
                 else if(targetObj != null)
@@ -167,6 +167,7 @@ public class AttackEnemy : EnemyBase, Character
             {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
+                targetObj = GetItems()[i].gameObject;
             }
         }
 
@@ -226,7 +227,7 @@ public class AttackEnemy : EnemyBase, Character
             var character = targetObj.GetComponent(typeof(Character)) as Character;
             if (character.hasItem == false)
             {
-                SetTarget();
+                ResetTarget();
                 return;
             }
         }
@@ -238,9 +239,7 @@ public class AttackEnemy : EnemyBase, Character
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
-            {
                 return;
-            }
 
             // パワーチャージ
             Charge();
@@ -322,9 +321,7 @@ public class AttackEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if (obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 12);
 
@@ -343,9 +340,7 @@ public class AttackEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
 
@@ -407,8 +402,9 @@ public class AttackEnemy : EnemyBase, Character
         }
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
         {
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
@@ -421,5 +417,10 @@ public class AttackEnemy : EnemyBase, Character
 
             hasItem = false;
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }

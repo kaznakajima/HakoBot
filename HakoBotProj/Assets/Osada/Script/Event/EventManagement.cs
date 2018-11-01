@@ -26,7 +26,7 @@ public class EventManagement : MonoBehaviour
               .Subscribe(x =>
               {
                   target = Random.Range(0, eventList.Count);
-                  //events[target].EventStart();
+                  eventList[target].EventStart();
                   Debug.Log("イベント" + target + "スタート");
                   play.Value = true;
               }).AddTo(this);
@@ -38,7 +38,7 @@ public class EventManagement : MonoBehaviour
               Observable.Timer(System.TimeSpan.FromSeconds(eventTime))
               .Subscribe(x =>
               {
-                  //events[target].EventEnd();
+                  eventList[target].EventEnd();
                   Debug.Log("イベント" + target + "終了");
                   play.Value = false;
               }).AddTo(this);

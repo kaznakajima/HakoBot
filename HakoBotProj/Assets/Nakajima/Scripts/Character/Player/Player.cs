@@ -70,6 +70,9 @@ public class Player : PlayerBase, Character
     // 入力判定
     void PlayerInput()
     {
+        if (isAttack)
+            return;
+
         /* ここから移動量判定 */
         if (system.LeftStickAxis(myNumber) != Vector2.zero)
         {
@@ -78,9 +81,10 @@ public class Player : PlayerBase, Character
         }
         else
         {
+            myRig.velocity = Vector3.zero;
             if (_hasItem)
             {
-                myAnim.SetInteger("PlayAnimNum", 12);
+                myAnim.SetInteger("PlayAnimNum", 11);
             }
             else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
             {
@@ -105,10 +109,7 @@ public class Player : PlayerBase, Character
     public void Move(Vector3 vec)
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
@@ -144,10 +145,7 @@ public class Player : PlayerBase, Character
     public void Attack()
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         // エフェクト再生
         emitter.Play();
@@ -157,7 +155,7 @@ public class Player : PlayerBase, Character
         isCharge = false;
 
         //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 200f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
@@ -192,7 +190,7 @@ public class Player : PlayerBase, Character
             return;
         }
 
-        myAnim.SetInteger("PlayAnimNum", 12);
+        //myAnim.SetInteger("PlayAnimNum", 12);
 
         itemObj = obj;
 
@@ -255,8 +253,9 @@ public class Player : PlayerBase, Character
         }
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
         {
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン

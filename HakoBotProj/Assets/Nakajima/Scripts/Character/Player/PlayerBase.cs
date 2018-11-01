@@ -25,7 +25,7 @@ public class PlayerBase : MonoBehaviour
 
     // 移動スピード
     [HideInInspector]
-    public float runSpeed = 5.0f;
+    public float runSpeed = 4.0f;
 
     // 自身のRig
     [HideInInspector]

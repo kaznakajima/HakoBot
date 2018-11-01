@@ -257,9 +257,7 @@ public class BalanceEnemy : EnemyBase, Character
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
-            {
                 return;
-            }
 
             // パワーチャージ
             Charge();
@@ -341,9 +339,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if(obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 12);
 
@@ -362,9 +358,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
 
@@ -426,8 +420,9 @@ public class BalanceEnemy : EnemyBase, Character
         }
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
         {
+            
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
@@ -440,5 +435,10 @@ public class BalanceEnemy : EnemyBase, Character
 
             hasItem = false;
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }

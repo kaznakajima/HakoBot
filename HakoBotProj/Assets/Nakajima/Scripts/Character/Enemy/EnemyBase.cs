@@ -146,4 +146,13 @@ public abstract class EnemyBase : MonoBehaviour
         patrolPos = new Vector3(Random.Range(-stageSize, stageSize), transform.position.y, Random.Range(-stageSize, stageSize));
         return patrolPos;
     }
+
+    public virtual void OnCollisionExit(Collision col)
+    {
+        // タックル中にプレイヤーに触れたとき
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
+        {
+            myRig.velocity = Vector3.zero;
+        }
+    }
 }
