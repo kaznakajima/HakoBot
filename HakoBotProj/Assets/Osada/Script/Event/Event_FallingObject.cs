@@ -6,7 +6,7 @@ using UniRx.Triggers;
 
 public class Event_FallingObject : Event
 {
-    [SerializeField]
+    [System.Serializable]
     private struct ObjectData
     {
         public GameObject obj;
