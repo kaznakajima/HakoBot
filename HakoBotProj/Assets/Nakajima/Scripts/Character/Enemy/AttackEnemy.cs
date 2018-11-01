@@ -207,10 +207,7 @@ public class AttackEnemy : EnemyBase, Character
     public void Move(Vector3 vec)
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         if(_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
@@ -280,10 +277,7 @@ public class AttackEnemy : EnemyBase, Character
     public void Attack()
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         // エフェクト再生
         emitter.Play();
@@ -292,7 +286,7 @@ public class AttackEnemy : EnemyBase, Character
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
@@ -402,20 +396,16 @@ public class AttackEnemy : EnemyBase, Character
         }
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
-            }
-            
-            character.Release();
 
-            hasItem = false;
+            character.Release();
         }
     }
 

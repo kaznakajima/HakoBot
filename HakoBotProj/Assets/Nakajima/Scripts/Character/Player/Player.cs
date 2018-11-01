@@ -253,7 +253,7 @@ public class Player : PlayerBase, Character
         }
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
