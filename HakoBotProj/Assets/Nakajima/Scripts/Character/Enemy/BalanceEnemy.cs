@@ -127,6 +127,28 @@ public class BalanceEnemy : EnemyBase, Character
     //}
 
     /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public override void CheckTarget(GameObject otherObj)
+    {
+        // ターゲットリストにアクセス
+        for(int i = 0;i < targetList.Count; i++)
+        {
+            if (targetList[i] != targetObj)
+                return;
+
+            // 他のキャラクターの方がターゲットに近いならターゲット変更
+            float distance = GetTargetDistance(otherObj, targetList[i]);
+            if(distance < minDistance) {
+                targetList.Remove(targetList[i]);
+                targetObj = targetList[0];
+                break;
+            }
+        }
+    }
+
+    /// <summary>
     /// ターゲットのリセット
     /// </summary>
     public override void ResetTarget()
@@ -143,6 +165,9 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
+        // リストを初期化
+        targetList.Clear();
+
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
 
@@ -164,9 +189,10 @@ public class BalanceEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance)
-            {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch)
+            {              
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -208,6 +234,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ステージ上のゴールすべてにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
+            targetList.Add(GetPointArea()[i].gameObject);
             // 最短距離のゴールをターゲットに設定
             if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
@@ -244,6 +271,14 @@ public class BalanceEnemy : EnemyBase, Character
             {
                 SetTarget();
                 return;
+            }
+        }
+        else
+        {
+            // ターゲットの状態を確認
+            for (int i = 0; i < GetCharacter().Length; i++)
+            {
+                CheckTarget(GetCharacter()[i]);
             }
         }
 

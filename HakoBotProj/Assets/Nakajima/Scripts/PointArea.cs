@@ -8,8 +8,9 @@ public class PointArea : MonoBehaviour
     ScoreController score;
 
     // ポイントエリアが機能しているか
-    [HideInInspector]
     public bool isActive = true;
+
+    bool isOpen = true;
 
     // Use this for initialization
     void Start () {
@@ -17,8 +18,8 @@ public class PointArea : MonoBehaviour
     }
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () { 
+      
 	}
 
     void OnTriggerEnter(Collider col)

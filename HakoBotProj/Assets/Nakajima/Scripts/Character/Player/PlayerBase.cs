@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
-
     // 自身のAnimator
     [HideInInspector]
     public Animator myAnim;

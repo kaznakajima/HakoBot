@@ -17,6 +17,9 @@ public abstract class EnemyBase : MonoBehaviour
     }
     public ENEMY_STATE state;
 
+    // ターゲットオブジェクトのリスト
+    public List<GameObject> targetList = new List<GameObject>();
+
     // ナビメッシュ
     [HideInInspector]
     public NavMeshAgent agent;
@@ -79,6 +82,15 @@ public abstract class EnemyBase : MonoBehaviour
     public virtual PointArea[] GetPointArea()
     {
         return FindObjectsOfType<PointArea>();
+    }
+
+    /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public virtual void CheckTarget(GameObject otherObj)
+    {
+
     }
 
     /// <summary>
