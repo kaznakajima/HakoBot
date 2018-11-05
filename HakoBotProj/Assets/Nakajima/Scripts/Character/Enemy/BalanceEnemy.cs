@@ -285,7 +285,7 @@ public class BalanceEnemy : EnemyBase, Character
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (GetTargetDistance(targetObj, gameObject) < 5.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 4.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
@@ -299,7 +299,6 @@ public class BalanceEnemy : EnemyBase, Character
             {
                 Attack();
             }
-
         }
     }
 
@@ -342,7 +341,7 @@ public class BalanceEnemy : EnemyBase, Character
         myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             // チャージ段階を初期化
             _chargeLevel = 0;
@@ -410,18 +409,18 @@ public class BalanceEnemy : EnemyBase, Character
 
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 2 || isAttack)
             {
+                Attack();
                 disposable.Dispose();
             }
 
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-            Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);
     }
@@ -451,7 +450,8 @@ public class BalanceEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-            
+            myRig.velocity = Vector3.zero;
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
