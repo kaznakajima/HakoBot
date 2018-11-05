@@ -227,8 +227,8 @@ public class Player : PlayerBase, Character
         emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
         var disposable = new SingleAssignmentDisposable();
-        // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        // 0.5秒ごとにチャージ
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 2 || isAttack)
