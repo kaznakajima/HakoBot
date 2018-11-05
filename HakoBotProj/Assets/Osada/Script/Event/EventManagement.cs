@@ -26,7 +26,7 @@ public class EventManagement : MonoBehaviour
               .Subscribe(x =>
               {
                   target = Random.Range(0, eventList.Count);
-                  //events[target].EventStart();
+                  eventList[target].EventStart();
                   Debug.Log("イベント" + target + "スタート");
                   play.Value = true;
               }).AddTo(this);
@@ -38,23 +38,10 @@ public class EventManagement : MonoBehaviour
               Observable.Timer(System.TimeSpan.FromSeconds(eventTime))
               .Subscribe(x =>
               {
-                  //events[target].EventEnd();
+                  eventList[target].EventEnd();
                   Debug.Log("イベント" + target + "終了");
                   play.Value = false;
               }).AddTo(this);
           }).AddTo(this);
     }
-
-    //[CustomEditor(typeof(EventManagement))]
-    //public class Editor_EventManagement : Editor
-    //{
-    //    bool open = false;
-    //    public override void OnInspectorGUI()
-    //    {
-    //        EventManagement eventManagement = target as EventManagement;
-
-    //        eventManagement.eventTime = EditorGUILayout.FloatField("イベント発生時間", eventManagement.eventTime);
-    //        eventManagement.eventInterval = EditorGUILayout.FloatField("インターバル時間", eventManagement.eventInterval);
-    //    }
-    //}
 }

@@ -86,7 +86,7 @@ public class AttackEnemy : EnemyBase, Character
                 // ターゲットがいないならターゲット検索
                 if (targetObj == null)
                 {
-                    SetTarget();
+                    ResetTarget();
                 }
                 // ターゲットがいるなら追従
                 else if(targetObj != null)
@@ -99,6 +99,29 @@ public class AttackEnemy : EnemyBase, Character
                 break;
         }
 	}
+
+    /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public override void CheckTarget(GameObject otherObj)
+    {
+        // ターゲットリストにアクセス
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            if (targetList[i] != targetObj || targetList.Count == 1)
+                return;
+
+            // 他のキャラクターの方がターゲットに近いならターゲット変更
+            float distance = GetTargetDistance(otherObj, targetList[i]);
+            if (distance < minDistance)
+            {
+                targetList.Remove(targetList[i]);
+                targetObj = targetList[0];
+                break;
+            }
+        }
+    }
 
     /// <summary>
     /// ターゲットのリセット
@@ -139,14 +162,14 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetCharacter().Length; i++)
         {
             // 最短距離のプレイヤーをターゲット設定
-            if (Vector3.Distance(GetCharacter()[i].transform.position, transform.position) < minDistance)
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
                     // 最短距離の格納
-                    minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
-                    targetObj = GetCharacter()[i].gameObject;
+                    minDistance = GetTargetDistance(GetCharacter()[i], gameObject);
+                    targetObj = GetCharacter()[i];
                 }
             }
         }
@@ -163,10 +186,10 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
             }
         }
@@ -191,10 +214,10 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetPointArea().Length; i++)
         {
             // 最短距離のゴールをターゲットに設定
-            if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
+            if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
                 targetObj = GetPointArea()[i].gameObject;
             }
         }
@@ -209,7 +232,17 @@ public class AttackEnemy : EnemyBase, Character
         if (isAttack)
             return;
 
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        // ターゲットの状態を確認
+        for (int i = 0; i < GetCharacter().Length; i++)
+        {
+            CheckTarget(GetCharacter()[i]);
+        }
+
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -220,31 +253,37 @@ public class AttackEnemy : EnemyBase, Character
             var character = targetObj.GetComponent(typeof(Character)) as Character;
             if (character.hasItem == false)
             {
-                SetTarget();
+                ResetTarget();
                 return;
+            }
+        }
+        else
+        {
+            // ターゲットの状態を確認
+            for (int i = 0; i < GetCharacter().Length; i++)
+            {
+                CheckTarget(GetCharacter()[i]);
             }
         }
 
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (Vector3.Distance(targetObj.transform.position, transform.position) < 5.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 5.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
-            {
                 return;
-            }
 
             // パワーチャージ
             Charge();
 
             // 攻撃範囲に入ったら攻撃
-            if(Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
+            if (GetTargetDistance(targetObj, gameObject) < 2.0f)
             {
                 Attack();
             }
-           
+
         }
     }
 
@@ -280,11 +319,11 @@ public class AttackEnemy : EnemyBase, Character
         // エフェクト再生
         emitter.Play();
 
-        //myAnim.SetInteger("PlayAnimNum", 2);
+        myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
@@ -313,9 +352,9 @@ public class AttackEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if (obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
+
+        myAnim.SetInteger("PlayAnimNum", 12);
 
         itemObj = obj;
 
@@ -332,9 +371,9 @@ public class AttackEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
+
+        myAnim.SetInteger("PlayAnimNum", 10);
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
@@ -396,17 +435,19 @@ public class AttackEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
-            }
-            
-            character.Release();
 
-            hasItem = false;
+            character.Release();
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }

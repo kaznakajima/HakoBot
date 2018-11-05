@@ -109,6 +109,29 @@ public class TransportEnemy : EnemyBase, Character
 	}
 
     /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public override void CheckTarget(GameObject otherObj)
+    {
+        // ターゲットリストにアクセス
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            if (targetList[i] != targetObj)
+                return;
+
+            // 他のキャラクターの方がターゲットに近いならターゲット変更
+            float distance = GetTargetDistance(otherObj, targetList[i]);
+            if (distance < minDistance)
+            {
+                targetList.Remove(targetList[i]);
+                targetObj = targetList[0];
+                break;
+            }
+        }
+    }
+
+    /// <summary>
     /// ターゲットのリセット
     /// </summary>
     public override void ResetTarget()
@@ -127,6 +150,8 @@ public class TransportEnemy : EnemyBase, Character
     {
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
+        // 最長距離の初期化 (とりあえず0を入れてある)
+        maxDistance = 0;
 
         // アイテムを所持していないとき
         if (itemObj == null)
@@ -149,10 +174,10 @@ public class TransportEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
             }
         }
@@ -173,14 +198,17 @@ public class TransportEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
+        // 他のプレイヤーとポイントエリアの距離
+        float distanceToPointArea;
+
         // ステージ上のゴールすべてにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
             // 最短距離のゴールをターゲットに設定
-            if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
+            if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
                 targetObj = GetPointArea()[i].gameObject;
             }
         }
@@ -192,7 +220,17 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        // ターゲットの状態を確認
+        for (int i = 0; i < GetCharacter().Length; i++)
+        {
+            CheckTarget(GetCharacter()[i]);
+        }
+
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -243,9 +281,9 @@ public class TransportEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if (obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
+
+        myAnim.SetInteger("PlayAnimNum", 12);
 
         itemObj = obj;
 
@@ -260,9 +298,9 @@ public class TransportEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
+
+        myAnim.SetInteger("PlayAnimNum", 10);
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
@@ -301,6 +339,7 @@ public class TransportEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
@@ -311,5 +350,10 @@ public class TransportEnemy : EnemyBase, Character
 
             character.Release();
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }

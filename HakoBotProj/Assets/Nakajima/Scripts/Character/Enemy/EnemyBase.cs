@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// 敵(エネミー)のベースクラス
+/// 敵AIのベースクラス
+/// 敵AIが共通でつ処理、変数はここに書く
 /// </summary>
 public abstract class EnemyBase : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public abstract class EnemyBase : MonoBehaviour
     }
     public ENEMY_STATE state;
 
+    // ターゲットオブジェクトのリスト
+    public List<GameObject> targetList = new List<GameObject>();
+
     // ナビメッシュ
     [HideInInspector]
     public NavMeshAgent agent;
@@ -26,6 +30,10 @@ public abstract class EnemyBase : MonoBehaviour
     // ターゲットとの最短距離
     [HideInInspector]
     public float minDistance = 100;
+
+    // ターゲットとの最長距離
+    [HideInInspector]
+    public float maxDistance = 0;
 
     // アイテムを持つ位置
     public Transform pointPos;
@@ -77,6 +85,15 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public virtual void CheckTarget(GameObject otherObj)
+    {
+
+    }
+
+    /// <summary>
     /// ターゲットのリセット
     /// </summary>
     public virtual void ResetTarget()
@@ -118,6 +135,18 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     /// <summary>
+    /// 自身とターゲットとの距離を計算
+    /// </summary>
+    /// <param name="targetObj">ターゲットのオブジェクト</param>
+    /// <param name="myObj">自身のオブジェクト</param>
+    /// <returns></returns>
+    public float GetTargetDistance(GameObject targetObj, GameObject myObj)
+    {
+        float distance = Vector3.Distance(targetObj.transform.position, myObj.transform.position);
+        return distance;
+    }
+
+    /// <summary>
     /// 巡回する地点の取得
     /// </summary>
     /// <returns>ステージ内のどこかの座標</returns>
@@ -128,5 +157,14 @@ public abstract class EnemyBase : MonoBehaviour
         // 巡回用の座標を保存
         patrolPos = new Vector3(Random.Range(-stageSize, stageSize), transform.position.y, Random.Range(-stageSize, stageSize));
         return patrolPos;
+    }
+
+    public virtual void OnCollisionExit(Collision col)
+    {
+        // タックル中にプレイヤーに触れたとき
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
+        {
+            myRig.velocity = Vector3.zero;
+        }
     }
 }
