@@ -135,7 +135,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ターゲットリストにアクセス
         for(int i = 0;i < targetList.Count; i++)
         {
-            if (targetList[i] != targetObj)
+            if (targetList[i] != targetObj || targetList.Count == 1)
                 return;
 
             // 他のキャラクターの方がターゲットに近いならターゲット変更
