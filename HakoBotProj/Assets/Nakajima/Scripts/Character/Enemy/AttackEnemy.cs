@@ -329,6 +329,7 @@ public class AttackEnemy : EnemyBase, Character
         {
             // チャージ段階を初期化
             _chargeLevel = 0;
+            myRig.velocity = Vector3.zero;
             isAttack = false;
             SetTarget();
         }).AddTo(this);
