@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Event
+public class Event : MonoBehaviour
 {
-    void EventStart();
-    void EventEnd();
+    public virtual void EventStart()
+    {
+
+    }
+    public virtual void EventEnd()
+    {
+
+    }
 }

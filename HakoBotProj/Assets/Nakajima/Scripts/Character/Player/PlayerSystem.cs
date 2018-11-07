@@ -14,6 +14,8 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     // 操作キャラクターのリスト
     public List<GameObject> playerList;
 
+    public List<GameObject> enemyList;
+
     // プレイヤーがアクティブかどうか
     public bool[] isActive;
 
@@ -49,11 +51,11 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     }
 
     /// <summary>
-    /// Aボタンの入力状態の確認
+    /// Bボタンの入力状態の確認
     /// </summary>
     /// <param name="playerNo">プレイヤー番号</param>
     /// <returns></returns>
-    public bool Button_A(int playerNo)
+    public bool Button_B(int playerNo)
     {
         if(state[playerNo] != null)
         {
@@ -66,11 +68,11 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     }
 
     /// <summary>
-    /// Aボタンを離したかどうか
+    /// Bボタンを離したかどうか
     /// </summary>
     /// <param name="playerNo">プレイヤー番号</param>
     /// <returns></returns>
-    public bool ButtonUp_A(int playerNo)
+    public bool ButtonUp_B(int playerNo)
     {
         if (state[playerNo] != null)
         {
@@ -82,8 +84,20 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         }
     }
 
-	// Update is called once per frame
-	void Update () {
+    public bool Button_A(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].A;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }

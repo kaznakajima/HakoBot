@@ -750,7 +750,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 187418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.85, y: 2.0158312e-17, z: -0.618287}
+  m_LocalPosition: {x: 6.85, y: 0.1594603, z: -0.618287}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4491799842995110}
@@ -1179,7 +1179,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 72258f43e22637242b01e94074486dae, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -1197,7 +1197,7 @@ CapsuleCollider:
   m_Radius: 0.362403
   m_Height: 1.2757847
   m_Direction: 1
-  m_Center: {x: -0.017818665, y: 0.6311648, z: 0.0018598766}
+  m_Center: {x: -0.017818665, y: 0.68, z: 0.0018598766}
 --- !u!137 &13763432
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1312,7 +1312,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1331655666306520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.787, z: 0.38}
+  m_LocalPosition: {x: 0, y: 0.787, z: 0.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 424838}

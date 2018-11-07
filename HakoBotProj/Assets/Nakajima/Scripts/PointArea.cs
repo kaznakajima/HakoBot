@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class PointArea : MonoBehaviour
 {
-
+    // スコア加算
     ScoreController score;
+
+    // ポイントエリアが機能しているか
+    [HideInInspector]
+    public bool isActive = true;
 
     // Use this for initialization
     void Start () {

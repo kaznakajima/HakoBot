@@ -36,12 +36,8 @@ public class PlayerEntry : MonoBehaviour
     {
         for(int i = 0;i < 4; i++)
         {
-            if (PlayerSystem.Instance.Button_A(i + 1))
+            if (PlayerSystem.Instance.Button_B(i + 1))
             {
-                if (isEntry)
-                {
-                    SceneManager.LoadScene("Prote");
-                }
                 Debug.Log("player" + i + 1 + "参加");
                 PlayerSystem.Instance.isActive[i] = true;
                 isEntry = true;
@@ -49,6 +45,10 @@ public class PlayerEntry : MonoBehaviour
                 {
                     Debug.Log(active);
                 }
+            }
+            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry)
+            {
+                SceneManager.LoadScene("Prote");
             }
         }
     }
