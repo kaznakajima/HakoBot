@@ -127,6 +127,28 @@ public class BalanceEnemy : EnemyBase, Character
     //}
 
     /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public override void CheckTarget(GameObject otherObj)
+    {
+        // ターゲットリストにアクセス
+        for(int i = 0;i < targetList.Count; i++)
+        {
+            if (targetList[i] != targetObj || targetList.Count == 1)
+                return;
+
+            // 他のキャラクターの方がターゲットに近いならターゲット変更
+            float distance = GetTargetDistance(otherObj, targetList[i]);
+            if(distance < minDistance) {
+                targetList.Remove(targetList[i]);
+                targetObj = targetList[0];
+                break;
+            }
+        }
+    }
+
+    /// <summary>
     /// ターゲットのリセット
     /// </summary>
     public override void ResetTarget()
@@ -143,6 +165,9 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
+        // リストを初期化
+        targetList.Clear();
+
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
 
@@ -164,9 +189,10 @@ public class BalanceEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance)
-            {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch)
+            {              
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -208,6 +234,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ステージ上のゴールすべてにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
+            targetList.Add(GetPointArea()[i].gameObject);
             // 最短距離のゴールをターゲットに設定
             if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
             {
@@ -225,10 +252,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Move(Vector3 vec)
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
@@ -249,17 +273,23 @@ public class BalanceEnemy : EnemyBase, Character
                 return;
             }
         }
+        else
+        {
+            // ターゲットの状態を確認
+            for (int i = 0; i < GetCharacter().Length; i++)
+            {
+                CheckTarget(GetCharacter()[i]);
+            }
+        }
 
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (GetTargetDistance(targetObj, gameObject) < 5.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 4.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
-            {
                 return;
-            }
 
             // パワーチャージ
             Charge();
@@ -269,7 +299,6 @@ public class BalanceEnemy : EnemyBase, Character
             {
                 Attack();
             }
-
         }
     }
 
@@ -300,10 +329,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Attack()
     {
         if (isAttack)
-        {
-            myAnim.SetInteger("PlayAnimNum", 8);
             return;
-        }
 
         // エフェクト再生
         emitter.Play();
@@ -312,13 +338,14 @@ public class BalanceEnemy : EnemyBase, Character
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             // チャージ段階を初期化
             _chargeLevel = 0;
+            myRig.velocity = Vector3.zero;
             isAttack = false;
             SetTarget();
         }).AddTo(this);
@@ -341,9 +368,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if(obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 12);
 
@@ -362,9 +387,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
 
@@ -387,18 +410,18 @@ public class BalanceEnemy : EnemyBase, Character
 
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 2 || isAttack)
             {
+                Attack();
                 disposable.Dispose();
             }
 
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-            Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);
     }
@@ -428,17 +451,20 @@ public class BalanceEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            myRig.velocity = Vector3.zero;
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
-            }
 
             character.Release();
-
-            hasItem = false;
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }
