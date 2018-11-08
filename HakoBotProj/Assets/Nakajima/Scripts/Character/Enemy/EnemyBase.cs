@@ -27,6 +27,10 @@ public abstract class EnemyBase : MonoBehaviour
     // ターゲットとするGameObject
     public GameObject targetObj;
 
+    // 消去法ターゲット
+    [HideInInspector]
+    public GameObject dummyTarget;
+
     // ターゲットとの最短距離
     [HideInInspector]
     public float minDistance = 100;

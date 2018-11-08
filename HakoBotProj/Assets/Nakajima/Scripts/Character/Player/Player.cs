@@ -155,10 +155,10 @@ public class Player : PlayerBase, Character
         isCharge = false;
 
         //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
-        myRig.AddForce(transform.forward * _chargeLevel / 1.5f * 200f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel * 600.0f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
