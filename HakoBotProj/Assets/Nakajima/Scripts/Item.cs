@@ -66,6 +66,8 @@ public class Item : MonoBehaviour
     /// <param name="playerPos">取得しているプレイヤー座標</param>
     public void ReleaseItem(Vector3 playerPos)
     {
+        gameObject.layer = 8;
+
         transform.parent = null;
         myCol.isTrigger = false;
 
@@ -120,6 +122,7 @@ public class Item : MonoBehaviour
     {
         if(col.gameObject.name == "Box001")
         {
+            gameObject.layer = 0;
             isCatch = true;
             isTarget = false;
         }

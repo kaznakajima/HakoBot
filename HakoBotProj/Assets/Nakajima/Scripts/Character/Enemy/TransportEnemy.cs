@@ -315,8 +315,6 @@ public class TransportEnemy : EnemyBase, Character
         if (obj.GetComponent<Item>().isCatch == false)
             return;
 
-        myAnim.SetInteger("PlayAnimNum", 12);
-
         itemObj = obj;
 
         itemObj.transform.parent = transform;
