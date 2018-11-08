@@ -353,9 +353,10 @@ public class AttackEnemy : EnemyBase, Character
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
+        myAnim.SetInteger("PlayAnimNum", 8);
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 600f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.5f * _chargeLevel)).Subscribe(time =>

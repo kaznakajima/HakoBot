@@ -5,8 +5,11 @@ using UnityEngine;
 /// <summary>
 /// ゲームの全体を管理するクラス
 /// </summary>
-public class MainManager : MonoBehaviour
+public class MainManager : SingletonMonobeBehaviour<MainManager>
 {
+    // プレイヤーの得点
+    public int[] playerPoint = new int[4];
+
 	// Use this for initialization
 	void Start () {
         // Character配置
@@ -54,7 +57,6 @@ public class MainManager : MonoBehaviour
                 }
             }
         }
-		
 	}
 	
 	// Update is called once per frame
