@@ -187,6 +187,7 @@ public class TransportEnemy : EnemyBase, Character
         // ターゲットが設定されたらリターン
         if (minDistance != 100)
         {
+            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
@@ -223,7 +224,7 @@ public class TransportEnemy : EnemyBase, Character
 
                 enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
                 distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
-                if (distance > enemyDistacne[j])
+                if (minDistance > enemyDistacne[j])
                 {
                     targetObj = null;
                 }

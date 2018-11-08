@@ -250,15 +250,18 @@ public class BalanceEnemy : EnemyBase, Character
 
             for (int j = 0; j < GetCharacter().Length; j++)
             {
+                if (GetCharacter()[i] == this)
+                    return;
+
                 enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
                 distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
-                if (distance > enemyDistacne[j])
+                if (minDistance > enemyDistacne[j])
                 {
                     targetObj = null;
                 }
             }
 
-            float average = distanceAverage[i] * 0.25f;
+            float average = distanceAverage[i] / 3.0f;
             if (average > maxDistance)
             {
                 maxDistance = average;
@@ -270,7 +273,6 @@ public class BalanceEnemy : EnemyBase, Character
             return;
 
         targetObj = dummyTarget;
-
     }
 
     /// <summary>
@@ -367,7 +369,6 @@ public class BalanceEnemy : EnemyBase, Character
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
-        myAnim.SetInteger("PlayAnimNum", 8);
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
         myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
@@ -375,6 +376,7 @@ public class BalanceEnemy : EnemyBase, Character
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
         {
+            myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
             myRig.velocity = Vector3.zero;
