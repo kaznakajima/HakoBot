@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RankTextForm : MonoBehaviour
 {
+    //スコアを出すプレハブを呼び出すやつ
     public GameObject Rightcanvas;//右キャンバス
     public GameObject Centercanvas;//中央キャンバス
     public GameObject Leftcanvas;//左キャンバス
