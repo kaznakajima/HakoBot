@@ -755,8 +755,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EfectTime: 2
   EfectTime2: 8
-  efectcolor: {r: 0.9245283, g: 0.720245, b: 0.07413671, a: 1}
-  efectcolor2: {r: 0.9339623, g: 0.101326115, b: 0.101326115, a: 1}
+  efectcolor: {r: 0.9150943, g: 0.12517802, b: 0.29535252, a: 1}
+  efectcolor2: {r: 0.36510652, g: 0.9433962, b: 0.09344962, a: 1}
 --- !u!1001 &707504321
 Prefab:
   m_ObjectHideFlags: 0

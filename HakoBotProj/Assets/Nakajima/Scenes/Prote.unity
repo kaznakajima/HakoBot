@@ -464,9 +464,6 @@ MonoBehaviour:
   - obj: {fileID: 1107438094751248, guid: ca33c5520be8e304896264395652fe74, type: 2}
     sizeX: 1
     sizeZ: 1
-  - obj: {fileID: 1678350508860974, guid: ca3336fc065c22b4380c90e0a71e0899, type: 2}
-    sizeX: 1
-    sizeZ: 1
 --- !u!4 &519491306
 Transform:
   m_ObjectHideFlags: 0
@@ -2767,7 +2764,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventList:
   - {fileID: 513594877}
-  - {fileID: 513594877}
+  - {fileID: 2065250432}
   - {fileID: 513594877}
 --- !u!4 &2061400053
 Transform:
