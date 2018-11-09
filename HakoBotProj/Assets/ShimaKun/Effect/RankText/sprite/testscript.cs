@@ -12,6 +12,7 @@ public class testscript : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        RankText.Instance.p1();
+        //RankText.Instance.p1(1);
+        RankText.Instance.p1(2);
     }
 }
