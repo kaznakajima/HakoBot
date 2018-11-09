@@ -117,7 +117,7 @@ public class TransportEnemy : EnemyBase, Character
         // ターゲットリストにアクセス
         for (int i = 0; i < targetList.Count; i++)
         {
-            if (targetList[i] != targetObj)
+            if (targetList[i] == null || targetList[i] != targetObj || targetList.Count == 1)
                 return;
 
             // 他のキャラクターの方がターゲットに近いならターゲット変更
@@ -161,6 +161,8 @@ public class TransportEnemy : EnemyBase, Character
         // アイテムを所持しているとき
         else
         {
+            // リストを初期化
+            targetList.Clear();
             SearchPointArea();
         }
     }
@@ -174,7 +176,7 @@ public class TransportEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isCatch == true)
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false)
             {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
@@ -185,6 +187,7 @@ public class TransportEnemy : EnemyBase, Character
         // ターゲットが設定されたらリターン
         if (minDistance != 100)
         {
+            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
@@ -198,20 +201,47 @@ public class TransportEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
-        // 他のプレイヤーとポイントエリアの距離
-        float distanceToPointArea;
+        // 自身とポイントエリアの距離
+        float distance;
+        float[] distanceAverage = new float[4];
+        float[] enemyDistacne = new float[4];
 
-        // ステージ上のゴールすべてにアクセス
+        // すべてのポイントエリアにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
-            // 最短距離のゴールをターゲットに設定
-            if (GetTargetDistance(GetPointArea()[i].gameObject, gameObject) < minDistance)
+            distance = GetTargetDistance(gameObject, GetPointArea()[i].gameObject);
+            // 最短距離のポイントエリアをターゲットとする
+            if (distance < minDistance)
             {
-                // 最短距離の格納
-                minDistance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
+                minDistance = distance;
                 targetObj = GetPointArea()[i].gameObject;
             }
+
+            for (int j = 0; j < GetCharacter().Length; j++)
+            {
+                if (GetCharacter()[i] == this)
+                    return;
+
+                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
+                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
+                if (minDistance > enemyDistacne[j])
+                {
+                    targetObj = null;
+                }
+            }
+
+            float average = distanceAverage[i] / 3.0f;
+            if (average > maxDistance)
+            {
+                maxDistance = average;
+                dummyTarget = GetPointArea()[i].gameObject;
+            }
         }
+
+        if (targetObj != null)
+            return;
+
+        targetObj = dummyTarget;
     }
 
     /// <summary>
@@ -223,6 +253,9 @@ public class TransportEnemy : EnemyBase, Character
         // ターゲットの状態を確認
         for (int i = 0; i < GetCharacter().Length; i++)
         {
+            if (GetCharacter()[i] == this)
+                return;
+
             CheckTarget(GetCharacter()[i]);
         }
 
@@ -282,8 +315,6 @@ public class TransportEnemy : EnemyBase, Character
     {
         if (obj.GetComponent<Item>().isCatch == false)
             return;
-
-        myAnim.SetInteger("PlayAnimNum", 12);
 
         itemObj = obj;
 

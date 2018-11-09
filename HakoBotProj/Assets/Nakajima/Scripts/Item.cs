@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Item : MonoBehaviour
 {
@@ -11,13 +12,23 @@ public class Item : MonoBehaviour
     Rigidbody myRig;
 
     // 取得できるかどうか
+    [HideInInspector]
     public bool isCatch;
+
+    // ターゲットにされているか
+    [HideInInspector]
+    public bool isTarget;
+
+    // 障害認識
+    NavMeshObstacle navMeshObs;
 
 	// Use this for initialization
 	void Start () {
         isCatch = true;
+        isTarget = false;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
+        navMeshObs = GetComponent<NavMeshObstacle>();
 	}
 	
 	// Update is called once per frame
@@ -42,6 +53,8 @@ public class Item : MonoBehaviour
         myCol.isTrigger = true;
         myRig.useGravity = false;
 
+        navMeshObs.enabled = false;
+
         // 動き、向きを固定
         myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ |
             RigidbodyConstraints.FreezeRotationY;
@@ -53,11 +66,15 @@ public class Item : MonoBehaviour
     /// <param name="playerPos">取得しているプレイヤー座標</param>
     public void ReleaseItem(Vector3 playerPos)
     {
+        gameObject.layer = 8;
+
         transform.parent = null;
         myCol.isTrigger = false;
 
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
+
+        navMeshObs.enabled = true;
 
         // 目標地点
         Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.5f, Random.Range(-4.0f, 4.0f));
@@ -105,7 +122,9 @@ public class Item : MonoBehaviour
     {
         if(col.gameObject.name == "Box001")
         {
+            gameObject.layer = 0;
             isCatch = true;
+            isTarget = false;
         }
     }
 }

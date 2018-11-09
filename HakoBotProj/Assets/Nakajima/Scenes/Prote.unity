@@ -1178,6 +1178,10 @@ Prefab:
       propertyPath: m_Name
       value: Box002 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: 826b61b6d6ba6bc48bac5bc6c7895e4d, type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 826b61b6d6ba6bc48bac5bc6c7895e4d, type: 3}
   m_IsPrefabAsset: 0
