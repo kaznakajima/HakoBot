@@ -96,7 +96,7 @@ public class Player : PlayerBase, Character
         {
             Charge();
         }
-        if(system.ButtonUp_B(myNumber))
+        if(system.ButtonUp_B(myNumber) && _chargeLevel != 0)
         {
             Attack();
         }
@@ -153,7 +153,6 @@ public class Player : PlayerBase, Character
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
         isCharge = false;
-        myAnim.SetInteger("PlayAnimNum", 8);
 
         //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
         myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
@@ -161,6 +160,7 @@ public class Player : PlayerBase, Character
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
         {
+            myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
             isAttack = false;
