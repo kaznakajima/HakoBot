@@ -418,8 +418,6 @@ GameObject:
   - component: {fileID: 13674616}
   - component: {fileID: 54044934112455338}
   - component: {fileID: 195201733999675620}
-  - component: {fileID: 114110580170199318}
-  - component: {fileID: 114185268807351758}
   m_Layer: 0
   m_Name: FredRobot_Green
   m_TagString: Character
@@ -752,7 +750,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 187418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.85, y: 2.0158312e-17, z: -0.618287}
+  m_LocalPosition: {x: 6.85, y: 0.1594603, z: -0.618287}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4491799842995110}
@@ -1181,7 +1179,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 72258f43e22637242b01e94074486dae, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -1199,7 +1197,7 @@ CapsuleCollider:
   m_Radius: 0.362403
   m_Height: 1.2757847
   m_Direction: 1
-  m_Center: {x: -0.017818665, y: 0.6311648, z: 0.0018598766}
+  m_Center: {x: -0.017818665, y: 0.68, z: 0.0018598766}
 --- !u!137 &13763432
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1314,7 +1312,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1331655666306520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.787, z: 0.38}
+  m_LocalPosition: {x: 0, y: 0.787, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 424838}
@@ -1359,45 +1357,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.1, z: 0.1}
   m_Center: {x: 0.15, y: 0, z: 0}
---- !u!114 &114110580170199318
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6cfc23ffe15c9047bfc449e23be0f2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  agent: {fileID: 0}
-  targetObj: {fileID: 0}
-  minDistance: 100
-  pointPos: {fileID: 4491799842995110}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
-  patrolPos: {x: 0, y: 0, z: 0}
-  _myNumber: 4
-  _attackEffect: {fileID: 0}
---- !u!114 &114185268807351758
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187418}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5acdbf7754fbb004ca84b0a6d7fc67ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _myNumber: 0
-  _attackEffect: {fileID: 0}
-  pointPos: {fileID: 4491799842995110}
-  isAttack: 0
-  myRig: {fileID: 0}
-  itemObj: {fileID: 0}
 --- !u!114 &114617154352019284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1422,14 +1381,14 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.3
   m_Speed: 4
-  m_Acceleration: 8
+  m_Acceleration: 10
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 180
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 1.5
+  m_Height: 1
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4

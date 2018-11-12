@@ -7,7 +7,7 @@ using System;
 /// <summary>
 /// プレイヤークラス
 /// </summary>
-public class Player : MonoBehaviour, Character
+public class Player : PlayerBase, Character
 {
 
     // インプット処理
@@ -17,12 +17,11 @@ public class Player : MonoBehaviour, Character
     EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    [SerializeField]
-    private int _myNumber;
+    public int _myNumber;
 
     public int myNumber
     {
-        set { }
+        set { _myNumber = value; }
         get { return _myNumber; }
     }
 
@@ -33,17 +32,6 @@ public class Player : MonoBehaviour, Character
     {
         set { }
         get { return _myEnergy; }
-    }
-
-
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
     }
 
     // チャージ段階
@@ -64,33 +52,10 @@ public class Player : MonoBehaviour, Character
         get { return _hasItem; }
     }
 
-    // 自身のAnimator
-    Animator myAnim;
-
-    // 入力判定
-    Vector3 inputVec;
-
-    // アイテムを所持するための座標
-    [SerializeField]
-    Transform pointPos;
-
-    // 攻撃判定
-    [HideInInspector]
-    public bool isAttack;
-
-    // 移動スピード
-    float runSpeed = 5.0f;
-
-    // 自身のRig
-    [HideInInspector]
-    public Rigidbody myRig;
-
-    // 自身が持っているアイテム
-    [HideInInspector]
-    public GameObject itemObj;
-
     // Use this for initialization
     void Start () {
+        isCharge = false;
+        pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
@@ -105,6 +70,9 @@ public class Player : MonoBehaviour, Character
     // 入力判定
     void PlayerInput()
     {
+        if (isAttack)
+            return;
+
         /* ここから移動量判定 */
         if (system.LeftStickAxis(myNumber) != Vector2.zero)
         {
@@ -113,17 +81,22 @@ public class Player : MonoBehaviour, Character
         }
         else
         {
-            if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
+            myRig.velocity = Vector3.zero;
+            if (_hasItem)
+            {
+                myAnim.SetInteger("PlayAnimNum", 11);
+            }
+            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
             {
                 myAnim.SetInteger("PlayAnimNum", 8);
             }
         }
 
-        if (system.Button_A(myNumber))
+        if (system.Button_B(myNumber))
         {
             Charge();
         }
-        if(system.ButtonUp_A(myNumber))
+        if(system.ButtonUp_B(myNumber) && _chargeLevel != 0)
         {
             Attack();
         }
@@ -136,11 +109,13 @@ public class Player : MonoBehaviour, Character
     public void Move(Vector3 vec)
     {
         if (isAttack)
-        {
             return;
-        }
 
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -152,7 +127,14 @@ public class Player : MonoBehaviour, Character
         Vector3 moveForward = cameraForward * vec.z + Camera.main.transform.right * vec.x;
 
         // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
-        myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
+        if(isCharge == false)
+        {
+            myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
+        }
+        else
+        {
+            myRig.velocity = Vector3.zero;
+        }
 
         // キャラクターの向きを進行方向に
         transform.rotation = Quaternion.LookRotation(moveForward);
@@ -163,22 +145,22 @@ public class Player : MonoBehaviour, Character
     public void Attack()
     {
         if (isAttack)
-        {
             return;
-        }
 
         // エフェクト再生
         emitter.Play();
 
-        //myAnim.SetInteger("PlayAnimNum", 2);
+        myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
+        isCharge = false;
 
         //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
         {
+            myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
             isAttack = false;
@@ -209,6 +191,8 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
+        //myAnim.SetInteger("PlayAnimNum", 12);
+
         itemObj = obj;
 
         itemObj.transform.parent = transform;
@@ -225,6 +209,7 @@ public class Player : MonoBehaviour, Character
             return;
         }
 
+        myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
         itemObj = null;
         hasItem = false;
@@ -233,15 +218,17 @@ public class Player : MonoBehaviour, Character
     // パワーチャージ
     public void Charge()
     {
-        if (_chargeLevel != 0)
+        if (isCharge)
             return;
+
+        isCharge = true;
 
         _chargeLevel = 1;
         emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
         var disposable = new SingleAssignmentDisposable();
-        // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        // 0.5秒ごとにチャージ
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 2 || isAttack)
@@ -252,7 +239,6 @@ public class Player : MonoBehaviour, Character
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-            Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);
     }
@@ -269,6 +255,8 @@ public class Player : MonoBehaviour, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            myRig.velocity = Vector3.zero;
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン

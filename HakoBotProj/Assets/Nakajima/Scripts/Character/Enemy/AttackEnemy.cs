@@ -28,16 +28,6 @@ public class AttackEnemy : EnemyBase, Character
         get { return _myEnergy; }
     }
 
-    // タックルエフェクト
-    [SerializeField]
-    GameObject _attackEffect;
-
-    public GameObject attackEffect
-    {
-        set { }
-        get { return _attackEffect; }
-    }
-
     // チャージ段階
     private int _chargeLevel;
 
@@ -93,10 +83,12 @@ public class AttackEnemy : EnemyBase, Character
                 SetTarget();
                 break;
             case ENEMY_STATE.TARGETMOVE:
+                // ターゲットがいないならターゲット検索
                 if (targetObj == null)
                 {
-                    SetTarget();
+                    ResetTarget();
                 }
+                // ターゲットがいるなら追従
                 else if(targetObj != null)
                 {
                     if (targetObj.transform.parent != null && targetObj.transform.parent != this)
@@ -108,32 +100,28 @@ public class AttackEnemy : EnemyBase, Character
         }
 	}
 
-    ///// <summary>
-    ///// ステージ上のすべてのプレイヤーを取得
-    ///// </summary>
-    ///// <returns>Playerクラスの配列</returns>
-    //public override GameObject[] GetCharacter()
-    //{
-    //    return base.GetCharacter();
-    //}
+    /// <summary>
+    /// ターゲットの状態を取得
+    /// </summary>
+    /// <param name="otherObj">他のプレイヤー</param>
+    public override void CheckTarget(GameObject otherObj)
+    {
+        // ターゲットリストにアクセス
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            if (targetList[i] == null || targetList[i] != targetObj || targetList.Count == 1)
+                return;
 
-    ///// <summary>
-    ///// ステージ上のすべてのアイテムを取得
-    ///// </summary>
-    ///// <returns>Itemクラスの配列</returns>
-    //public override Item[] GetItems()
-    //{
-    //    return base.GetItems();
-    //}
-
-    ///// <summary>
-    ///// ステージ上のすべてのゴールを取得
-    ///// </summary>
-    ///// <returns>PointAreaクラスの配列</returns>
-    //public override PointArea[] GetPointArea()
-    //{
-    //    return base.GetPointArea();
-    //}
+            // 他のキャラクターの方がターゲットに近いならターゲット変更
+            float distance = GetTargetDistance(otherObj, targetList[i]);
+            if (distance < minDistance)
+            {
+                targetList.Remove(targetList[i]);
+                targetObj = targetList[0];
+                break;
+            }
+        }
+    }
 
     /// <summary>
     /// ターゲットのリセット
@@ -161,6 +149,8 @@ public class AttackEnemy : EnemyBase, Character
         }
         else
         {
+            // リストを初期化
+            targetList.Clear();
             SearchPointArea();
         }
     }
@@ -174,14 +164,14 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetCharacter().Length; i++)
         {
             // 最短距離のプレイヤーをターゲット設定
-            if (Vector3.Distance(GetCharacter()[i].transform.position, transform.position) < minDistance)
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance && GetCharacter()[i] != this)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
                     // 最短距離の格納
-                    minDistance = Vector3.Distance(GetCharacter()[i].transform.position, transform.position);
-                    targetObj = GetCharacter()[i].gameObject;
+                    minDistance = GetTargetDistance(GetCharacter()[i], gameObject);
+                    targetObj = GetCharacter()[i];
                 }
             }
         }
@@ -198,10 +188,10 @@ public class AttackEnemy : EnemyBase, Character
         for (int i = 0; i < GetItems().Length; i++)
         {
             // 最短距離のアイテムをターゲットに設定
-            if (Vector3.Distance(GetItems()[i].transform.position, transform.position) < minDistance && GetItems()[i].isCatch == true)
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false)
             {
                 // 最短距離の格納
-                minDistance = Vector3.Distance(GetItems()[i].transform.position, transform.position);
+                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
             }
         }
@@ -209,6 +199,7 @@ public class AttackEnemy : EnemyBase, Character
         // ターゲットが設定されたらリターン
         if (minDistance != 100)
         {
+            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
@@ -222,17 +213,47 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
-        // ステージ上のゴールすべてにアクセス
+        // 自身とポイントエリアの距離
+        float distance;
+        float[] distanceAverage = new float[4];
+        float[] enemyDistacne = new float[4];
+
+        // すべてのポイントエリアにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
-            // 最短距離のゴールをターゲットに設定
-            if (Vector3.Distance(GetPointArea()[i].transform.position, transform.position) < minDistance)
+            distance = GetTargetDistance(gameObject, GetPointArea()[i].gameObject);
+            // 最短距離のポイントエリアをターゲットとする
+            if (distance < minDistance)
             {
-                // 最短距離の格納
-                minDistance = Vector3.Distance(GetPointArea()[i].transform.position, transform.position);
+                minDistance = distance;
                 targetObj = GetPointArea()[i].gameObject;
             }
+
+            for (int j = 0; j < GetCharacter().Length; j++)
+            {
+                if (GetCharacter()[i] == this)
+                    return;
+
+                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
+                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
+                if (minDistance > enemyDistacne[j])
+                {
+                    targetObj = null;
+                }
+            }
+
+            float average = distanceAverage[i] / 3.0f;
+            if (average > maxDistance)
+            {
+                maxDistance = average;
+                dummyTarget = GetPointArea()[i].gameObject;
+            }
         }
+
+        if (targetObj != null)
+            return;
+
+        targetObj = dummyTarget;
     }
 
     /// <summary>
@@ -244,7 +265,17 @@ public class AttackEnemy : EnemyBase, Character
         if (isAttack)
             return;
 
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
+        // ターゲットの状態を確認
+        for (int i = 0; i < GetCharacter().Length; i++)
+        {
+            CheckTarget(GetCharacter()[i]);
+        }
+
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+        {
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
         {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -255,31 +286,39 @@ public class AttackEnemy : EnemyBase, Character
             var character = targetObj.GetComponent(typeof(Character)) as Character;
             if (character.hasItem == false)
             {
-                SetTarget();
+                ResetTarget();
                 return;
+            }
+        }
+        else
+        {
+            // ターゲットの状態を確認
+            for (int i = 0; i < GetCharacter().Length; i++)
+            {
+                if (GetCharacter()[i] == this)
+                    return;
+
+                CheckTarget(GetCharacter()[i]);
             }
         }
 
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (Vector3.Distance(targetObj.transform.position, transform.position) < 5.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 4.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
-            {
                 return;
-            }
 
             // パワーチャージ
             Charge();
 
             // 攻撃範囲に入ったら攻撃
-            if(Vector3.Distance(targetObj.transform.position, transform.position) < 2.0f)
+            if (GetTargetDistance(targetObj, gameObject) < 2.0f)
             {
                 Attack();
             }
-           
         }
     }
 
@@ -315,17 +354,19 @@ public class AttackEnemy : EnemyBase, Character
         // エフェクト再生
         emitter.Play();
 
-        //myAnim.SetInteger("PlayAnimNum", 2);
+        myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
         // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 100f, ForceMode.Acceleration);
+        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.5f * _chargeLevel)).Subscribe(time =>
         {
+            myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
+            myRig.velocity = Vector3.zero;
             isAttack = false;
             SetTarget();
         }).AddTo(this);
@@ -348,9 +389,10 @@ public class AttackEnemy : EnemyBase, Character
     public void Catch(GameObject obj)
     {
         if (obj.GetComponent<Item>().isCatch == false)
-        {
             return;
-        }
+
+        // 攻撃中止
+        _chargeLevel = 0;
 
         itemObj = obj;
 
@@ -367,9 +409,9 @@ public class AttackEnemy : EnemyBase, Character
     public void Release()
     {
         if (itemObj == null)
-        {
             return;
-        }
+
+        myAnim.SetInteger("PlayAnimNum", 10);
 
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
@@ -390,18 +432,20 @@ public class AttackEnemy : EnemyBase, Character
 
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
-            if (_chargeLevel >= 2 || isAttack)
-            {
+            if (_chargeLevel >= 3 || isAttack) {
+                Attack();
+                disposable.Dispose();
+            }
+            else if (_chargeLevel == 0) {
                 disposable.Dispose();
             }
 
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-            Debug.Log("プレイヤー" + _myNumber + "パワー" + chargeLevel);
 
         }).AddTo(this);
     }
@@ -431,17 +475,20 @@ public class AttackEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            myRig.velocity = Vector3.zero;
+
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
-            }
-            
-            character.Release();
 
-            hasItem = false;
+            character.Release();
         }
+    }
+
+    public override void OnCollisionExit(Collision col)
+    {
+        base.OnCollisionExit(col);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Item : MonoBehaviour
 {
@@ -11,13 +12,23 @@ public class Item : MonoBehaviour
     Rigidbody myRig;
 
     // 取得できるかどうか
+    [HideInInspector]
     public bool isCatch;
+
+    // ターゲットにされているか
+    [HideInInspector]
+    public bool isTarget;
+
+    // 障害認識
+    NavMeshObstacle navMeshObs;
 
 	// Use this for initialization
 	void Start () {
         isCatch = true;
+        isTarget = false;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
+        navMeshObs = GetComponent<NavMeshObstacle>();
 	}
 	
 	// Update is called once per frame
@@ -32,15 +43,21 @@ public class Item : MonoBehaviour
     public void GetItem(Transform point)
     {
         if(isCatch == false)
-        {
             return;
-        }
 
+        // プレイヤーの取得位置に配置
         transform.position = point.position;
+        // 向きを修正
+        transform.rotation = point.rotation;
         isCatch = false;
         myCol.isTrigger = true;
         myRig.useGravity = false;
-        myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
+
+        navMeshObs.enabled = false;
+
+        // 動き、向きを固定
+        myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ |
+            RigidbodyConstraints.FreezeRotationY;
     }
 
     /// <summary>
@@ -49,20 +66,24 @@ public class Item : MonoBehaviour
     /// <param name="playerPos">取得しているプレイヤー座標</param>
     public void ReleaseItem(Vector3 playerPos)
     {
+        gameObject.layer = 8;
+
+        transform.parent = null;
+        myCol.isTrigger = false;
+
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
 
+        navMeshObs.enabled = true;
+
         // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.0f, Random.Range(-4.0f, 4.0f));
+        Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.5f, Random.Range(-4.0f, 4.0f));
         // 射出角度、方向を取得
-        float angle = 60.0f;
+        float angle = 70.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
 
         // 射出
         myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
-
-        transform.parent = null;
-        myCol.isTrigger = false;
     }
 
     /// <summary>
@@ -99,9 +120,11 @@ public class Item : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "Plane")
+        if(col.gameObject.name == "Box001")
         {
+            gameObject.layer = 0;
             isCatch = true;
+            isTarget = false;
         }
     }
 }
