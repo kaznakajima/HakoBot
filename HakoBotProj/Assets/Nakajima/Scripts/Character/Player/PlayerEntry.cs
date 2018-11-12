@@ -51,5 +51,7 @@ public class PlayerEntry : MonoBehaviour
                 SceneManager.LoadScene("Prote");
             }
         }
+        if(Input.GetMouseButtonDown(0))
+            SceneManager.LoadScene("Prote");
     }
 }
