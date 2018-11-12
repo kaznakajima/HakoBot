@@ -53,8 +53,6 @@ public class Item : MonoBehaviour
         myCol.isTrigger = true;
         myRig.useGravity = false;
 
-        navMeshObs.enabled = false;
-
         // 動き、向きを固定
         myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ |
             RigidbodyConstraints.FreezeRotationY;
@@ -66,7 +64,7 @@ public class Item : MonoBehaviour
     /// <param name="playerPos">取得しているプレイヤー座標</param>
     public void ReleaseItem(Vector3 playerPos)
     {
-        gameObject.layer = 8;
+        gameObject.layer = 9;
 
         transform.parent = null;
         myCol.isTrigger = false;
@@ -74,10 +72,8 @@ public class Item : MonoBehaviour
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
 
-        navMeshObs.enabled = true;
-
         // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-4.0f, 4.0f), 0.5f, Random.Range(-4.0f, 4.0f));
+        Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
         // 射出角度、方向を取得
         float angle = 70.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
@@ -120,7 +116,7 @@ public class Item : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "Box001")
+        if(col.gameObject.name == "st")
         {
             gameObject.layer = 0;
             isCatch = true;
