@@ -158,7 +158,7 @@ public class Player : PlayerBase, Character
         myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(0.25f * _chargeLevel)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
