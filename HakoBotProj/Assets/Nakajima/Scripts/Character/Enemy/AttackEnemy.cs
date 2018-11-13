@@ -91,7 +91,7 @@ public class AttackEnemy : EnemyBase, Character
                 // ターゲットがいるなら追従
                 else if(targetObj != null)
                 {
-                    if (targetObj.transform.parent != null && targetObj.transform.parent != this)
+                    if (targetObj.GetComponent<Item>() != null && targetObj.transform.parent != null && targetObj.transform.parent != this)
                         SetTarget();
 
                     Move(targetObj.transform.position);
@@ -116,8 +116,7 @@ public class AttackEnemy : EnemyBase, Character
             float distance = GetTargetDistance(otherObj, targetList[i]);
             if (distance < minDistance)
             {
-                targetList.Remove(targetList[i]);
-                targetObj = targetList[0];
+                SetTarget();
                 break;
             }
         }
@@ -142,15 +141,16 @@ public class AttackEnemy : EnemyBase, Character
     {
         // 最短距離の初期化 (とりあえず100を入れてある)
         minDistance = 100;
+        maxDistance = 0;
 
-        if(itemObj == null)
+        if (itemObj == null)
         {
+            // リストを初期化
+            targetList.Clear();
             SearchTarget();
         }
         else
         {
-            // リストを初期化
-            targetList.Clear();
             SearchPointArea();
         }
     }
@@ -187,6 +187,8 @@ public class AttackEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            // リストに追加
+            targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false)
             {
@@ -265,12 +267,6 @@ public class AttackEnemy : EnemyBase, Character
         if (isAttack)
             return;
 
-        // ターゲットの状態を確認
-        for (int i = 0; i < GetCharacter().Length; i++)
-        {
-            CheckTarget(GetCharacter()[i]);
-        }
-
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
             myAnim.SetInteger("PlayAnimNum", 11);
@@ -286,21 +282,35 @@ public class AttackEnemy : EnemyBase, Character
             var character = targetObj.GetComponent(typeof(Character)) as Character;
             if (character.hasItem == false)
             {
-                ResetTarget();
+                SetTarget();
                 return;
             }
         }
-        else
-        {
-            // ターゲットの状態を確認
-            for (int i = 0; i < GetCharacter().Length; i++)
-            {
-                if (GetCharacter()[i] == this)
-                    return;
+        //else if (targetObj.GetComponent<Item>() != null)
+        //{
+        //    // ターゲットの状態を確認
+        //    for (int i = 0; i < GetCharacter().Length; i++)
+        //    {
+        //        if (GetCharacter()[i] == this)
+        //            return;
 
-                CheckTarget(GetCharacter()[i]);
-            }
-        }
+        //        CheckTarget(GetCharacter()[i]);
+        //    }
+        //}
+
+        // 次の位置への方向を求める
+        var dir = agent.nextPosition - transform.position;
+
+        // 方向と現在の前方との角度を計算（スムーズに回転するように係数を掛ける）
+        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+        var angle = Mathf.Acos(Vector3.Dot(transform.forward, dir.normalized)) * Mathf.Rad2Deg * smooth;
+
+        // 回転軸を計算
+        var axis = Vector3.Cross(transform.forward, dir);
+
+        // 回転の更新
+        var rot = Quaternion.AngleAxis(angle, axis);
+        transform.forward = rot * transform.forward;
 
         agent.SetDestination(vec);
 
@@ -348,7 +358,7 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public void Attack()
     {
-        if (isAttack)
+        if (isAttack || _chargeLevel == 0)
             return;
 
         // エフェクト再生
@@ -388,7 +398,7 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        if (obj.GetComponent<Item>().isCatch == false)
+        if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
         // 攻撃中止
@@ -412,10 +422,8 @@ public class AttackEnemy : EnemyBase, Character
             return;
 
         myAnim.SetInteger("PlayAnimNum", 10);
-
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
 
-        // ターゲットの再設定
         hasItem = false;
     }
 
