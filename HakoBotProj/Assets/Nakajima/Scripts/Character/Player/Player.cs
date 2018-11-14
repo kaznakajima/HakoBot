@@ -186,10 +186,8 @@ public class Player : PlayerBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        if(obj.GetComponent<Item>().isCatch == false)
-        {
+        if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
-        }
 
         //myAnim.SetInteger("PlayAnimNum", 12);
 
