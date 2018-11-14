@@ -1,0 +1,285 @@
+fileFormatVersion: 2
+guid: 7a08d797a9e1b0f46a99b121043a98a3
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: be001
+    100002: be002
+    100004: be003
+    100006: be004
+    100008: Box004
+    100010: Box005
+    100012: Box012
+    100014: Box013
+    100016: Box014
+    100018: Box015
+    100020: Box016
+    100022: Box017
+    100024: Box018
+    100026: Box019
+    100028: Box020
+    100030: Box021
+    100032: Box022
+    100034: Box023
+    100036: Box024
+    100038: Box025
+    100040: Box026
+    100042: Box027
+    100044: Box028
+    100046: humidai007
+    100048: humidai008
+    100050: humidai009
+    100052: humidai010
+    100054: humidai03
+    100056: humidai06
+    100058: monitor
+    100060: rnp01
+    100062: rnp02
+    100064: rnp03
+    100066: rnp04
+    100068: rnp05
+    100070: rnp06
+    100072: rnp07
+    100074: rnp08
+    100076: st
+    100078: //RootNode
+    400000: be001
+    400002: be002
+    400004: be003
+    400006: be004
+    400008: Box004
+    400010: Box005
+    400012: Box012
+    400014: Box013
+    400016: Box014
+    400018: Box015
+    400020: Box016
+    400022: Box017
+    400024: Box018
+    400026: Box019
+    400028: Box020
+    400030: Box021
+    400032: Box022
+    400034: Box023
+    400036: Box024
+    400038: Box025
+    400040: Box026
+    400042: Box027
+    400044: Box028
+    400046: humidai007
+    400048: humidai008
+    400050: humidai009
+    400052: humidai010
+    400054: humidai03
+    400056: humidai06
+    400058: monitor
+    400060: rnp01
+    400062: rnp02
+    400064: rnp03
+    400066: rnp04
+    400068: rnp05
+    400070: rnp06
+    400072: rnp07
+    400074: rnp08
+    400076: st
+    400078: //RootNode
+    2100000: 'Material #61'
+    2100002: 'Material #65'
+    2100004: 'Material #36'
+    2100006: 'Material #35'
+    2100008: 'Material #63'
+    2100010: 'Material #62'
+    2100012: 'Material #64'
+    2100014: 'Material #67'
+    2100016: No Name
+    2100018: 'Material #2'
+    2100020: 'Material #3'
+    2100022: 'Material #66'
+    2300000: Box004
+    2300002: Box005
+    2300004: Box012
+    2300006: Box013
+    2300008: Box014
+    2300010: Box015
+    2300012: Box016
+    2300014: Box017
+    2300016: Box018
+    2300018: Box019
+    2300020: Box020
+    2300022: Box021
+    2300024: Box022
+    2300026: Box023
+    2300028: Box024
+    2300030: Box025
+    2300032: Box026
+    2300034: Box027
+    2300036: Box028
+    2300038: humidai007
+    2300040: humidai008
+    2300042: humidai009
+    2300044: humidai010
+    2300046: humidai03
+    2300048: humidai06
+    2300050: monitor
+    2300052: rnp01
+    2300054: rnp02
+    2300056: rnp03
+    2300058: rnp04
+    2300060: rnp05
+    2300062: rnp06
+    2300064: rnp07
+    2300066: rnp08
+    2300068: st
+    3300000: Box004
+    3300002: Box005
+    3300004: Box012
+    3300006: Box013
+    3300008: Box014
+    3300010: Box015
+    3300012: Box016
+    3300014: Box017
+    3300016: Box018
+    3300018: Box019
+    3300020: Box020
+    3300022: Box021
+    3300024: Box022
+    3300026: Box023
+    3300028: Box024
+    3300030: Box025
+    3300032: Box026
+    3300034: Box027
+    3300036: Box028
+    3300038: humidai007
+    3300040: humidai008
+    3300042: humidai009
+    3300044: humidai010
+    3300046: humidai03
+    3300048: humidai06
+    3300050: monitor
+    3300052: rnp01
+    3300054: rnp02
+    3300056: rnp03
+    3300058: rnp04
+    3300060: rnp05
+    3300062: rnp06
+    3300064: rnp07
+    3300066: rnp08
+    3300068: st
+    4300000: st
+    4300002: Box012
+    4300004: Box004
+    4300006: Box005
+    4300008: monitor
+    4300010: Box013
+    4300012: humidai06
+    4300014: humidai03
+    4300016: humidai007
+    4300018: humidai008
+    4300020: humidai009
+    4300022: humidai010
+    4300024: Box014
+    4300026: Box015
+    4300028: Box016
+    4300030: Box017
+    4300032: Box018
+    4300034: Box019
+    4300036: Box020
+    4300038: Box021
+    4300040: Box022
+    4300042: rnp08
+    4300044: rnp07
+    4300046: rnp06
+    4300048: rnp05
+    4300050: rnp04
+    4300052: rnp03
+    4300054: rnp02
+    4300056: rnp01
+    4300058: Box023
+    4300060: Box024
+    4300062: Box025
+    4300064: Box026
+    4300066: Box027
+    4300068: Box028
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
