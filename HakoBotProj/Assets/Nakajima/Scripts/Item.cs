@@ -19,6 +19,13 @@ public class Item : MonoBehaviour
     [HideInInspector]
     public bool isTarget;
 
+    // コンベアに乗ったかどうか
+    [HideInInspector]
+    bool isCarry;
+
+    // 移動方向
+    Vector3 dir;
+
     // 障害認識
     NavMeshObstacle navMeshObs;
 
@@ -33,8 +40,38 @@ public class Item : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (isCarry)
+            Move(dir);
 	}
+
+    /// <summary>
+    /// コンベアに乗せた後の処理
+    /// </summary>
+    /// <param name="parent">乗せたコンベアのオブジェクト</param>
+    /// <param name="dir">方向</param>
+    public void ItemCarry(GameObject parent, Vector3 _dir)
+    {
+        // 向きを取得
+        dir = _dir;
+
+        // 位置の調整
+        transform.parent = parent.transform;
+        transform.localPosition = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+        transform.localPosition += new Vector3(0.0f, 0.0f, 0.2f);
+
+        // コンベアを流れていく
+        isCarry = true;
+    }
+
+    /// <summary>
+    /// 移動処理
+    /// </summary>
+    /// <param name="dir">方向</param>
+    void Move(Vector3 dir)
+    {
+        transform.position += dir * 2.0f * Time.deltaTime;
+    }
 
     /// <summary>
     /// プレイヤーに所持される
