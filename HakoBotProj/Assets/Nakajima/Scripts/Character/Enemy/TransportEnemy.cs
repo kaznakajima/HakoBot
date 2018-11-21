@@ -374,7 +374,7 @@ public class TransportEnemy : EnemyBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.name == "Item(Clone)" && hasItem == false)
+        if (col.gameObject.tag == "Item")
         {
             Catch(col.gameObject);
         }

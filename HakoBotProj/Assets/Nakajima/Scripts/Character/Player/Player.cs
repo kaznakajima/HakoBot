@@ -245,7 +245,7 @@ public class Player : PlayerBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.name == "Item(Clone)")
+        if (col.gameObject.tag == "Item")
         {
             Catch(col.gameObject);
         }
