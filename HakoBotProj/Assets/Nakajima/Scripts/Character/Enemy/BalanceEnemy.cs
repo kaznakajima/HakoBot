@@ -242,12 +242,12 @@ public class BalanceEnemy : EnemyBase, Character
         // すべてのポイントエリアにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
-            distance = GetTargetDistance(gameObject, GetPointArea()[i].gameObject);
+            distance = GetTargetDistance(gameObject, GetPointArea()[i].targetObj);
             // 最短距離のポイントエリアをターゲットとする
             if (distance < minDistance)
             {
                 minDistance = distance;
-                targetObj = GetPointArea()[i].gameObject;
+                targetObj = GetPointArea()[i].targetObj;
             }
 
             for (int j = 0; j < GetCharacter().Length; j++)
@@ -255,8 +255,8 @@ public class BalanceEnemy : EnemyBase, Character
                 if (GetCharacter()[i] == this)
                     return;
 
-                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
-                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].gameObject);
+                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
+                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
                 if (minDistance > enemyDistacne[j])
                 {
                     targetObj = null;
@@ -267,7 +267,7 @@ public class BalanceEnemy : EnemyBase, Character
             if (average > maxDistance)
             {
                 maxDistance = average;
-                dummyTarget = GetPointArea()[i].gameObject;
+                dummyTarget = GetPointArea()[i].targetObj;
             }
         }
 

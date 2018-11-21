@@ -56,9 +56,8 @@ public class Item : MonoBehaviour
 
         // 位置の調整
         transform.parent = parent.transform;
-        transform.localPosition = Vector3.zero;
         transform.rotation = Quaternion.identity;
-        transform.localPosition += new Vector3(0.0f, 0.0f, 0.2f);
+        transform.localPosition = new Vector3(0.0f, 0.0f, 0.2f);
 
         // コンベアを流れていく
         isCarry = true;
@@ -158,6 +157,14 @@ public class Item : MonoBehaviour
             gameObject.layer = 0;
             isCatch = true;
             isTarget = false;
+        }
+    }
+
+    void OnTriggerExit(Collider col)
+    {
+        if(col.gameObject.GetComponent<PointArea>() != null)
+        {
+            Destroy(gameObject);
         }
     }
 }

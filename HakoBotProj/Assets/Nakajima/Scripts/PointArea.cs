@@ -16,6 +16,9 @@ public class PointArea : MonoBehaviour
     [SerializeField]
    Vector3 dir;
 
+    // ターゲットポイント
+    public GameObject targetObj;
+
     // Use this for initialization
     void Start () {
         score = FindObjectOfType<ScoreController>();
