@@ -144,21 +144,32 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (isAttack)
+        if (isAttack || _chargeLevel == 0)
             return;
 
         // エフェクト再生
         emitter.Play();
 
+        Debug.Log(_chargeLevel);
+
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
         isCharge = false;
 
-        //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 2.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
+        // チャージ段階に応じてアタック強化
+        switch (_chargeLevel)
+        {
+            case 3:
+                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                break;
+            default:
+                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                break;
+        }
+        
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(0.5f *  _chargeLevel)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
@@ -189,7 +200,7 @@ public class Player : PlayerBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
-        //myAnim.SetInteger("PlayAnimNum", 12);
+        _chargeLevel = 0;
 
         itemObj = obj;
 
@@ -202,8 +213,10 @@ public class Player : PlayerBase, Character
     // アイテムを放棄
     public void Release()
     {
-        if(itemObj == null)
+        if (itemObj == null || hasItem == false)
         {
+            itemObj = null;
+            hasItem = false;
             return;
         }
 
@@ -216,7 +229,7 @@ public class Player : PlayerBase, Character
     // パワーチャージ
     public void Charge()
     {
-        if (isCharge)
+        if (isCharge || hasItem)
             return;
 
         isCharge = true;
@@ -259,10 +272,20 @@ public class Player : PlayerBase, Character
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
+
+            // アイテムを登録
+            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
+            // チャージが最大レベルなら
+            if (_chargeLevel == 3)
+            {
+                itemObj.GetComponent<Item>().isCatch = true;
+                character.hasItem = false;
+                // アイテムを奪う
+                Catch(itemObj);
             }
-            
+
+            // アイテム放棄
             character.Release();
         }
     }

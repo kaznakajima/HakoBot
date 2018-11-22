@@ -12,7 +12,7 @@ using System.Linq;
 public class TransportEnemy : EnemyBase, Character
 {
     // エフェクト再生
-    EffekseerEmitter emitter;
+    //EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     public int _myNumber;
@@ -67,7 +67,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
-        emitter = GetComponentInChildren<EffekseerEmitter>();
+        //emitter = GetComponentInChildren<EffekseerEmitter>();
     }
 	
 	// Update is called once per frame
@@ -343,8 +343,11 @@ public class TransportEnemy : EnemyBase, Character
     // アイテムを放棄
     public void Release()
     {
-        if (itemObj == null)
+        if (itemObj == null || hasItem == false)
+        {
+            ResetTarget();
             return;
+        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);

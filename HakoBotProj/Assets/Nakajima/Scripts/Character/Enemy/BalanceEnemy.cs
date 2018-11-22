@@ -89,7 +89,7 @@ public class BalanceEnemy : EnemyBase, Character
                 else if(targetObj != null)
                 {
                     if (targetObj.GetComponent<Item>() != null && targetObj.transform.parent != null && targetObj.transform.parent != this)
-                        SetTarget();
+                        ResetTarget();
 
                     Move(targetObj.transform.position);
                 }
@@ -386,11 +386,20 @@ public class BalanceEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
-        // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
+        // チャージ段階に応じてアタック強化
+        switch (_chargeLevel)
+        {
+            case 3:
+                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                break;
+            default:
+                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                break;
+        }
+
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.0f * _chargeLevel)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(0.5f * _chargeLevel)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
@@ -437,8 +446,11 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public void Release()
     {
-        if (itemObj == null)
+        if (itemObj == null || hasItem == false)
+        {
+            ResetTarget();
             return;
+        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position);
@@ -451,7 +463,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public void Charge()
     {
-        if (_chargeLevel != 0)
+        if (_chargeLevel != 0 || hasItem)
             return;
 
         _chargeLevel = 1;
@@ -510,6 +522,18 @@ public class BalanceEnemy : EnemyBase, Character
             if (character.hasItem == false)
                 return;
 
+            // アイテムを登録
+            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
+            // チャージが最大レベルなら
+            if (_chargeLevel == 3)
+            {
+                itemObj.GetComponent<Item>().isCatch = true;
+                character.hasItem = false;
+                // アイテムを奪う
+                Catch(itemObj);
+            }
+
+            // アイテム放棄
             character.Release();
         }
     }

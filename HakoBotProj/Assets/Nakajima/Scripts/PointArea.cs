@@ -10,8 +10,6 @@ public class PointArea : MonoBehaviour
     // ポイントエリアが機能しているか
     public bool isActive = true;
 
-    bool isOpen = true;
-
     // アイテムを運ぶ方向
     [SerializeField]
    Vector3 dir;
