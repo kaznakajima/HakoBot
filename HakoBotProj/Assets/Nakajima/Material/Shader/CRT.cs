@@ -53,6 +53,12 @@ public class CRT : MonoBehaviour
     float scanLineSpeed = 10;
     public float ScanLineSpeed { get { return scanLineSpeed; } set { scanLineSpeed = value; } }
 
+    // 透明度
+    [SerializeField]
+    [Range(-1, 1)]
+    float alpha = 1;
+    public float Alpha { get { return alpha; } set { alpha = value; } }
+
     // カメラにアタッチした際に使う用
     //void OnRenderImage(RenderTexture src, RenderTexture dest)
     //{
@@ -85,5 +91,6 @@ public class CRT : MonoBehaviour
         material.SetFloat("_ScanLineSpeed", scanLineSpeed);
         material.SetFloat("_ScanLineTail", scanLineTail);
         material.SetVector("_Offset", offset);
+        material.SetFloat("_Alpha", alpha);
     }
 }

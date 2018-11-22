@@ -457,7 +457,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1544215273
 GameObject:
@@ -632,9 +632,10 @@ GameObject:
   - component: {fileID: 1827312242}
   - component: {fileID: 1827312241}
   - component: {fileID: 1827312240}
+  - component: {fileID: 1827312244}
   - component: {fileID: 1827312239}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Noise
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -653,13 +654,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 3cc072fba944df14098f683e62c42e8a, type: 2}
   noiseX: 0
-  rgbNoise: 0
+  rgbNoise: 1
   sinNoiseScale: 0
   sinNoiseWidth: 0
   sinNoiseOffset: 0
   offset: {x: 0, y: 0}
-  scanLineTail: 1
-  scanLineSpeed: 1
+  scanLineTail: 2
+  scanLineSpeed: 10
+  alpha: 1
 --- !u!64 &1827312240
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -723,9 +725,27 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1827312238}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.1, y: -2.5, z: 17.8}
-  m_LocalScale: {x: 3, y: 3, z: 2}
+  m_LocalPosition: {x: 0.03, y: -2.49, z: 18}
+  m_LocalScale: {x: 2.9287071, y: 3, z: 1.7851748}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!95 &1827312244
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1827312238}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 37bef05ca475c4a4683ff7e02bcc0e78, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
