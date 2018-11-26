@@ -217,7 +217,7 @@ public class TransportEnemy : EnemyBase, Character
 
             for (int j = 0; j < GetCharacter().Length; j++)
             {
-                if (GetCharacter()[i] == this)
+                if (GetCharacter()[j] == this)
                     return;
 
                 enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
