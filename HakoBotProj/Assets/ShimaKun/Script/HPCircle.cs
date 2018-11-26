@@ -6,18 +6,26 @@ using UnityEngine.UI;
 public class HPCircle : MonoBehaviour
 {
     GameObject iamge;
-	// Use this for initialization
-	void Start () {
-        iamge = GameObject.Find("HPCircle");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    public void HPDown(float current,int max)
+
+    [SerializeField]
+    float a;
+    // Use this for initialization
+    void Start()
     {
-        iamge.GetComponent<Image>().fillAmount = current / max;
+        iamge = GameObject.Find("HPCircle");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public void HPDown(float current, int max)
+    {
+        //float maxfill = 0.75f;
+
+        iamge.GetComponent<Image>().fillAmount += current;
+
         
     }
 }

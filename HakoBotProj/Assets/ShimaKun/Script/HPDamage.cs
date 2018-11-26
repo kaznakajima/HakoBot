@@ -17,11 +17,13 @@ public class HPDamage : MonoBehaviour
     Text text;
     GameObject hpSystem;
 
-   public float interval = 0;
+    public float interval = 0.2f;
 
     bool flg = false;
 
-    private static readonly int PollingInterval = 60 * 1000;
+    [SerializeField]
+    int Player_HP;
+
 
     // Use this for initialization
     void Start ()
@@ -30,6 +32,7 @@ public class HPDamage : MonoBehaviour
         //textObj = GameObject.Find("HPDamage");//
         //HPSystemを取得する
         hpSystem = GameObject.Find("HPCircle");
+        StartCoroutine(Interval());
     }
 	
 	// Update is called once per frame
@@ -41,7 +44,7 @@ public class HPDamage : MonoBehaviour
         //textObj.GetComponent<RankText>().test((int)currentHP);
 
         //HPSystemのスクリプトのHPDown関数に2つの数値を送る
-        hpSystem.GetComponent<HPCircle>().HPDown(currentHP, maxHP);
+        //hpSystem.GetComponent<HPCircle>().HPDown(currentHP, maxHP);
 
     }
     void FixedUpdate()
@@ -61,6 +64,7 @@ public class HPDamage : MonoBehaviour
                
         }
 
+        
             
             
             
@@ -86,13 +90,14 @@ public class HPDamage : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            if (0 <= currentHP || currentHP <= 100)
+            //0以上maxHP未満
+            if (0 <= currentHP && currentHP <= maxHP)
             {
-
-                // maxHPから秒数（×10）を引いた数がcurrentHP
-                currentHP += 1.0f;
+                //0.075ずつゲージを足している
+                currentHP = 0.075f;
+                hpSystem.GetComponent<HPCircle>().HPDown(currentHP, maxHP);
             }
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(interval);
         }
         flg = false;
     }
