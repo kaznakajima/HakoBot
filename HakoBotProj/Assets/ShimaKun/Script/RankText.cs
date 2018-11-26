@@ -32,9 +32,7 @@ public class RankText : SingletonMonobeBehaviour<RankText>
                 //score = score + point;
                 if (MainManager.Instance.playerPoint[playerNum - 1] >= 10)//
                 {
-                    //numSprite1.SetNumber(score % 10);
-                    //numSprite10.SetNumber((score / 10)%10);
-                    //numSprite100.SetNumber((score / 100)%10);
+                    
                     numSprite1.SetNumber(MainManager.Instance.playerPoint[playerNum - 1] % 10);
                     numSprite10.SetNumber((MainManager.Instance.playerPoint[playerNum - 1] / 10) % 10);
                     numSprite100.SetNumber((MainManager.Instance.playerPoint[playerNum - 1] / 100) % 10);
@@ -42,5 +40,16 @@ public class RankText : SingletonMonobeBehaviour<RankText>
             }           
         }
         numSprite1.SetNumber(MainManager.Instance.playerPoint[playerNum - 1]);          
+    }
+    public void test(int score)//HPゲージのとこで使う
+    {
+        numSprite1.SetNumber(score);
+        for (int i = 0; i < 1; i++)
+        {
+            numSprite1.SetNumber(score % 10);
+            numSprite10.SetNumber((score / 10) % 10);
+            numSprite100.SetNumber((score / 100) % 10);
+        }
+           
     }
 }
