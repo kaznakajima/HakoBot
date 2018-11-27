@@ -21,7 +21,6 @@ class Data
 
     }
 }
-
 public class Sound : MonoBehaviour {
     //SEチャンネル数
     const int SE_CHANNEL = 3;
@@ -54,18 +53,15 @@ public class Sound : MonoBehaviour {
         //  チャンネルの確保
         SEArray = new AudioSource[SE_CHANNEL];
     }
-
     //サウンドのロード
     public static void LoadBgm(string key,string resName)
     {
         Instance().LoadBGM(key, resName);
     }
-
     public static void LoadSe(string key,string resName)
     {
         Instance().LoadSE(key, resName);
     }
-
     void LoadBGM(string key,string resName)
     {
         if (poolBgm.ContainsKey(key))
@@ -75,7 +71,6 @@ public class Sound : MonoBehaviour {
         }
         poolBgm.Add(key, new Data(key, resName));
     }
-
     void LoadSE(string key,string resName)
     {
         if (poolSe.ContainsKey(key))
@@ -85,13 +80,11 @@ public class Sound : MonoBehaviour {
         }
         poolSe.Add(key, new Data(key, resName));
     }
-
     //BGMの再生
     public static bool PlayBGM(string key)
     {
         return Instance().PlayBgm(key);
     }
-
     bool PlayBgm(string key)
     {
         if (poolBgm.ContainsKey(key) == false)
@@ -112,7 +105,6 @@ public class Sound : MonoBehaviour {
 
         return true;
     }
-
     //AudioSoureを取得する
     AudioSource GetAudioSource(SEType type,int channel = 1)
     {
@@ -151,25 +143,21 @@ public class Sound : MonoBehaviour {
             }
         }
     }
-
     //BGMの停止
     public static bool StopBgm()
     {
         return Instance()._StopBgm();
     }
-
     bool _StopBgm()
     {
         GetAudioSource(SEType.BGM).Stop();
         return true;
     }
-
     //SEの再生
     public static bool PlaySe(string key,int channel = 1)
     {
         return Instance().PlaySE(key, channel);
     }
-
     bool PlaySE(string key,int channel = 1)
     {
         if (poolSe.ContainsKey(key) == false)

@@ -237,7 +237,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 77127044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -10.4}
   m_LocalScale: {x: 1, y: 1, z: 98153.59}
   m_Children: []
   m_Father: {fileID: 0}
@@ -753,8 +753,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc38871a58ae4ed43b5f438fb4465c23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EfectTime: 2
-  EfectTime2: 8
+  EfectTime: 7
+  EfectTime2: 15
   efectcolor: {r: 0.9150943, g: 0.12517802, b: 0.29535252, a: 1}
   efectcolor2: {r: 0.36510652, g: 0.9433962, b: 0.09344962, a: 1}
 --- !u!1001 &707504321
@@ -909,7 +909,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.14
+      value: 0.27
       objectReference: {fileID: 0}
     - target: {fileID: 424838, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
       propertyPath: m_LocalPosition.z
@@ -971,6 +971,7 @@ GameObject:
   - component: {fileID: 2144408919}
   - component: {fileID: 2144408918}
   - component: {fileID: 2144408917}
+  - component: {fileID: 2144408920}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1038,3 +1039,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 51.049004, y: -6.42, z: -5.262}
+--- !u!114 &2144408920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2144408916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b6cc6a00944b643a7da72f7a40f074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batrusound: {fileID: 8300000, guid: e331e74466c00b344b6cd083d76d051e, type: 3}
