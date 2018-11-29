@@ -25,12 +25,12 @@ public class Player : PlayerBase, Character
         get { return _myNumber; }
     }
 
-    // 自身のエネルギー残量
-    private int _myEnergy = 100;
+    // 自身のエネルギー割合
+    private int _myEnergy = 0;
 
     public int myEnergy
     {
-        set { }
+        set { _myEnergy += value; }
         get { return _myEnergy; }
     }
 
@@ -150,11 +150,12 @@ public class Player : PlayerBase, Character
         // エフェクト再生
         emitter.Play();
 
-        Debug.Log(_chargeLevel);
-
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
         isCharge = false;
+
+        // エネルギー計算
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
 
         // チャージ段階に応じてアタック強化
         switch (_chargeLevel)
@@ -200,6 +201,8 @@ public class Player : PlayerBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        isCharge = false;
+
         _chargeLevel = 0;
 
         itemObj = obj;
@@ -210,8 +213,12 @@ public class Player : PlayerBase, Character
         hasItem = true;
     }
 
-    // アイテムを放棄
-    public void Release()
+    /// <summary>
+    /// アイテムを放棄
+    /// </summary>
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    public void Release(bool isSteal, Vector3 opponentPos)
     {
         if (itemObj == null || hasItem == false)
         {
@@ -221,7 +228,7 @@ public class Player : PlayerBase, Character
         }
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position);
+        itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
         itemObj = null;
         hasItem = false;
     }
@@ -279,14 +286,14 @@ public class Player : PlayerBase, Character
             // チャージが最大レベルなら
             if (_chargeLevel == 3)
             {
-                itemObj.GetComponent<Item>().isCatch = true;
-                character.hasItem = false;
-                // アイテムを奪う
-                Catch(itemObj);
+                //// アイテムを奪う
+                //Catch(itemObj);
+                // アイテム放棄
+                character.Release(true, transform.position);
+                return;
             }
 
-            // アイテム放棄
-            character.Release();
+            character.Release(false, Vector3.zero);
         }
     }
 }

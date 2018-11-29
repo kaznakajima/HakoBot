@@ -98,7 +98,8 @@ public class Item : MonoBehaviour
     /// 取得状態から放棄する
     /// </summary>
     /// <param name="playerPos">取得しているプレイヤー座標</param>
-    public void ReleaseItem(Vector3 playerPos)
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>>
+    public void ReleaseItem(Vector3 playerPos, Vector3 opponentPos, bool isSteal)
     {
         gameObject.layer = 9;
 
@@ -108,14 +109,27 @@ public class Item : MonoBehaviour
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
 
-        // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
-        // 射出角度、方向を取得
-        float angle = 70.0f;
-        Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+        if (isSteal)
+        {
 
-        // 射出
-        myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+            // 目標地点
+            Vector3 throwPos = opponentPos;
+            // 射出角度、方向を取得
+            float angle = 70.0f;
+            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+            // 射出
+            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+        }
+        else
+        {
+            // 目標地点
+            Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
+            // 射出角度、方向を取得
+            float angle = 70.0f;
+            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+            // 射出
+            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+        }
     }
 
     /// <summary>

@@ -340,8 +340,12 @@ public class TransportEnemy : EnemyBase, Character
         SetTarget();
     }
 
-    // アイテムを放棄
-    public void Release()
+    /// <summary>
+    /// アイテムを放棄
+    /// </summary>
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    public void Release(bool isSteal, Vector3 opponentPos)
     {
         if (itemObj == null || hasItem == false)
         {
@@ -350,7 +354,7 @@ public class TransportEnemy : EnemyBase, Character
         }
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position);
+        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
     }
 
@@ -394,7 +398,7 @@ public class TransportEnemy : EnemyBase, Character
                 return;
             }
 
-            character.Release();
+            character.Release(false, Vector3.zero);
         }
     }
 

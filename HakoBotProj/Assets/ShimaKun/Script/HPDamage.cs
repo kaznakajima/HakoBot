@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.UI;
 
-public class HPDamage : MonoBehaviour
+public class HPDamage : SingletonMonobeBehaviour<HPDamage>
 {
     //最大HP
     [SerializeField]
@@ -15,7 +15,7 @@ public class HPDamage : MonoBehaviour
 
     //GameObject textObj;
     Text text;
-    GameObject hpSystem;
+    HPCircle hpSystem;
 
     public float interval = 0.2f;
 
@@ -31,7 +31,7 @@ public class HPDamage : MonoBehaviour
         //TextをGameObjectとして取得する
         //textObj = GameObject.Find("HPDamage");//
         //HPSystemを取得する
-        hpSystem = GameObject.Find("HPCircle");
+        hpSystem = GetComponent<HPCircle>();
         StartCoroutine(Interval());
     }
 	
@@ -100,5 +100,25 @@ public class HPDamage : MonoBehaviour
             yield return new WaitForSeconds(interval);
         }
         flg = false;
+    }
+
+    /// <summary>
+    /// オーバーヒートするかのチェック
+    /// </summary>
+    /// <param name="playerNum">プレイヤー番号</param>
+    /// <param name="playerEnergy">現在のエネルギー割合</param>
+    /// <param name="_chargeLevel">チャージ段階</param>>
+    public void CheckOverHeat(int playerNum, int playerEnergy, int _chargeLevel)
+    {
+        if (playerEnergy >= 100)
+            return;
+
+        //0以上maxHP未満
+        if (0 <= playerEnergy)
+        {
+            //0.075ずつゲージを足している
+            currentHP += 0.1f * _chargeLevel;
+            hpSystem.GetComponent<HPCircle>().HPDown(currentHP, maxHP);
+        }
     }
 }
