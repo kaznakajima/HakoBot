@@ -12,6 +12,9 @@ public class SE : MonoBehaviour {
         Sound.LoadSe("Ranking", "zyuni");
         Sound.LoadSe("GameStart", "Start");
         Sound.LoadSe("noizu", "noizu");
+        Sound.LoadSe("shutter", "shutter");
+        
+        
         
     }
 	
