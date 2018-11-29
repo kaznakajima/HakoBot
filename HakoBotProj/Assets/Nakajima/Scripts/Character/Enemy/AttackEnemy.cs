@@ -423,9 +423,11 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     /// <summary>
-    /// アイテムの放棄
+    /// アイテムを放棄
     /// </summary>
-    public void Release()
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    public void Release(bool isSteal, Vector3 opponentPos)
     {
         if (itemObj == null || hasItem == false)
         {
@@ -434,8 +436,7 @@ public class AttackEnemy : EnemyBase, Character
         }
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position);
-
+        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
     }
 
@@ -509,13 +510,15 @@ public class AttackEnemy : EnemyBase, Character
             if (_chargeLevel == 3)
             {
                 itemObj.GetComponent<Item>().isCatch = true;
-                character.hasItem = false;
-                // アイテムを奪う
-                Catch(itemObj);
+                //character.hasItem = false;
+                //// アイテムを奪う
+                //Catch(itemObj);
+                // アイテム放棄
+                character.Release(true, transform.position);
+                return;
             }
 
-            // アイテム放棄
-            character.Release();
+            character.Release(false, Vector3.zero);
         }
     }
 
