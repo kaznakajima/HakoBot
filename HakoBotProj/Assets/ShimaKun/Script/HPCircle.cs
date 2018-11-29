@@ -45,10 +45,11 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
         // Hpゲージの値を格納
         character.myEnergy = 1 * _chargeLevel;
         float time = 0.0f;
+        float fillValue = image[playerNum - 1].fillAmount;
         while (time < 1.0f)
         {
             time += Time.deltaTime / 1.0f;
-            image[playerNum - 1].fillAmount = Mathf.Lerp(image[playerNum - 1].fillAmount, image[playerNum - 1].fillAmount + 0.1f * _chargeLevel, time);
+            image[playerNum - 1].fillAmount = Mathf.Lerp(image[playerNum - 1].fillAmount, fillValue + (0.1f * _chargeLevel), time);
             yield return null;
         }
         //image[playerNum - 1].fillAmount += 0.1f * _chargeLevel;
