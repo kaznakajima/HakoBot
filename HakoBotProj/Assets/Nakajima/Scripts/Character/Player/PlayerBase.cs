@@ -34,6 +34,9 @@ public class PlayerBase : MonoBehaviour
     [HideInInspector]
     public GameObject itemObj;
 
+    // エフェクト用オブジェクト
+    protected GameObject chargeEffect;
+
     // Use this for initialization
     void Start () {
 		

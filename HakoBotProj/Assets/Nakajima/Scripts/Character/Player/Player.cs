@@ -52,9 +52,15 @@ public class Player : PlayerBase, Character
         get { return _hasItem; }
     }
 
+    // チャージエフェクトの一時保存用
+    GameObject _chargeEffect;
+    // チャージエフェクト用マテリアル
+    ParticleSystem.MainModule chargeMaterial;
+
     // Use this for initialization
     void Start () {
         isCharge = false;
+        chargeEffect = Resources.Load("Charge") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
@@ -146,6 +152,8 @@ public class Player : PlayerBase, Character
     {
         if (isAttack || _chargeLevel == 0)
             return;
+
+        Destroy(_chargeEffect);
 
         // エフェクト再生
         emitter.Play();
@@ -244,6 +252,11 @@ public class Player : PlayerBase, Character
         _chargeLevel = 1;
         emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
+        // チャージエフェクト
+        _chargeEffect = Instantiate(chargeEffect, transform);
+        _chargeEffect.transform.position = new Vector3(0.0f, 1.0f, 0.0f);
+        chargeMaterial = _chargeEffect.GetComponent<ParticleSystem>().main;
+
         var disposable = new SingleAssignmentDisposable();
         // 0.5秒ごとにチャージ
         disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
@@ -257,6 +270,20 @@ public class Player : PlayerBase, Character
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+
+            // チャージ段階に応じてエフェクトの見た目変更
+            switch (_chargeLevel)
+            {
+                case 1:
+                    chargeMaterial.startColor = Color.white;
+                    break;
+                case 2:
+                    chargeMaterial.startColor = Color.yellow;
+                    break;
+                case 3:
+                    chargeMaterial.startColor = Color.red;
+                    break;
+            }
 
         }).AddTo(this);
     }

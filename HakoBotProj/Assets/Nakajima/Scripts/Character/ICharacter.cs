@@ -16,7 +16,7 @@ public interface Character
 
     // アイテムを所持しているか
     bool hasItem { get; set; }
-    
+
     /// <summary>
     /// 移動メソッド
     /// </summary>

@@ -54,6 +54,10 @@ public abstract class EnemyBase : MonoBehaviour
     [HideInInspector]
     public GameObject itemObj;
 
+    // エフェクト用オブジェクト
+    [SerializeField]
+    GameObject chargeEffect;
+
     // 巡回地点の一時保存
     [HideInInspector]
     public Vector3 patrolPos;
