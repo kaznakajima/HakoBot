@@ -17,6 +17,9 @@ public interface Character
     // アイテムを所持しているか
     bool hasItem { get; set; }
 
+    // オーバーヒートしたか
+    bool isStan { get; set; }
+
     /// <summary>
     /// 移動メソッド
     /// </summary>

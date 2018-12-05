@@ -52,6 +52,16 @@ public class Player : PlayerBase, Character
         get { return _hasItem; }
     }
 
+    // オーバーヒート
+    private bool _isStan;
+
+    public bool isStan
+    {
+        set { _isStan = value; }
+        get { return _isStan; }
+    }
+
+
     // チャージエフェクトの一時保存用
     GameObject _chargeEffect;
     // チャージエフェクト用マテリアル
@@ -59,13 +69,12 @@ public class Player : PlayerBase, Character
 
     // Use this for initialization
     void Start () {
-        isCharge = false;
         chargeEffect = Resources.Load("Charge") as GameObject;
-        pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
+        emitter = GetComponentInChildren<EffekseerEmitter>();
+        pointPos = emitter.gameObject.transform;
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
-        emitter = GetComponentInChildren<EffekseerEmitter>();
 	}
 	
 	// Update is called once per frame
@@ -114,17 +123,8 @@ public class Player : PlayerBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        if (isAttack)
+        if (isAttack || isStan)
             return;
-
-        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
-        {
-            myAnim.SetInteger("PlayAnimNum", 11);
-        }
-        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
-        {
-            myAnim.SetInteger("PlayAnimNum", 4);
-        }
 
         // カメラの方向から、x-z平面の単位ベクトルを取得
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -132,9 +132,18 @@ public class Player : PlayerBase, Character
         // 方向キーの入力値とカメラの向きから、移動方向の決定
         Vector3 moveForward = cameraForward * vec.z + Camera.main.transform.right * vec.x;
 
-        // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
         if(isCharge == false)
         {
+            if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
+            {
+                myAnim.SetInteger("PlayAnimNum", 11);
+            }
+            else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
+            {
+                myAnim.SetInteger("PlayAnimNum", 4);
+            }
+
+            // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
             myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
         }
         else
@@ -153,7 +162,8 @@ public class Player : PlayerBase, Character
         if (isAttack || _chargeLevel == 0)
             return;
 
-        Destroy(_chargeEffect);
+        if (_chargeEffect != null)
+            Destroy(_chargeEffect);
 
         // エフェクト再生
         emitter.Play();
@@ -197,7 +207,7 @@ public class Player : PlayerBase, Character
     // スタン
     public void Stan()
     {
-
+        isStan = true;
     }
 
     /// <summary>
@@ -209,12 +219,13 @@ public class Player : PlayerBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        // チャージ中止
         isCharge = false;
-
         _chargeLevel = 0;
+        Destroy(_chargeEffect);
 
+        // アイテムを所持
         itemObj = obj;
-
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
@@ -228,6 +239,7 @@ public class Player : PlayerBase, Character
     /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
     public void Release(bool isSteal, Vector3 opponentPos)
     {
+        // アイテムを持っていないならリターン
         if (itemObj == null || hasItem == false)
         {
             itemObj = null;
@@ -244,22 +256,23 @@ public class Player : PlayerBase, Character
     // パワーチャージ
     public void Charge()
     {
+        // すでにチャージ中、アイテムを持っているならリターン
         if (isCharge || hasItem)
             return;
 
+        // チャージ開始
         isCharge = true;
-
         _chargeLevel = 1;
         emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
         // チャージエフェクト
         _chargeEffect = Instantiate(chargeEffect, transform);
-        _chargeEffect.transform.position = new Vector3(0.0f, 1.0f, 0.0f);
+        _chargeEffect.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
         chargeMaterial = _chargeEffect.GetComponent<ParticleSystem>().main;
 
         var disposable = new SingleAssignmentDisposable();
         // 0.5秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(750)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 2 || isAttack)
@@ -270,6 +283,9 @@ public class Player : PlayerBase, Character
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+
+            if (_chargeEffect == null)
+                return;
 
             // チャージ段階に応じてエフェクトの見た目変更
             switch (_chargeLevel)
@@ -313,8 +329,6 @@ public class Player : PlayerBase, Character
             // チャージが最大レベルなら
             if (_chargeLevel == 3)
             {
-                //// アイテムを奪う
-                //Catch(itemObj);
                 // アイテム放棄
                 character.Release(true, transform.position);
                 return;
