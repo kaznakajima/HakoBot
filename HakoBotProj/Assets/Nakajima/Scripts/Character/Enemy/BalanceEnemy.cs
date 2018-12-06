@@ -365,8 +365,6 @@ public class BalanceEnemy : EnemyBase, Character
         if (isAttack || _chargeLevel == 0)
             return;
 
-        isCharge = false;
-
         if (_chargeEffect != null)
             Destroy(_chargeEffect);
 
