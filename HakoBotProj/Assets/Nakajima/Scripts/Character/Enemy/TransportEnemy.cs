@@ -70,8 +70,12 @@ public class TransportEnemy : EnemyBase, Character
     // 自身のAnimator
     Animator myAnim;
 
+    // スタンエフェクトの一時保存用
+    GameObject _stanEffect;
+
     // Use this for initialization
     void Start () {
+        stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -319,7 +323,17 @@ public class TransportEnemy : EnemyBase, Character
     // スタン
     public void Stan()
     {
+        isStan = true;
 
+        _stanEffect = Instantiate(stanEffect, transform);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+
+        // しばらく動けなくなる
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time => 
+        {
+            Destroy(_stanEffect);
+            isStan = false;
+        }).AddTo(this);
     }
 
     /// <summary>

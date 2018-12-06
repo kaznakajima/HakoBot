@@ -60,6 +60,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     // エフェクト用オブジェクト
     protected GameObject chargeEffect;
+    protected GameObject stanEffect;
 
     // 巡回地点の一時保存
     [HideInInspector]

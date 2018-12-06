@@ -36,6 +36,7 @@ public class PlayerBase : MonoBehaviour
 
     // エフェクト用オブジェクト
     protected GameObject chargeEffect;
+    protected GameObject stanEffect;
 
     // Use this for initialization
     void Start () {

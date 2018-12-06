@@ -66,6 +66,8 @@ public class BalanceEnemy : EnemyBase, Character
 
     // チャージエフェクトの一時保存用
     GameObject _chargeEffect;
+    // スタンエフェクトの一時保存用
+    GameObject _stanEffect;
     // チャージエフェクト用マテリアル
     ParticleSystem.MainModule chargeMaterial;
 
@@ -73,6 +75,7 @@ public class BalanceEnemy : EnemyBase, Character
     void Start()
     {
         chargeEffect = Resources.Load("Charge") as GameObject;
+        stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
         myAnim = GetComponent<Animator>();
@@ -408,7 +411,17 @@ public class BalanceEnemy : EnemyBase, Character
 
     public void Stan()
     {
+        isStan = true;
 
+        _stanEffect = Instantiate(stanEffect, transform);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+
+        // しばらく動けなくなる
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+        {
+            Destroy(_stanEffect);
+            isStan = false;
+        }).AddTo(this);
     }
 
     /// <summary>
