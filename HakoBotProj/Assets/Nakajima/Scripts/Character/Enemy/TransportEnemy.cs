@@ -12,7 +12,7 @@ using System.Linq;
 public class TransportEnemy : EnemyBase, Character
 {
     // エフェクト再生
-    EffekseerEmitter emitter;
+    //EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     public int _myNumber;
@@ -58,16 +58,29 @@ public class TransportEnemy : EnemyBase, Character
         get { return _hasItem; }
     }
 
+    // オーバーヒート
+    private bool _isStan;
+
+    public bool isStan
+    {
+        set { _isStan = value; }
+        get { return _isStan; }
+    }
+
     // 自身のAnimator
     Animator myAnim;
 
+    // スタンエフェクトの一時保存用
+    GameObject _stanEffect;
+
     // Use this for initialization
     void Start () {
+        stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
-        emitter = GetComponentInChildren<EffekseerEmitter>();
+        //emitter = GetComponentInChildren<EffekseerEmitter>();
     }
 	
 	// Update is called once per frame
@@ -89,19 +102,14 @@ public class TransportEnemy : EnemyBase, Character
                 // ターゲットがいるなら追従
                 if (targetObj != null)
                 {
-                    // アイテムが入手不可能ならターゲット再設定
-                    if (targetObj.GetComponent<Item>() != null && targetObj.GetComponent<Item>().isCatch == false)
-                    {
-                        ResetTarget();
-                        return;
-                    }
-
                     Move(targetObj.transform.position);
+
+                    CheckTarget(targetObj);
                 }
-                // ターゲットがいないなら検索
+                // ターゲットがいないならパトロール
                 else if(targetObj == null)
                 {
-                    ResetTarget();
+                    state = ENEMY_STATE.PATROL;
                 }
                 break;
         }
@@ -111,21 +119,25 @@ public class TransportEnemy : EnemyBase, Character
     /// <summary>
     /// ターゲットの状態を取得
     /// </summary>
-    /// <param name="otherObj">他のプレイヤー</param>
-    public override void CheckTarget(GameObject otherObj)
+    /// <param name="_targetObj">ターゲットオブジェクト</param>
+    public override void CheckTarget(GameObject _targetObj)
     {
-        // ターゲットリストにアクセス
-        for (int i = 0; i < targetList.Count; i++)
+        if(_targetObj.GetComponent<Item>() != null)
         {
-            if (targetList[i] == null || targetList[i] != targetObj || targetList.Count == 1)
-                return;
-
-            // 他のキャラクターの方がターゲットに近いならターゲット変更
-            float distance = GetTargetDistance(otherObj, targetList[i]);
-            if (distance < minDistance)
+            // アイテムが入手不可能ならターゲット再設定
+            if (targetObj.GetComponent<Item>().isCatch == false)
             {
-                SetTarget();
-                break;
+                ResetTarget();
+                return;
+            }
+        }
+        else if(_targetObj.GetComponent<PointArea>() != null)
+        {
+            // ポイントエリアが機能していないならターゲット再設定
+            if (targetObj.GetComponent<PointArea>().isActive == false)
+            {
+                ResetTarget();
+                return;
             }
         }
     }
@@ -209,17 +221,20 @@ public class TransportEnemy : EnemyBase, Character
         {
             distance = GetTargetDistance(gameObject, GetPointArea()[i].targetObj);
             // 最短距離のポイントエリアをターゲットとする
-            if (distance < minDistance)
+            if (distance < minDistance || GetPointArea()[i].isActive == true)
             {
                 minDistance = distance;
                 targetObj = GetPointArea()[i].targetObj;
             }
 
+            // その他のキャラクターにアクセス
             for (int j = 0; j < GetCharacter().Length; j++)
             {
-                if (GetCharacter()[i] == this)
+                // 自身は除外
+                if (GetCharacter()[j] == this)
                     return;
 
+                // 他のキャラクターがターゲットより近いならターゲットから除外
                 enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
                 distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
                 if (minDistance > enemyDistacne[j])
@@ -228,6 +243,7 @@ public class TransportEnemy : EnemyBase, Character
                 }
             }
 
+            // 平均で一番遠い場所を目指す
             float average = distanceAverage[i] / 3.0f;
             if (average > maxDistance)
             {
@@ -247,19 +263,7 @@ public class TransportEnemy : EnemyBase, Character
     /// </summary>
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
-    {
-        //if (targetObj.GetComponent<Item>() != null)
-        //{
-        //    // ターゲットの状態を確認
-        //    for (int i = 0; i < GetCharacter().Length; i++)
-        //    {
-        //        if (GetCharacter()[i] == this)
-        //            return;
-
-        //        CheckTarget(GetCharacter()[i]);
-        //    }
-        //}
-
+    { 
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
             myAnim.SetInteger("PlayAnimNum", 11);
@@ -319,7 +323,17 @@ public class TransportEnemy : EnemyBase, Character
     // スタン
     public void Stan()
     {
+        isStan = true;
 
+        _stanEffect = Instantiate(stanEffect, transform);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+
+        // しばらく動けなくなる
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time => 
+        {
+            Destroy(_stanEffect);
+            isStan = false;
+        }).AddTo(this);
     }
 
     /// <summary>
@@ -328,11 +342,13 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        if (hasItem == true)
+        if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
-        itemObj = obj;
+        
 
+        // アイテムを所持
+        itemObj = obj;
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
@@ -340,14 +356,21 @@ public class TransportEnemy : EnemyBase, Character
         SetTarget();
     }
 
-    // アイテムを放棄
-    public void Release()
+    /// <summary>
+    /// アイテムを放棄
+    /// </summary>
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    public void Release(bool isSteal, Vector3 opponentPos)
     {
-        if (itemObj == null)
+        if (itemObj == null || hasItem == false)
+        {
+            ResetTarget();
             return;
+        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position);
+        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
     }
 
@@ -391,7 +414,7 @@ public class TransportEnemy : EnemyBase, Character
                 return;
             }
 
-            character.Release();
+            character.Release(false, Vector3.zero);
         }
     }
 

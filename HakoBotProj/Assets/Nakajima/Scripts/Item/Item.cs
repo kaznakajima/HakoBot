@@ -35,7 +35,7 @@ public class Item : MonoBehaviour
         isTarget = false;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
-        navMeshObs = GetComponent<NavMeshObstacle>();
+        navMeshObs = GetComponentInChildren<NavMeshObstacle>();
 	}
 	
 	// Update is called once per frame
@@ -81,6 +81,8 @@ public class Item : MonoBehaviour
         if(isCatch == false)
             return;
 
+        navMeshObs.enabled = false;
+
         // プレイヤーの取得位置に配置
         transform.position = point.position;
         // 向きを修正
@@ -98,24 +100,35 @@ public class Item : MonoBehaviour
     /// 取得状態から放棄する
     /// </summary>
     /// <param name="playerPos">取得しているプレイヤー座標</param>
-    public void ReleaseItem(Vector3 playerPos)
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>>
+    public void ReleaseItem(Vector3 playerPos, Vector3 opponentPos, bool isSteal)
     {
         gameObject.layer = 9;
-
         transform.parent = null;
         myCol.isTrigger = false;
-
-        myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
+        myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
-        // 射出角度、方向を取得
-        float angle = 70.0f;
-        Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
-
-        // 射出
-        myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+        if (isSteal)
+        {
+            // 目標地点
+            Vector3 throwPos = opponentPos;
+            // 射出角度、方向を取得
+            float angle = 70.0f;
+            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+            // 射出
+            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+        }
+        else
+        {
+            // 目標地点
+            Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
+            // 射出角度、方向を取得
+            float angle = 70.0f;
+            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+            // 射出
+            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
+        }
     }
 
     /// <summary>
@@ -154,6 +167,7 @@ public class Item : MonoBehaviour
     {
         if(col.gameObject.name == "st")
         {
+            navMeshObs.enabled = true;
             gameObject.layer = 0;
             isCatch = true;
             isTarget = false;
