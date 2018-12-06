@@ -10,7 +10,12 @@ public class PointArea : MonoBehaviour
     // ポイントエリアが機能しているか
     public bool isActive = true;
 
-    bool isOpen = true;
+    // アイテムを運ぶ方向
+    [SerializeField]
+   Vector3 dir;
+
+    // ターゲットポイント
+    public GameObject targetObj;
 
     // Use this for initialization
     void Start () {
@@ -24,13 +29,13 @@ public class PointArea : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
-        if(col.gameObject.name == "Item(Clone)")
+        if(col.gameObject.tag == "Item")
         {
             var character = col.gameObject.GetComponentInParent(typeof(Character)) as Character;
             character.hasItem = false;
             
             score.AddScore(character.myNumber);
-            Destroy(col.gameObject);
+            col.gameObject.GetComponent<Item>().ItemCarry(gameObject, dir);
         }
     }
 }
