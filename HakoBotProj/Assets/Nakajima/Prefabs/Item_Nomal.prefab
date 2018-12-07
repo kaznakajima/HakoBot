@@ -38,12 +38,13 @@ GameObject:
   - component: {fileID: 4522865143493902}
   - component: {fileID: 33217982647475422}
   - component: {fileID: 23822720196476690}
+  - component: {fileID: 208175970817192794}
   m_Layer: 0
   m_Name: hako_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_NavMeshLayer: 3
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!1 &1582754998552444
 GameObject:
@@ -228,3 +229,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCatch: 0
   isTarget: 0
+--- !u!208 &208175970817192794
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392475815015796}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.19700001, y: 0.19700001, z: 0.19700001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.19700001}
+  m_TimeToStationary: 0.5

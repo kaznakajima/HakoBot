@@ -16,7 +16,10 @@ public interface Character
 
     // アイテムを所持しているか
     bool hasItem { get; set; }
-    
+
+    // オーバーヒートしたか
+    bool isStan { get; set; }
+
     /// <summary>
     /// 移動メソッド
     /// </summary>
@@ -41,6 +44,10 @@ public interface Character
     /// <param name="obj">アイテムのオブジェクト</param>
     void Catch(GameObject obj);
 
-    // アイテムを放棄
-    void Release();
+    /// <summary>
+    /// アイテムを放棄
+    /// </summary>
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    void Release(bool isSteal, Vector3 opponentPos);
 }

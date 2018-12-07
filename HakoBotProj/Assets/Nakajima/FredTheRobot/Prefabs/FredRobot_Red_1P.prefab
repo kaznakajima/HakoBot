@@ -1276,7 +1276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50091075b6bce714bbcd73abc4eee722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectName: Attack_Lv
+  effectName: Attack_Lv1
   playOnStart: 0
   loop: 0
 --- !u!136 &136009076584625212

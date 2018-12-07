@@ -54,17 +54,36 @@ public class AttackEnemy : EnemyBase, Character
         get { return _hasItem; }
     }
 
+    // オーバーヒート
+    private bool _isStan;
+
+    public bool isStan
+    {
+        set { _isStan = value; }
+        get { return _isStan; }
+    }
+
     // 自身のAnimator
     Animator myAnim;
+
+    // チャージエフェクトの一時保存用
+    GameObject _chargeEffect;
+    // スタンエフェクトの一時保存用
+    GameObject _stanEffect;
+    // チャージエフェクト用マテリアル
+    ParticleSystem.MainModule chargeMaterial;
+   
 
     // Use this for initialization
     void Start()
     {
-        pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
+        chargeEffect = Resources.Load("Charge") as GameObject;
+        stanEffect = Resources.Load("PlayerStan") as GameObject;
+        emitter = GetComponentInChildren<EffekseerEmitter>();
+        pointPos = emitter.gameObject.transform;
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
-        emitter = GetComponentInChildren<EffekseerEmitter>();
     }
 
     // Update is called once per frame
@@ -83,18 +102,17 @@ public class AttackEnemy : EnemyBase, Character
                 SetTarget();
                 break;
             case ENEMY_STATE.TARGETMOVE:
-                // ターゲットがいないならターゲット検索
-                if (targetObj == null)
-                {
-                    ResetTarget();
-                }
                 // ターゲットがいるなら追従
-                else if(targetObj != null)
+                if (targetObj != null)
                 {
-                    if (targetObj.GetComponent<Item>() != null && targetObj.transform.parent != null && targetObj.transform.parent != this)
-                        SetTarget();
-
                     Move(targetObj.transform.position);
+
+                    CheckTarget(targetObj);
+                }
+                // ターゲットがいないならパトロール
+                else if (targetObj == null)
+                {
+                    state = ENEMY_STATE.PATROL;
                 }
                 break;
         }
@@ -103,21 +121,25 @@ public class AttackEnemy : EnemyBase, Character
     /// <summary>
     /// ターゲットの状態を取得
     /// </summary>
-    /// <param name="otherObj">他のプレイヤー</param>
-    public override void CheckTarget(GameObject otherObj)
+    /// <param name="_targetObj">ターゲットオブジェクト</param>
+    public override void CheckTarget(GameObject _targetObj)
     {
-        // ターゲットリストにアクセス
-        for (int i = 0; i < targetList.Count; i++)
+        if (_targetObj.GetComponent<Item>() != null)
         {
-            if (targetList[i] == null || targetList[i] != targetObj || targetList.Count == 1)
-                return;
-
-            // 他のキャラクターの方がターゲットに近いならターゲット変更
-            float distance = GetTargetDistance(otherObj, targetList[i]);
-            if (distance < minDistance)
+            // アイテムが入手不可能ならターゲット再設定
+            if (targetObj.GetComponent<Item>().isCatch == false)
             {
-                SetTarget();
-                break;
+                ResetTarget();
+                return;
+            }
+        }
+        else if (_targetObj.GetComponent<PointArea>() != null)
+        {
+            // ポイントエリアが機能していないならターゲット再設定
+            if (targetObj.GetComponent<PointArea>().isActive == false)
+            {
+                ResetTarget();
+                return;
             }
         }
     }
@@ -166,6 +188,9 @@ public class AttackEnemy : EnemyBase, Character
             // 最短距離のプレイヤーをターゲット設定
             if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance && GetCharacter()[i] != this)
             {
+                if (GetCharacter()[i] == this)
+                    return;
+
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
@@ -233,7 +258,7 @@ public class AttackEnemy : EnemyBase, Character
 
             for (int j = 0; j < GetCharacter().Length; j++)
             {
-                if (GetCharacter()[i] == this)
+                if (GetCharacter()[j] == this)
                     return;
 
                 enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
@@ -297,7 +322,7 @@ public class AttackEnemy : EnemyBase, Character
         //        CheckTarget(GetCharacter()[i]);
         //    }
         //}
-
+        
         // 次の位置への方向を求める
         var dir = agent.nextPosition - transform.position;
 
@@ -315,7 +340,7 @@ public class AttackEnemy : EnemyBase, Character
         agent.SetDestination(vec);
 
         // ターゲットとの距離が近づいたら
-        if (GetTargetDistance(targetObj, gameObject) < 4.0f)
+        if (GetTargetDistance(targetObj, gameObject) < 6.0f)
         {
             // キャラクターがターゲットでないならリターン
             if (targetObj.gameObject.tag != "Character")
@@ -361,22 +386,37 @@ public class AttackEnemy : EnemyBase, Character
         if (isAttack || _chargeLevel == 0)
             return;
 
+        if (_chargeEffect != null)
+            Destroy(_chargeEffect);
+
         // エフェクト再生
         emitter.Play();
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
-        // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * _chargeLevel, 5.0f);
-        myRig.AddForce(transform.forward * _chargeLevel * 300.0f, ForceMode.Acceleration);
+        // チャージ段階に応じてアタック強化
+        switch (_chargeLevel)
+        {
+            case 3:
+                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                break;
+            default:
+                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                break;
+        }
+
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f * _chargeLevel)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(0.5f * _chargeLevel)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
             myRig.velocity = Vector3.zero;
+            // 移動制限解除
+            isCharge = false;
+            agent.updatePosition = true;
             isAttack = false;
             SetTarget();
         }).AddTo(this);
@@ -389,7 +429,17 @@ public class AttackEnemy : EnemyBase, Character
 
     public void Stan()
     {
+        isStan = true;
 
+        _stanEffect = Instantiate(stanEffect, transform);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+
+        // しばらく動けなくなる
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+        {
+            Destroy(_stanEffect);
+            isStan = false;
+        }).AddTo(this);
     }
 
     /// <summary>
@@ -401,11 +451,14 @@ public class AttackEnemy : EnemyBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
-        // 攻撃中止
+        // チャージ中止
+        isCharge = false;
+        agent.updatePosition = true;
         _chargeLevel = 0;
+        Destroy(_chargeEffect);
 
+        // アイテムを所持
         itemObj = obj;
-
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
@@ -414,16 +467,20 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     /// <summary>
-    /// アイテムの放棄
+    /// アイテムを放棄
     /// </summary>
-    public void Release()
+    /// <param name="isSteal">アイテムを奪うかどうか</param>
+    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
+    public void Release(bool isSteal, Vector3 opponentPos)
     {
-        if (itemObj == null)
+        if (itemObj == null || hasItem == false)
+        {
+            ResetTarget();
             return;
+        }
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position);
-
+        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
     }
 
@@ -432,15 +489,25 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public void Charge()
     {
-        if (_chargeLevel != 0)
+        if (_chargeLevel != 0 || hasItem)
             return;
 
+        // 移動制限
+        isCharge = true;
+        agent.updatePosition = false;
+
+        // チャージ開始
         _chargeLevel = 1;
         emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
 
+        // チャージエフェクト生成
+        _chargeEffect = Instantiate(chargeEffect, transform);
+        _chargeEffect.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
+        chargeMaterial = _chargeEffect.GetComponent<ParticleSystem>().main;
+
         var disposable = new SingleAssignmentDisposable();
         // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(500)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(750)).Subscribe(time =>
         {
             // 3段階上昇、または攻撃で終了
             if (_chargeLevel >= 3 || isAttack) {
@@ -448,12 +515,31 @@ public class AttackEnemy : EnemyBase, Character
                 disposable.Dispose();
             }
             else if (_chargeLevel == 0) {
+                Destroy(_chargeEffect);
                 disposable.Dispose();
             }
 
             // チャージ段階上昇
             _chargeLevel++;
             emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+
+            // エフェクトが生成しきれていないならリターン
+            if (_chargeEffect == null)
+                return;
+
+            // チャージ段階に応じてエフェクトの見た目変更
+            switch (_chargeLevel)
+            {
+                case 1:
+                    chargeMaterial.startColor = Color.white;
+                    break;
+                case 2:
+                    chargeMaterial.startColor = Color.yellow;
+                    break;
+                case 3:
+                    chargeMaterial.startColor = Color.red;
+                    break;
+            }
 
         }).AddTo(this);
     }
@@ -491,7 +577,21 @@ public class AttackEnemy : EnemyBase, Character
             if (character.hasItem == false)
                 return;
 
-            character.Release();
+            // アイテムを登録
+            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
+            // チャージが最大レベルなら
+            if (_chargeLevel == 3)
+            {
+                itemObj.GetComponent<Item>().isCatch = true;
+                //character.hasItem = false;
+                //// アイテムを奪う
+                //Catch(itemObj);
+                // アイテム放棄
+                character.Release(true, transform.position);
+                return;
+            }
+
+            character.Release(false, Vector3.zero);
         }
     }
 

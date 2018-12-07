@@ -10,7 +10,8 @@ public class PointArea : MonoBehaviour
     // ポイントエリアが機能しているか
     public bool isActive = true;
 
-    bool isOpen = true;
+    // 自身のAnimator
+    Animator myAnim;
 
     // アイテムを運ぶ方向
     [SerializeField]
@@ -21,6 +22,7 @@ public class PointArea : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        myAnim = GetComponent<Animator>();
         score = FindObjectOfType<ScoreController>();
     }
 	
@@ -28,6 +30,28 @@ public class PointArea : MonoBehaviour
 	void Update () { 
       
 	}
+
+    /// <summary>
+    /// シャッターを閉じる
+    /// </summary>
+    public void Close()
+    {
+        // 機能していないフラグ
+        isActive = false;
+
+        myAnim.SetBool(gameObject.name + "_Open", false);
+    }
+
+    /// <summary>
+    /// シャッターを開ける
+    /// </summary>
+    public void Open()
+    {
+        myAnim.SetBool(gameObject.name + "_Open", true);
+
+        // 機能しているフラグ
+        isActive = true;
+    }
 
     void OnTriggerEnter(Collider col)
     {
