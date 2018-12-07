@@ -7,19 +7,22 @@ using UniRx.Triggers;
 public class Missile : MonoBehaviour
 {
     [SerializeField]
+    private GameObject effectObj;
+    [SerializeField]
     private Vector3 m_TargetPos;
-    private float speed = 5.0f;
+    private float speed = 1.0f;
 
     private void Start()
     {
         this.UpdateAsObservable().Subscribe(_ =>
         {
-            if (Vector3.Distance(transform.position, m_TargetPos) <= 0.05f)
+            if (Vector3.Distance(transform.position, m_TargetPos) <= 0.4f)
             {
                 transform.position = m_TargetPos;
                 //爆発エフェクトを出す
+                effectObj.SetActive(true);
 
-                Observable.Timer(System.TimeSpan.FromSeconds(2.0f))
+                Observable.Timer(System.TimeSpan.FromSeconds(0.5f))
                 .Subscribe(__ =>
                 {
                     Destroy(gameObject);
@@ -27,8 +30,8 @@ public class Missile : MonoBehaviour
             }
             else
             {
-                var dir = (m_TargetPos - transform.position).normalized;
-                transform.Translate(dir * Time.deltaTime * speed);
+                transform.position = Vector3.Lerp(transform.position, m_TargetPos, speed * Time.deltaTime);
+                transform.localRotation = Quaternion.LookRotation((m_TargetPos - transform.position),Vector3.up);
             }
         }).AddTo(this);
     }
