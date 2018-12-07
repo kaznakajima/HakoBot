@@ -762,7 +762,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 280846719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &280846721
@@ -5187,6 +5187,10 @@ Prefab:
     - target: {fileID: 1024946606784718, guid: 88187a46ea15fca42bf6112e57a9bc48, type: 2}
       propertyPath: m_Name
       value: Stan
+      objectReference: {fileID: 0}
+    - target: {fileID: 1024946606784718, guid: 88187a46ea15fca42bf6112e57a9bc48, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88187a46ea15fca42bf6112e57a9bc48, type: 2}
