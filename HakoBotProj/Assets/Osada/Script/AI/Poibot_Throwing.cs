@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Poibot_Throwing : MonoBehaviour
 {
+
+
     //投てき物 通常荷物　高得点荷物
     [SerializeField]
     private GameObject baggage;

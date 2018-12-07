@@ -42,6 +42,10 @@ public abstract class EnemyBase : MonoBehaviour
     // アイテムを持つ位置
     public Transform pointPos;
 
+    // チャージ判定
+    [HideInInspector]
+    public bool isCharge;
+
     // 攻撃判定
     [HideInInspector]
     public bool isAttack;
@@ -53,6 +57,10 @@ public abstract class EnemyBase : MonoBehaviour
     // 自身が持っているアイテム
     [HideInInspector]
     public GameObject itemObj;
+
+    // エフェクト用オブジェクト
+    protected GameObject chargeEffect;
+    protected GameObject stanEffect;
 
     // 巡回地点の一時保存
     [HideInInspector]

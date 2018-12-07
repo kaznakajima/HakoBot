@@ -35,7 +35,7 @@ public class Item : MonoBehaviour
         isTarget = false;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
-        navMeshObs = GetComponent<NavMeshObstacle>();
+        navMeshObs = GetComponentInChildren<NavMeshObstacle>();
 	}
 	
 	// Update is called once per frame
@@ -81,6 +81,8 @@ public class Item : MonoBehaviour
         if(isCatch == false)
             return;
 
+        navMeshObs.enabled = false;
+
         // プレイヤーの取得位置に配置
         transform.position = point.position;
         // 向きを修正
@@ -102,16 +104,13 @@ public class Item : MonoBehaviour
     public void ReleaseItem(Vector3 playerPos, Vector3 opponentPos, bool isSteal)
     {
         gameObject.layer = 9;
-
         transform.parent = null;
         myCol.isTrigger = false;
-
-        myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         myRig.useGravity = true;
+        myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         if (isSteal)
         {
-
             // 目標地点
             Vector3 throwPos = opponentPos;
             // 射出角度、方向を取得
@@ -168,6 +167,7 @@ public class Item : MonoBehaviour
     {
         if(col.gameObject.name == "st")
         {
+            navMeshObs.enabled = true;
             gameObject.layer = 0;
             isCatch = true;
             isTarget = false;
