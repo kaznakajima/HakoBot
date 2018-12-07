@@ -8,37 +8,37 @@ AnimatorController:
   m_Name: SpaceShutterAnim
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Space_F_L_Open
+  - m_Name: Space_F_L_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Space_F_R_Open
+  - m_Name: Space_F_R_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Space_R_L_Open
+  - m_Name: Space_R_L_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Space_R_R_Open
+  - m_Name: Space_R_R_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Space_L_L_Open
+  - m_Name: Space_L_L_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Space_L_R_Open
+  - m_Name: Space_L_R_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -65,7 +65,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_R_R_Open
+    m_ConditionEvent: Space_R_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102866855546838272}
@@ -89,7 +89,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_L_L_Open
+    m_ConditionEvent: Space_L_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102935816585756506}
@@ -134,7 +134,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_F_R_Open
+    m_ConditionEvent: Space_F_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102284860562040740}
@@ -179,7 +179,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_R_R_Open
+    m_ConditionEvent: Space_R_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102269528964743992}
@@ -203,7 +203,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_L_R_Open
+    m_ConditionEvent: Space_L_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102545798382893538}
@@ -227,7 +227,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_F_R_Open
+    m_ConditionEvent: Space_F_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102847854976912448}
@@ -251,7 +251,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_R_L_Open
+    m_ConditionEvent: Space_R_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102116768569402930}
@@ -317,7 +317,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_R_L_Open
+    m_ConditionEvent: Space_R_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102071353971293446}
@@ -362,7 +362,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_L_L_Open
+    m_ConditionEvent: Space_L_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102066641509232258}
@@ -386,7 +386,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Space_F_L_Open
+    m_ConditionEvent: Space_F_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102907710587608432}
@@ -410,7 +410,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_L_R_Open
+    m_ConditionEvent: Space_L_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102020227201541606}
@@ -455,7 +455,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Space_F_L_Open
+    m_ConditionEvent: Space_F_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102193279062936760}

@@ -39,7 +39,7 @@ public class PointArea : MonoBehaviour
         // 機能していないフラグ
         isActive = false;
 
-        myAnim.SetBool(gameObject.name + "_Open", false);
+        myAnim.SetBool(gameObject.name + "_Close", true);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class PointArea : MonoBehaviour
     /// </summary>
     public void Open()
     {
-        myAnim.SetBool(gameObject.name + "_Open", true);
+        myAnim.SetBool(gameObject.name + "_Close", false);
 
         // 機能しているフラグ
         isActive = true;

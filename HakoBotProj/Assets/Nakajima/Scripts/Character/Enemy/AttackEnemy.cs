@@ -20,11 +20,11 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     // 自身のエネルギー残量
-    private int _myEnergy = 100;
+    private int _myEnergy = 0;
 
     public int myEnergy
     {
-        set { }
+        set { _myEnergy += value; }
         get { return _myEnergy; }
     }
 
@@ -87,7 +87,12 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
+        // オーバーヒート中はリターン
+        if (isStan)
+            return;
+
         switch (state)
         {
             case ENEMY_STATE.PATROL:
@@ -124,6 +129,13 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="_targetObj">ターゲットオブジェクト</param>
     public override void CheckTarget(GameObject _targetObj)
     {
+        // ターゲットリスト更新
+        for(int i = 0;i < targetList.Count; i++) {
+            if(targetList[i] == null) {
+                targetList.RemoveAt(i);
+            }
+        }
+
         if (_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
@@ -185,12 +197,12 @@ public class AttackEnemy : EnemyBase, Character
         // ステージ上のすべてのプレイヤーにアクセス
         for (int i = 0; i < GetCharacter().Length; i++)
         {
-            // 最短距離のプレイヤーをターゲット設定
-            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance && GetCharacter()[i] != this)
-            {
-                if (GetCharacter()[i] == this)
-                    return;
+            if (GetCharacter()[i] == this)
+                return;
 
+            // 最短距離のプレイヤーをターゲット設定
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
+            {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
@@ -392,6 +404,9 @@ public class AttackEnemy : EnemyBase, Character
         // エフェクト再生
         emitter.Play();
 
+        // エネルギー計算
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
+
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
@@ -414,11 +429,19 @@ public class AttackEnemy : EnemyBase, Character
             // チャージ段階を初期化
             _chargeLevel = 0;
             myRig.velocity = Vector3.zero;
+
             // 移動制限解除
             isCharge = false;
-            agent.updatePosition = true;
             isAttack = false;
-            SetTarget();
+
+            // オーバーヒート
+            if (_myEnergy >= 10) {
+                Stan();
+            }
+            else {
+                agent.updatePosition = true;
+                SetTarget();
+            }
         }).AddTo(this);
     }
 
@@ -437,8 +460,15 @@ public class AttackEnemy : EnemyBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            // エナジーゲージの初期化
+            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            _myEnergy = 0;
+
             Destroy(_stanEffect);
+
             isStan = false;
+            agent.updatePosition = true;
+            ResetTarget();
         }).AddTo(this);
     }
 

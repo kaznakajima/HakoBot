@@ -24,11 +24,11 @@ public class TransportEnemy : EnemyBase, Character
     }
 
     // 自身のエネルギー残量
-    private int _myEnergy = 100;
+    private int _myEnergy = 0;
 
     public int myEnergy
     {
-        set { }
+        set { _myEnergy += value; }
         get { return _myEnergy; }
     }
 
@@ -127,7 +127,7 @@ public class TransportEnemy : EnemyBase, Character
             // アイテムが入手不可能ならターゲット再設定
             if (targetObj.GetComponent<Item>().isCatch == false)
             {
-                ResetTarget();
+                SetTarget();
                 return;
             }
         }
@@ -136,7 +136,7 @@ public class TransportEnemy : EnemyBase, Character
             // ポイントエリアが機能していないならターゲット再設定
             if (targetObj.GetComponent<PointArea>().isActive == false)
             {
-                ResetTarget();
+                SetTarget();
                 return;
             }
         }

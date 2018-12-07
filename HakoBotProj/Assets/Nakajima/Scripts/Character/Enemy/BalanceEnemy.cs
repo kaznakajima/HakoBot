@@ -18,11 +18,11 @@ public class BalanceEnemy : EnemyBase, Character
     }
 
     // 自身のエネルギー残量
-    private int _myEnergy = 100;
+    private int _myEnergy = 0;
 
     public int myEnergy
     {
-        set { }
+        set { _myEnergy += value; }
         get { return _myEnergy; }
     }
 
@@ -86,6 +86,10 @@ public class BalanceEnemy : EnemyBase, Character
     // Update is called once per frame
     void Update()
     {
+        // オーバーヒート中はリターン
+        if (isStan)
+            return;
+
         switch (state)
         {
             case ENEMY_STATE.PATROL:
@@ -196,13 +200,13 @@ public class BalanceEnemy : EnemyBase, Character
 
         // ステージ上のすべてのプレイヤーにアクセス
         for (int i = 0; i < GetCharacter().Length; i++)
-        { 
-            // 最短距離のプレイヤーをターゲット設定
-            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance && GetCharacter()[i] != this)
-            {
-                if (GetCharacter()[i] == this)
-                    return;
+        {
+            if (GetCharacter()[i] == this)
+                return;
 
+            // 最短距離のプレイヤーをターゲット設定
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
+            {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true)
                 {
@@ -374,6 +378,9 @@ public class BalanceEnemy : EnemyBase, Character
         // エフェクト再生
         emitter.Play();
 
+        // エネルギー計算
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
+
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
@@ -398,9 +405,16 @@ public class BalanceEnemy : EnemyBase, Character
             myRig.velocity = Vector3.zero;
             // 移動制限解除
             isCharge = false;
-            agent.updatePosition = true;
             isAttack = false;
-            SetTarget();
+
+            // オーバーヒート
+            if (_myEnergy >= 10) {
+                Stan();
+            }
+            else {
+                agent.updatePosition = true;
+                SetTarget();
+            }
         }).AddTo(this);
     }
 
@@ -419,8 +433,15 @@ public class BalanceEnemy : EnemyBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            // エナジーゲージの初期化
+            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            _myEnergy = 0;
+
             Destroy(_stanEffect);
+
             isStan = false;
+            agent.updatePosition = true;
+            ResetTarget();
         }).AddTo(this);
     }
 
