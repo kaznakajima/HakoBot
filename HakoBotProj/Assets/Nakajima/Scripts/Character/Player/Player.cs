@@ -181,10 +181,12 @@ public class Player : PlayerBase, Character
         switch (_chargeLevel)
         {
             case 3:
-                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
                 break;
             default:
-                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 10.0f;
                 break;
         }
         
@@ -287,7 +289,8 @@ public class Player : PlayerBase, Character
         // チャージ開始
         isCharge = true;
         _chargeLevel = 1;
-        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        emitter.effectName = "Attack";
 
         // チャージエフェクト
         _chargeEffect = Instantiate(chargeEffect, transform);

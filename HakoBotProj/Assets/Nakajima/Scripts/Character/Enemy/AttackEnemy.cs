@@ -304,6 +304,8 @@ public class AttackEnemy : EnemyBase, Character
         if (isAttack)
             return;
 
+        CheckTarget(targetObj);
+
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
             myAnim.SetInteger("PlayAnimNum", 11);
@@ -323,17 +325,6 @@ public class AttackEnemy : EnemyBase, Character
                 return;
             }
         }
-        //else if (targetObj.GetComponent<Item>() != null)
-        //{
-        //    // ターゲットの状態を確認
-        //    for (int i = 0; i < GetCharacter().Length; i++)
-        //    {
-        //        if (GetCharacter()[i] == this)
-        //            return;
-
-        //        CheckTarget(GetCharacter()[i]);
-        //    }
-        //}
         
         // 次の位置への方向を求める
         var dir = agent.nextPosition - transform.position;
@@ -360,12 +351,11 @@ public class AttackEnemy : EnemyBase, Character
 
             // パワーチャージ
             Charge();
-
-            // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 2.0f)
-            {
-                Attack();
-            }
+        }
+        // 攻撃範囲に入ったら攻撃
+        if (GetTargetDistance(targetObj, gameObject) < 10.0f && isCharge)
+        {
+            Attack();
         }
     }
 
@@ -414,10 +404,12 @@ public class AttackEnemy : EnemyBase, Character
         switch (_chargeLevel)
         {
             case 3:
-                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
                 break;
             default:
-                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 10.0f;
                 break;
         }
 

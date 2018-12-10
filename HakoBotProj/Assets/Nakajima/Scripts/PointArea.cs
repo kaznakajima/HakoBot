@@ -9,6 +9,9 @@ public class PointArea : MonoBehaviour
 
     // ポイントエリアが機能しているか
     public bool isActive = true;
+    // ランプ用のRenderer
+    [SerializeField]
+    MeshRenderer[] lampRenderer;
 
     // 自身のAnimator
     Animator myAnim;
@@ -39,6 +42,8 @@ public class PointArea : MonoBehaviour
         // 機能していないフラグ
         isActive = false;
 
+        LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.RED);
+
         myAnim.SetBool(gameObject.name + "_Close", true);
     }
 
@@ -48,6 +53,8 @@ public class PointArea : MonoBehaviour
     public void Open()
     {
         myAnim.SetBool(gameObject.name + "_Close", false);
+
+        LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.BLUE);
 
         // 機能しているフラグ
         isActive = true;
