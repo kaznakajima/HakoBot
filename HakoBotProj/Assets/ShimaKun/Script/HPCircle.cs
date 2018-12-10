@@ -9,6 +9,10 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     [SerializeField]
     Image[] image;
 
+    // プレイヤーごとのHPゲージ
+    [SerializeField]
+    GameObject[] energyImage;
+
     // Use this for initialization
     void Start()
     {
@@ -45,34 +49,15 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
         // Hpゲージの値を格納
         character.myEnergy = 1 * _chargeLevel;
         float time = 0.0f;
-        float fillValue = image[playerNum - 1].fillAmount;
+        float energy = 0.0f;
         while (time < 1.0f)
         {
             time += Time.deltaTime / 1.0f;
-            // UI更新
-            image[playerNum - 1].fillAmount = Mathf.Lerp(image[playerNum - 1].fillAmount, fillValue + (0.1f * _chargeLevel), time);
+            energy = Mathf.Lerp(energy, character.myEnergy, time);
+            energyImage[(int)energy].SetActive(true);
+            //image[playerNum - 1].fillAmount = Mathf.Lerp(image[playerNum - 1].fillAmount, image[playerNum - 1].fillAmount + 0.1f * _chargeLevel, time);
             yield return null;
         }
         //image[playerNum - 1].fillAmount += 0.1f * _chargeLevel;
-    }
-
-    /// <summary>
-    /// エナジーゲージの初期化
-    /// </summary>
-    /// <param name="playerObj">プレイヤーオブジェクト</param>
-    /// <param name="playerNum">プレイヤー番号</param>
-    /// <returns></returns>
-    public IEnumerator EnergyReset(GameObject playerObj, int playerNum)
-    {
-        var chracter = playerObj.GetComponent(typeof(Character)) as Character;
-
-        float time = 0.0f;
-        while (time < 2.0f)
-        {
-            time += Time.deltaTime / 1.0f;
-            // UI更新
-            image[playerNum - 1].fillAmount = Mathf.Lerp(image[playerNum - 1].fillAmount, 0.0f, time);
-            yield return null;
-        }
     }
 }
