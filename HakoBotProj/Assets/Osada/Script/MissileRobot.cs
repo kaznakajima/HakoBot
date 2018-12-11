@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
-public class Sample : MonoBehaviour
+public class MissileRobot : MonoBehaviour
 {
     [SerializeField]
     private GameObject m_Missile;
@@ -61,7 +61,7 @@ public class Sample : MonoBehaviour
                 StartCoroutine("Return", pos);
                 break;
             }
-            yield return null; 
+            yield return null;
         }
     }
 
