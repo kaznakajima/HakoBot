@@ -22,7 +22,11 @@ public class BalanceEnemy : EnemyBase, Character
 
     public int myEnergy
     {
-        set { _myEnergy += value; }
+        set {
+            _myEnergy += value;
+            if (_myEnergy > 9)
+                _myEnergy = 9;
+        }
         get { return _myEnergy; }
     }
 
@@ -81,13 +85,14 @@ public class BalanceEnemy : EnemyBase, Character
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
+        emitter.effectName = "Attack";
     }
 
     // Update is called once per frame
     void Update()
     {
         // オーバーヒート中はリターン
-        if (isStan)
+        if (isStan || isAttack)
             return;
 
         switch (state)
@@ -95,25 +100,20 @@ public class BalanceEnemy : EnemyBase, Character
             case ENEMY_STATE.PATROL:
                 // 目標地点との距離が縮まったら
                 float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
-                if (distance < 2.0f)
-                {
+                if (distance < 2.0f) {
                     // 巡回座標を初期化
                     patrolPos = Vector3.zero;
                 }
                 PatrolMove(patrolPos);
-                ResetTarget();
+                SetTarget();
                 break;
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
-                if (targetObj != null)
-                {
+                if (targetObj != null) {
                     Move(targetObj.transform.position);
-
-                    CheckTarget(targetObj);
                 }
                 // ターゲットがいないならパトロール
-                else if (targetObj == null)
-                {
+                else if (targetObj == null) {
                     state = ENEMY_STATE.PATROL;
                 }
                 break;
@@ -129,18 +129,16 @@ public class BalanceEnemy : EnemyBase, Character
         if (_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
-            if (targetObj.GetComponent<Item>().isCatch == false)
-            {
-                ResetTarget();
+            if (targetObj.GetComponent<Item>().isCatch == false) {
+                SetTarget();
                 return;
             }
         }
-        else if (_targetObj.GetComponent<PointArea>() != null)
+        else if (_targetObj.GetComponentInParent<PointArea>() != null)
         {
             // ポイントエリアが機能していないならターゲット再設定
-            if (targetObj.GetComponent<PointArea>().isActive == false)
-            {
-                ResetTarget();
+            if (targetObj.GetComponentInParent<PointArea>().isActive == false) {
+                SetTarget();
                 return;
             }
         }
@@ -167,14 +165,12 @@ public class BalanceEnemy : EnemyBase, Character
         minDistance = 100;
         maxDistance = 0;
 
-        if (itemObj == null)
-        {
+        if (itemObj == null) {
             // リストを初期化
             targetList.Clear();
             SearchTarget();
         }
-        else
-        {
+        else {
             SearchPointArea();
         }
     }
@@ -190,8 +186,7 @@ public class BalanceEnemy : EnemyBase, Character
             // リストに追加
             targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false)
-            {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -201,15 +196,11 @@ public class BalanceEnemy : EnemyBase, Character
         // ステージ上のすべてのプレイヤーにアクセス
         for (int i = 0; i < GetCharacter().Length; i++)
         {
-            if (GetCharacter()[i] == this)
-                return;
-
             // 最短距離のプレイヤーをターゲット設定
             if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
-                if (character.hasItem == true)
-                {
+                if (character.hasItem == true && GetCharacter()[i] != gameObject) {
                     // 最短距離の格納
                     minDistance = GetTargetDistance(GetCharacter()[i], gameObject);
                     targetObj = GetCharacter()[i];
@@ -220,8 +211,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ターゲットが設定されたらリターン
         if (minDistance != 100)
         {
-            if(targetObj.tag != "Character")
-            {
+            if(targetObj.tag != "Character") {
                 targetObj.GetComponent<Item>().isTarget = true;
             }
             state = ENEMY_STATE.TARGETMOVE;
@@ -239,43 +229,42 @@ public class BalanceEnemy : EnemyBase, Character
     {
         // 自身とポイントエリアの距離
         float distance;
-        float[] distanceAverage = new float[4];
+        float[] averageDistance = new float[4];
         float[] enemyDistacne = new float[4];
 
         // すべてのポイントエリアにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
-            distance = GetTargetDistance(gameObject, GetPointArea()[i].targetObj);
+            distance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
             // 最短距離のポイントエリアをターゲットとする
-            if (distance < minDistance)
-            {
+            if (distance < minDistance && GetPointArea()[i].isActive == true) {
                 minDistance = distance;
+                dummyTarget = GetPointArea()[i].targetObj;
                 targetObj = GetPointArea()[i].targetObj;
             }
 
             for (int j = 0; j < GetCharacter().Length; j++)
             {
-                if (GetCharacter()[j] == this)
-                    return;
-
-                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
-                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
-                if (minDistance > enemyDistacne[j])
-                {
+                // 他のプレイヤーの方が近いならターゲットから除外
+                enemyDistacne[j] = GetTargetDistance(GetPointArea()[i].gameObject, GetCharacter()[j]);
+                if (minDistance > enemyDistacne[j] && GetCharacter()[j] != gameObject) {
                     targetObj = null;
                 }
+                averageDistance[i] += enemyDistacne[j];
             }
+            averageDistance[i] *= 0.3f;
 
-            float average = distanceAverage[i] / 3.0f;
-            if (average > maxDistance)
-            {
-                maxDistance = average;
+            // 平均的に一番遠い位置へ移動
+            if (averageDistance[i] > maxDistance) {
+                maxDistance = averageDistance[i];
                 dummyTarget = GetPointArea()[i].targetObj;
             }
         }
 
-        if (targetObj != null)
+        if (targetObj != null) {
+            state = ENEMY_STATE.TARGETMOVE;
             return;
+        }
 
         targetObj = dummyTarget;
     }
@@ -286,8 +275,6 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        if (isAttack)
-            return;
 
         CheckTarget(targetObj);
 
@@ -304,10 +291,14 @@ public class BalanceEnemy : EnemyBase, Character
         if (targetObj.tag == "Character")
         {
             var character = targetObj.GetComponent(typeof(Character)) as Character;
-            if (character.hasItem == false)
-            {
+            if (character.hasItem == false) {
                 SetTarget();
                 return;
+            }
+
+            // 攻撃範囲に入ったら攻撃
+            if (GetTargetDistance(targetObj, gameObject) < 8.0f) {
+                Attack();
             }
         }
 
@@ -327,21 +318,16 @@ public class BalanceEnemy : EnemyBase, Character
 
         agent.SetDestination(vec);
 
-        // ターゲットとの距離が近づいたら
-        if (GetTargetDistance(targetObj, gameObject) < 6.0f)
-        {
-            // キャラクターがターゲットでないならリターン
-            if (targetObj.gameObject.tag != "Character")
-                return;
+        //// ターゲットとの距離が近づいたら
+        //if (GetTargetDistance(targetObj, gameObject) < 6.0f)
+        //{
+        //    // キャラクターがターゲットでないならリターン
+        //    if (targetObj.gameObject.tag != "Character")
+        //        return;
 
-            // パワーチャージ
-            Charge();
-        }
-        // 攻撃範囲に入ったら攻撃
-        if (GetTargetDistance(targetObj, gameObject) < 10.0f && isCharge)
-        {
-            Attack();
-        }
+        //    // パワーチャージ
+        //    Charge();
+        //}
     }
 
     /// <summary>
@@ -350,15 +336,13 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="vec">目標地点</param>
     public override void PatrolMove(Vector3 vec)
     {
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
-        {
+        if (myAnim.GetInteger("PlayAnimNum") != 4) {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
 
         // 巡回座標が初期化されていたら
         // 再度設定
-        if (patrolPos == Vector3.zero)
-        {
+        if (patrolPos == Vector3.zero) {
             GetRandomPosition();
         }
 
@@ -370,8 +354,6 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public void Attack()
     {
-        if (isAttack || _chargeLevel == 0)
-            return;
 
         if (_chargeEffect != null)
             Destroy(_chargeEffect);
@@ -400,7 +382,7 @@ public class BalanceEnemy : EnemyBase, Character
 
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(0.5f * _chargeLevel)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
@@ -411,11 +393,10 @@ public class BalanceEnemy : EnemyBase, Character
             isAttack = false;
 
             // オーバーヒート
-            if (_myEnergy >= 10) {
+            if (_myEnergy >= 9) {
                 Stan();
             }
             else {
-                agent.updatePosition = true;
                 SetTarget();
             }
         }).AddTo(this);
@@ -429,6 +410,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Stan()
     {
         isStan = true;
+        myRig.velocity = Vector3.zero;
 
         _stanEffect = Instantiate(stanEffect, transform);
         _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
@@ -436,15 +418,14 @@ public class BalanceEnemy : EnemyBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            _myEnergy = 0;
             // エナジーゲージの初期化
             StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
-            _myEnergy = 0;
 
             Destroy(_stanEffect);
 
             isStan = false;
-            agent.updatePosition = true;
-            ResetTarget();
+            SetTarget();
         }).AddTo(this);
     }
 
@@ -458,9 +439,9 @@ public class BalanceEnemy : EnemyBase, Character
             return;
 
         // チャージ中止
-        isCharge = false;
-        agent.updatePosition = true;
-        _chargeLevel = 0;
+        //isCharge = false;
+        //agent.updatePosition = true;
+        //_chargeLevel = 0;
         Destroy(_chargeEffect);
 
         // アイテムを所持
@@ -479,8 +460,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
     public void Release(bool isSteal, Vector3 opponentPos)
     {
-        if (itemObj == null || hasItem == false)
-        {
+        if (itemObj == null || hasItem == false) {
             ResetTarget();
             return;
         }
@@ -489,6 +469,7 @@ public class BalanceEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
 
         hasItem = false;
+        ResetTarget();
     }
 
     /// <summary>
@@ -505,7 +486,8 @@ public class BalanceEnemy : EnemyBase, Character
 
         // チャージ開始
         _chargeLevel = 1;
-        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        emitter.effectName = "Attack";
 
         // チャージエフェクト生成
         _chargeEffect = Instantiate(chargeEffect, transform);
@@ -585,17 +567,17 @@ public class BalanceEnemy : EnemyBase, Character
                 return;
 
             // アイテムを登録
-            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
+            //GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
             // チャージが最大レベルなら
-            if (_chargeLevel == 3)
-            {
-                //character.hasItem = false;
-                //// アイテムを奪う
-                //Catch(itemObj);
-                // アイテム放棄
-                character.Release(true, transform.position);
-                return;
-            }
+            //if (_chargeLevel == 3)
+            //{
+            //    //character.hasItem = false;
+            //    //// アイテムを奪う
+            //    //Catch(itemObj);
+            //    // アイテム放棄
+            //    character.Release(true, transform.position);
+            //    return;
+            //}
 
             character.Release(false, Vector3.zero);
         }
