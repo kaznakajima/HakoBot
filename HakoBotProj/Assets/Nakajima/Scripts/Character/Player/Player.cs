@@ -57,7 +57,7 @@ public class Player : PlayerBase, Character
 
     public bool isStan
     {
-        set { _isStan = value; }
+        set{ _isStan = value; }
         get { return _isStan; }
     }
 
@@ -89,7 +89,7 @@ public class Player : PlayerBase, Character
     // 入力判定
     void PlayerInput()
     {
-        if (isAttack)
+        if (isAttack || isStan)
             return;
 
         /* ここから移動量判定 */
@@ -127,8 +127,6 @@ public class Player : PlayerBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        if (isAttack || isStan)
-            return;
 
         // カメラの方向から、x-z平面の単位ベクトルを取得
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -183,10 +181,12 @@ public class Player : PlayerBase, Character
         switch (_chargeLevel)
         {
             case 3:
-                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
                 break;
             default:
-                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
+                myRig.velocity = transform.forward * 10.0f;
                 break;
         }
         
@@ -194,10 +194,16 @@ public class Player : PlayerBase, Character
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(0.5f *  _chargeLevel)).Subscribe(time =>
         {
+            myRig.velocity = Vector3.zero;
             myAnim.SetInteger("PlayAnimNum", 8);
             // チャージ段階を初期化
             _chargeLevel = 0;
             isAttack = false;
+
+            // オーバーヒート
+            if (_myEnergy >= 10) {
+                Stan();
+            }
 
         }).AddTo(this);
     }
@@ -220,7 +226,12 @@ public class Player : PlayerBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            // エナジーゲージの初期化
+            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            _myEnergy = 0;
+
             Destroy(_stanEffect);
+
             isStan = false;
         }).AddTo(this);
     }
@@ -278,7 +289,8 @@ public class Player : PlayerBase, Character
         // チャージ開始
         isCharge = true;
         _chargeLevel = 1;
-        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        emitter.effectName = "Attack";
 
         // チャージエフェクト
         _chargeEffect = Instantiate(chargeEffect, transform);

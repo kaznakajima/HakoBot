@@ -8,29 +8,29 @@ AnimatorController:
   m_Name: ShutterCon
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: PointArea_I_Open
+  - m_Name: PointArea_I_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: PointArea_F_Open
+  - m_Name: PointArea_F_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: PointArea_R_Open
+  - m_Name: PointArea_R_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: PointArea_L_Open
+  - m_Name: PointArea_L_Close
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
@@ -73,8 +73,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: PointArea_R_Open
+  - m_ConditionMode: 1
+    m_ConditionEvent: PointArea_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102034669904722004}
@@ -97,8 +97,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: PointArea_R_Open
+  - m_ConditionMode: 2
+    m_ConditionEvent: PointArea_R_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102234143388994166}
@@ -121,8 +121,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: PointArea_I_Open
+  - m_ConditionMode: 2
+    m_ConditionEvent: PointArea_I_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102944115153868972}
@@ -145,8 +145,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: PointArea_F_Open
+  - m_ConditionMode: 1
+    m_ConditionEvent: PointArea_F_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102447233174298310}
@@ -169,8 +169,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: PointArea_F_Open
+  - m_ConditionMode: 2
+    m_ConditionEvent: PointArea_F_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102077352673058098}
@@ -214,8 +214,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: PointArea_I_Open
+  - m_ConditionMode: 1
+    m_ConditionEvent: PointArea_I_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102414098350312906}
@@ -259,8 +259,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: PointArea_L_Open
+  - m_ConditionMode: 2
+    m_ConditionEvent: PointArea_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102999275149087518}
@@ -283,8 +283,8 @@ AnimatorStateTransition:
   m_PrefabInternal: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: PointArea_L_Open
+  - m_ConditionMode: 1
+    m_ConditionEvent: PointArea_L_Close
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102273356452242532}
