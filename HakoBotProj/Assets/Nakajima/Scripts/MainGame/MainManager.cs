@@ -15,7 +15,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         // Character配置
         for(int i = 0;i < 4; i++)
         {
-
             // プレイヤーがエントリーしているならプレイヤー操作にする
             if (PlayerSystem.Instance.isActive[i])
             {

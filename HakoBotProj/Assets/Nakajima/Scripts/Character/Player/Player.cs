@@ -30,7 +30,11 @@ public class Player : PlayerBase, Character
 
     public int myEnergy
     {
-        set { _myEnergy += value; }
+        set {
+            _myEnergy += value;
+            if (_myEnergy > 9)
+                _myEnergy = 9;
+        }
         get { return _myEnergy; }
     }
 
@@ -201,7 +205,7 @@ public class Player : PlayerBase, Character
             isAttack = false;
 
             // オーバーヒート
-            if (_myEnergy >= 10) {
+            if (_myEnergy >= 9) {
                 Stan();
             }
 
@@ -225,10 +229,10 @@ public class Player : PlayerBase, Character
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
-        {
+        { 
+            _myEnergy = 0;
             // エナジーゲージの初期化
             StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
-            _myEnergy = 0;
 
             Destroy(_stanEffect);
 
