@@ -1,9 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 [ExecuteInEditMode()]
 public class CRT : MonoBehaviour
 {
+    // 自身のAnimator
+    [HideInInspector]
+    public Animator myAnim;
+
     // 適用するマテリアル
     [SerializeField]
     Material material;
@@ -72,6 +77,11 @@ public class CRT : MonoBehaviour
     //    material.SetVector("_Offset", offset);
     //    Graphics.Blit(src, dest, material);
     //}
+
+    void Start()
+    {
+        myAnim = GetComponent<Animator>();
+    }
 
     void Update()
     {
