@@ -36,6 +36,11 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         noiseAnim = noise.gameObject.GetComponent<Animator>();
         noiseAnim.SetTrigger("switchOff");
 
+        if (SceneManager.GetActiveScene().name != "Prote")
+        {     
+            return;
+        }
+
         // Character配置
         for(int i = 0;i < 4; i++)
         {
@@ -84,7 +89,19 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // Update is called once per frame
     void Update () {
-        CheckGameState();
+        if (SceneManager.GetActiveScene().name != "Prote")
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                noiseAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise(2.0f, "Title"));
+            }
+
+            return;
+        }
+           
+
+            CheckGameState();
 	}
 
     // ゲームの状況を判断
@@ -114,12 +131,12 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         {
             isStart = false;
             noiseAnim.SetTrigger("switchOn");
-            StartCoroutine(SceneNoise(2.0f));
+            StartCoroutine(SceneNoise(2.0f, "Result"));
         }).AddTo(this);
     }
 
     // シーン変更
-    public IEnumerator SceneNoise(float _interval)
+    public IEnumerator SceneNoise(float _interval, string sceneName)
     {
         float time = 0.0f;
         while (time <= _interval)
@@ -128,6 +145,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             yield return null;
         }
 
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene(sceneName);
     }
 }
