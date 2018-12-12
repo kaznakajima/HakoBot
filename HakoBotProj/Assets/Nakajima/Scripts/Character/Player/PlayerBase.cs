@@ -24,7 +24,7 @@ public class PlayerBase : MonoBehaviour
 
     // 移動スピード
     [HideInInspector]
-    public float runSpeed = 6.0f;
+    public float runSpeed = 7.0f;
 
     // 自身のRig
     [HideInInspector]
@@ -33,6 +33,10 @@ public class PlayerBase : MonoBehaviour
     // 自身が持っているアイテム
     [HideInInspector]
     public GameObject itemObj;
+
+    // エフェクト用オブジェクト
+    protected GameObject chargeEffect;
+    protected GameObject stanEffect;
 
     // Use this for initialization
     void Start () {

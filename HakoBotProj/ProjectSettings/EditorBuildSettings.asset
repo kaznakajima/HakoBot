@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Nakajima/Scenes/EntryTest.unity
     guid: f2c684e4b2e87cd40af9de0325208ce8
   - enabled: 1
+    path: Assets/Nakajima/Scenes/Title.unity
+    guid: 19e3d52b582961d40a91147a85d61394
+  - enabled: 1
     path: Assets/Nakajima/Scenes/Prote.unity
     guid: 8ac8bc189fc92db4f8a143c6ca8e501d
   m_configObjects: {}

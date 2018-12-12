@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ゲームの全体を管理するクラス
@@ -10,12 +11,19 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // プレイヤーの得点
     public int[] playerPoint = new int[4];
 
+    // ノイズ用アニメーション
+    Animator noiseAnim;
+
 	// Use this for initialization
 	void Start () {
+        DontDestroyOnLoad(this);
+
+        noiseAnim = FindObjectOfType<CRT>().gameObject.GetComponent<Animator>();
+        noiseAnim.SetTrigger("switchOff");
+
         // Character配置
         for(int i = 0;i < 4; i++)
         {
-
             // プレイヤーがエントリーしているならプレイヤー操作にする
             if (PlayerSystem.Instance.isActive[i])
             {
@@ -58,9 +66,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             }
         }
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }

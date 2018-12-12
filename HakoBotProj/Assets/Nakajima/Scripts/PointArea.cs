@@ -9,6 +9,12 @@ public class PointArea : MonoBehaviour
 
     // ポイントエリアが機能しているか
     public bool isActive = true;
+    // ランプ用のRenderer
+    [SerializeField]
+    MeshRenderer[] lampRenderer;
+
+    // 自身のAnimator
+    Animator myAnim;
 
     // アイテムを運ぶ方向
     [SerializeField]
@@ -19,6 +25,7 @@ public class PointArea : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        myAnim = GetComponent<Animator>();
         score = FindObjectOfType<ScoreController>();
     }
 	
@@ -26,6 +33,32 @@ public class PointArea : MonoBehaviour
 	void Update () { 
       
 	}
+
+    /// <summary>
+    /// シャッターを閉じる
+    /// </summary>
+    public void Close()
+    {
+        // 機能していないフラグ
+        isActive = false;
+
+        LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.RED);
+
+        myAnim.SetBool(gameObject.name + "_Close", true);
+    }
+
+    /// <summary>
+    /// シャッターを開ける
+    /// </summary>
+    public void Open()
+    {
+        myAnim.SetBool(gameObject.name + "_Close", false);
+
+        LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.BLUE);
+
+        // 機能しているフラグ
+        isActive = true;
+    }
 
     void OnTriggerEnter(Collider col)
     {

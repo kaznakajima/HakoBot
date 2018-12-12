@@ -24,11 +24,15 @@ public class TransportEnemy : EnemyBase, Character
     }
 
     // 自身のエネルギー残量
-    private int _myEnergy = 100;
+    private int _myEnergy = 0;
 
     public int myEnergy
     {
-        set { }
+        set {
+            _myEnergy += value;
+            if (_myEnergy > 9)
+                _myEnergy = 9;
+        }
         get { return _myEnergy; }
     }
 
@@ -58,11 +62,24 @@ public class TransportEnemy : EnemyBase, Character
         get { return _hasItem; }
     }
 
+    // オーバーヒート
+    private bool _isStan;
+
+    public bool isStan
+    {
+        set { _isStan = value; }
+        get { return _isStan; }
+    }
+
     // 自身のAnimator
     Animator myAnim;
 
+    // スタンエフェクトの一時保存用
+    GameObject _stanEffect;
+
     // Use this for initialization
     void Start () {
+        stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -77,8 +94,7 @@ public class TransportEnemy : EnemyBase, Character
             case ENEMY_STATE.PATROL:
                 // 目標地点との距離が縮まったら
                 float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
-                if (distance < 2.0f)
-                {
+                if (distance < 2.0f) {
                     // 巡回座標を初期化
                     patrolPos = Vector3.zero;
                 }
@@ -87,21 +103,12 @@ public class TransportEnemy : EnemyBase, Character
                 break;
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
-                if (targetObj != null)
-                {
-                    // アイテムが入手不可能ならターゲット再設定
-                    if (targetObj.GetComponent<Item>() != null && targetObj.GetComponent<Item>().isCatch == false)
-                    {
-                        ResetTarget();
-                        return;
-                    }
-
+                if (targetObj != null) {
                     Move(targetObj.transform.position);
                 }
-                // ターゲットがいないなら検索
-                else if(targetObj == null)
-                {
-                    ResetTarget();
+                // ターゲットがいないならパトロール
+                else if(targetObj == null) {
+                    state = ENEMY_STATE.PATROL;
                 }
                 break;
         }
@@ -111,21 +118,23 @@ public class TransportEnemy : EnemyBase, Character
     /// <summary>
     /// ターゲットの状態を取得
     /// </summary>
-    /// <param name="otherObj">他のプレイヤー</param>
-    public override void CheckTarget(GameObject otherObj)
+    /// <param name="_targetObj">ターゲットオブジェクト</param>
+    public override void CheckTarget(GameObject _targetObj)
     {
-        // ターゲットリストにアクセス
-        for (int i = 0; i < targetList.Count; i++)
+        if(_targetObj.GetComponent<Item>() != null)
         {
-            if (targetList[i] == null || targetList[i] != targetObj || targetList.Count == 1)
-                return;
-
-            // 他のキャラクターの方がターゲットに近いならターゲット変更
-            float distance = GetTargetDistance(otherObj, targetList[i]);
-            if (distance < minDistance)
-            {
+            // アイテムが入手不可能ならターゲット再設定
+            if (targetObj.GetComponent<Item>().isCatch == false) {
                 SetTarget();
-                break;
+                return;
+            }
+        }
+        else if(_targetObj.GetComponentInParent<PointArea>() != null)
+        {
+            // ポイントエリアが機能していないならターゲット再設定
+            if (targetObj.GetComponentInParent<PointArea>().isActive == false) {
+                SetTarget();
+                return;
             }
         }
     }
@@ -151,14 +160,12 @@ public class TransportEnemy : EnemyBase, Character
         minDistance = 100;
         maxDistance = 0;
 
-        if (itemObj == null)
-        {
+        if (itemObj == null) {
             // リストを初期化
             targetList.Clear();
             SearchTarget();
         }
-        else
-        {
+        else {
             SearchPointArea();
         }
     }
@@ -174,8 +181,7 @@ public class TransportEnemy : EnemyBase, Character
             // リストに追加
             targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false)
-            {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -183,8 +189,7 @@ public class TransportEnemy : EnemyBase, Character
         }
 
         // ターゲットが設定されたらリターン
-        if (minDistance != 100)
-        {
+        if (minDistance != 100) {
             targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
@@ -201,43 +206,41 @@ public class TransportEnemy : EnemyBase, Character
     {
         // 自身とポイントエリアの距離
         float distance;
-        float[] distanceAverage = new float[4];
+        float[] averageDistance = new float[4];
         float[] enemyDistacne = new float[4];
 
         // すべてのポイントエリアにアクセス
         for (int i = 0; i < GetPointArea().Length; i++)
         {
-            distance = GetTargetDistance(gameObject, GetPointArea()[i].targetObj);
+            distance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
             // 最短距離のポイントエリアをターゲットとする
-            if (distance < minDistance)
-            {
+            if (distance < minDistance && GetPointArea()[i].isActive == true) {
                 minDistance = distance;
                 targetObj = GetPointArea()[i].targetObj;
             }
 
             for (int j = 0; j < GetCharacter().Length; j++)
             {
-                if (GetCharacter()[j] == this)
-                    return;
-
-                enemyDistacne[j] = GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
-                distanceAverage[i] += GetTargetDistance(GetCharacter()[j], GetPointArea()[i].targetObj);
-                if (minDistance > enemyDistacne[j])
-                {
+                // 他のプレイヤーの方が近いならターゲットから除外
+                enemyDistacne[j] = GetTargetDistance(GetPointArea()[i].gameObject, GetCharacter()[j]);
+                if (minDistance > enemyDistacne[j] && GetCharacter()[j] != gameObject) {
                     targetObj = null;
                 }
+                averageDistance[i] += enemyDistacne[j];
             }
+            averageDistance[i] *= 0.3f;
 
-            float average = distanceAverage[i] / 3.0f;
-            if (average > maxDistance)
-            {
-                maxDistance = average;
+            // 平均的に一番遠い位置へ移動
+            if (averageDistance[i] > maxDistance) {
+                maxDistance = averageDistance[i];
                 dummyTarget = GetPointArea()[i].targetObj;
             }
         }
 
-        if (targetObj != null)
+        if (targetObj != null) {
+            state = ENEMY_STATE.TARGETMOVE;
             return;
+        }
 
         targetObj = dummyTarget;
     }
@@ -248,24 +251,12 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        //if (targetObj.GetComponent<Item>() != null)
-        //{
-        //    // ターゲットの状態を確認
-        //    for (int i = 0; i < GetCharacter().Length; i++)
-        //    {
-        //        if (GetCharacter()[i] == this)
-        //            return;
+        CheckTarget(targetObj);
 
-        //        CheckTarget(GetCharacter()[i]);
-        //    }
-        //}
-
-        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
-        {
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) {
             myAnim.SetInteger("PlayAnimNum", 11);
         }
-        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
-        {
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
 
@@ -289,15 +280,13 @@ public class TransportEnemy : EnemyBase, Character
 
     public override void PatrolMove(Vector3 vec)
     {
-        if (myAnim.GetInteger("PlayAnimNum") != 4)
-        {
+        if (myAnim.GetInteger("PlayAnimNum") != 4) {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
 
         // 巡回座標が初期化されていたら
         // 再度設定
-        if (patrolPos == Vector3.zero)
-        {
+        if (patrolPos == Vector3.zero) {
             GetRandomPosition();
         }
 
@@ -319,7 +308,23 @@ public class TransportEnemy : EnemyBase, Character
     // スタン
     public void Stan()
     {
+        isStan = true;
+        myRig.velocity = Vector3.zero;
 
+        _stanEffect = Instantiate(stanEffect, transform);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+
+        // しばらく動けなくなる
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time => 
+        {
+            _myEnergy = 0;
+            // エナジーゲージの初期化
+            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+
+            Destroy(_stanEffect);
+            isStan = false;
+            SetTarget();
+        }).AddTo(this);
     }
 
     /// <summary>
@@ -328,11 +333,11 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        if (hasItem == true)
+        if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        // アイテムを所持
         itemObj = obj;
-
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
@@ -347,8 +352,7 @@ public class TransportEnemy : EnemyBase, Character
     /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
     public void Release(bool isSteal, Vector3 opponentPos)
     {
-        if (itemObj == null || hasItem == false)
-        {
+        if (itemObj == null || hasItem == false) {
             ResetTarget();
             return;
         }
@@ -356,6 +360,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
+        ResetTarget();
     }
 
     // 充電
@@ -394,9 +399,7 @@ public class TransportEnemy : EnemyBase, Character
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
-            {
                 return;
-            }
 
             character.Release(false, Vector3.zero);
         }
