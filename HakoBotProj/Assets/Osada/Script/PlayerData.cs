@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [CreateAssetMenu]
 public class PlayerData : ScriptableObject
@@ -10,6 +13,7 @@ public class PlayerData : ScriptableObject
 
     public int point;
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(PlayerData))]
     public class Editor_PlayerData : Editor
     {
@@ -21,4 +25,5 @@ public class PlayerData : ScriptableObject
             p.point = EditorGUILayout.IntField("ポイント", p.point);
         }
     }
+#endif
 }

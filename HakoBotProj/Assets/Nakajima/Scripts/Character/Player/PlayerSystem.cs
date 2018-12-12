@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using GamepadInput;
 using UniRx;
 using UniRx.Triggers;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 {
@@ -102,6 +105,8 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 	}
 }
 
+#if UNITY_EDITOR
+[CustomEditor(typeof(PlayerSystem))]
 public class Editor_PlayerSystem : Editor
 {
     public override void OnInspectorGUI()
@@ -109,3 +114,4 @@ public class Editor_PlayerSystem : Editor
 
     }
 }
+#endif
