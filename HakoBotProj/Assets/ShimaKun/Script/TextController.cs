@@ -14,10 +14,10 @@ public class TextController : SingletonMonobeBehaviour<TextController>
     void Start () {
         RankingStart();
 
-        scoreText[0].text = "1位" + PlayerCheck(1) + playerData[0].point.ToString();
-        scoreText[1].text = "2位" + PlayerCheck(2) + playerData[1].point.ToString();
-        scoreText[2].text = "3位" + PlayerCheck(3) + playerData[2].point.ToString();
-        scoreText[3].text = "4位" + PlayerCheck(4) + playerData[3].point.ToString(); 
+        scoreText[0].text = "1位" + PlayerCheck(1) + playerData[0].point;
+        scoreText[1].text = "2位" + PlayerCheck(2) + playerData[1].point;
+        scoreText[2].text = "3位" + PlayerCheck(3) + playerData[2].point;
+        scoreText[3].text = "4位" + PlayerCheck(4) + playerData[3].point;
     }
 	
 	// Update is called once per frame
@@ -33,7 +33,7 @@ public class TextController : SingletonMonobeBehaviour<TextController>
 
     public void RankingStart()
     {
-        var list = playerData.OrderByDescending(c => c).ToList();
+        var list = playerData.OrderByDescending(c => c.point).ToList();
         playerData = list;
     }
 
