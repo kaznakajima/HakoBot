@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class testscript : MonoBehaviour
 {
+    public int P = 0;
     //RankTextからp1を読み込むるかの確認
     // Use this for initialization
     void Start () {
@@ -13,6 +14,7 @@ public class testscript : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
         //RankText.Instance.p1(1);
-        RankText.Instance.p1(2);
+        //RankText.Instance.p1(2);
+        MainManager.Instance.playerPoint[P].ToString();
     }
 }

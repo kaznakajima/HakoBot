@@ -26,5 +26,6 @@ public class ScoreController : MonoBehaviour
     {
         score[playerNo - 1] += 10;
         scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();
+        MainManager.Instance.playerPoint[playerNo - 1] = score[playerNo - 1];
     }
 }
