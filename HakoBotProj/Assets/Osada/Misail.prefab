@@ -380,8 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3041a9c6860c2f44db99e3b809a324bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TargetPos: {x: 0, y: 0, z: 0}
-  m_ExplosionObj: {fileID: 1822296837158374}
+  m_Explosion: {fileID: 1822296837158374}
 --- !u!198 &198473541706951510
 ParticleSystem:
   m_ObjectHideFlags: 1

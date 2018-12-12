@@ -22,23 +22,37 @@ public class MissileRobot : MonoBehaviour
     private Vector3 m_targetPos;
 
     private Vector3 m_Velocity = Vector3.zero;
-    private float m_Speed = 6.0f;
+    private float m_Speed = 1.0f;
+
+    private float m_SizeX = 3.0f, m_SizeZ = 3.0f;
 
     private void Start()
     {
+        EventStart();
+
         m_Moved.Where(c => c)
             .Subscribe(c =>
             {
-                StartCoroutine("Move", m_ThrowPosition);
+                StartCoroutine("ThrowMove");
             }).AddTo(this);
+
+        m_Moved.Where(c => !c)
+            .Subscribe(c =>
+            {
+                StopAllCoroutines();
+                StartCoroutine("Return");
+            }).AddTo(this);
+
     }
 
-    private IEnumerator ThrowMove(Vector3 pos)
+    private IEnumerator ThrowMove()
     {
         var obj = Instantiate(m_Missile, m_LaunchPosition.position, transform.rotation) as GameObject;
         obj.transform.parent = transform;
         var scr = obj.GetComponent<Missile>();
+        Setting();
 
+        var pos = m_ThrowPosition;
         while (true)
         {
             var dir = (pos - transform.position).normalized;
@@ -57,16 +71,16 @@ public class MissileRobot : MonoBehaviour
                 scr.Setting(m_targetPos);
                 obj.transform.parent = null;
 
-                pos = m_MoveStartPosition;
-                StartCoroutine("Return", pos);
+                StartCoroutine("Return");
                 break;
             }
             yield return null;
         }
     }
 
-    private IEnumerator Return(Vector3 pos)
+    private IEnumerator Return()
     {
+        var pos = m_MoveStartPosition;
         while (true)
         {
             var dir = (pos - transform.position).normalized;
@@ -81,18 +95,33 @@ public class MissileRobot : MonoBehaviour
             transform.position += m_Velocity * Time.deltaTime;
 
             if (dis < 0.3f)
+            {
+                if (m_Moved.Value)
+                {
+                    StartCoroutine("ThrowMove");
+                }
                 break;
-
+            }
             yield return null;
         }
     }
 
-    public void Setting(Vector3 targetPos)
+    public void EventStart()
     {
-        if (!m_Moved.Value)
-        {
-            m_Moved.Value = true;
-            m_targetPos = targetPos;
-        }
+        m_Moved.Value = true;
+    }
+    public void EventEnd()
+    {
+        m_Moved.Value = false;
+    }
+
+
+    public void Setting()
+    {
+        var x = Random.Range(-m_SizeX, m_SizeX);
+        var z = Random.Range(-m_SizeZ, m_SizeZ);
+
+        var targetPos = new Vector3(x, 0, z);
+        m_targetPos = targetPos;
     }
 }
