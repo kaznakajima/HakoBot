@@ -3590,7 +3590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25c824b87c64f424da76c0cea21756ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myAnim: {fileID: 0}
+  myAnim: {fileID: 1294368061}
   material: {fileID: 2100000, guid: 3cc072fba944df14098f683e62c42e8a, type: 2}
   noiseX: 0
   rgbNoise: 1
