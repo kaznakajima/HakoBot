@@ -78,9 +78,11 @@ public class TransportEnemy : EnemyBase, Character
     GameObject _stanEffect;
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
@@ -368,9 +370,8 @@ public class TransportEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
-
-        SEstate = SE_STATE.RELEASE;
-        AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+        
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);

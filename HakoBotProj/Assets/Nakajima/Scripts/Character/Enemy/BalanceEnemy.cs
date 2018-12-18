@@ -82,6 +82,7 @@ public class BalanceEnemy : EnemyBase, Character
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
@@ -474,8 +475,7 @@ public class BalanceEnemy : EnemyBase, Character
             return;
         }
 
-        SEstate = SE_STATE.RELEASE;
-        AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
@@ -569,8 +569,7 @@ public class BalanceEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-            SEstate = SE_STATE.DAMAGE;
-            AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+            AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
             myRig.velocity = Vector3.zero;
 

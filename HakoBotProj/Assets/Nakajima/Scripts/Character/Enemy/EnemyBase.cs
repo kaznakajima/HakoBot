@@ -17,19 +17,8 @@ public abstract class EnemyBase : MonoBehaviour
     }
     public ENEMY_STATE state;
 
-    // 流すSEのステートマシン
-    public enum SE_STATE
-    {
-        ATTACK = 0,
-        DAMAGE,
-        STAN,
-        RELEASE
-    }
-    public SE_STATE SEstate;
-
     // 自身のAudio関連
     public AudioSource myAudio;
-    public AudioClip[] myClip;
 
     // ターゲットオブジェクトのリスト
     public List<PointArea> targetList = new List<PointArea>();

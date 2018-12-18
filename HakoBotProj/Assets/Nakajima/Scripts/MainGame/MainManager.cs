@@ -161,6 +161,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 disposable.Dispose();
                 AudioController.Instance.SEPlay("Start");
                 isStart = true;
+                isPlay = false;
             }).AddTo(this);
         }
     }
@@ -168,6 +169,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // ゲーム終了
     public void GameEnd()
     {
+        if (isPlay)
+            return;
+
         Animation endAnim = countDown.GetComponent<Animation>();
         countDown.SetActive(true);
         endAnim.Play("CountDown_GameEnd");
@@ -188,6 +192,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             noiseAnim.SetTrigger("switchOn");
             StartCoroutine(SceneNoise(2.0f, "Result"));
         }).AddTo(this);
+
+        isPlay = true;
     }
 
     // シーン変更

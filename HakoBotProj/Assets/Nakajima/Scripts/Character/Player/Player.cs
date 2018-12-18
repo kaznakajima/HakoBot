@@ -80,6 +80,7 @@ public class Player : PlayerBase, Character
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
@@ -261,9 +262,8 @@ public class Player : PlayerBase, Character
             hasItem = false;
             return;
         }
-
-        SEstate = SE_STATE.RELEASE;
-        AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+        
+        AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
@@ -335,8 +335,7 @@ public class Player : PlayerBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-            SEstate = SE_STATE.DAMAGE;
-            AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+            AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
             myRig.velocity = Vector3.zero;
 

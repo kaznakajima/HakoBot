@@ -2,6 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+class AudioList
+{
+    //アクセス用のキー
+    public string Key;
+    //リソース名
+    public string ResName;
+    //AudioClip
+    public AudioClip Clip;
+
+    // コンストラクタ
+    public AudioList(string key, string res)
+    {
+        Key = key;
+        ResName = "Sounds/" + res;
+        //AudioClipの取得
+        Clip = Resources.Load(ResName) as AudioClip;
+    }
+}
+
 public class AudioController : SingletonMonobeBehaviour<AudioController>
 {
     // 流すBGMのステートマシン
@@ -34,10 +53,56 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     [SerializeField]
     AudioClip[] SE;
 
+    //BGMにアクセスするためのテーブル
+    Dictionary<string, AudioList> poolBgm = new Dictionary<string, AudioList>();
+    //SEにアクセスするためのテーブル
+    Dictionary<string, AudioList> poolSe = new Dictionary<string, AudioList>();
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         DontDestroyOnLoad(gameObject);
-	}
+
+        LoadBGM("Title", "Title");
+        LoadBGM("Main", "Main");
+        LoadSe("Select", "Select");
+        LoadSe("CountDown", "CountDown");
+        LoadSe("Start", "Start");
+        LoadSe("End", "End");
+        LoadSe("Damage", "Damage");
+        LoadSe("Release", "Release");
+    }
+
+    //サウンドのロード
+    public void LoadBgm(string key, string resName)
+    {
+        LoadBGM(key, resName);
+    }
+
+    public void LoadSe(string key, string resName)
+    {
+        LoadSE(key, resName);
+    }
+
+    void LoadBGM(string key, string resName)
+    {
+        if (poolBgm.ContainsKey(key))
+        {
+            //すでに登録済みなのでいったん消す
+            poolBgm.Remove(key);
+        }
+        poolBgm.Add(key, new AudioList(key, resName));
+    }
+
+    void LoadSE(string key, string resName)
+    {
+        if (poolSe.ContainsKey(key))
+        {
+            //すでに登録済みなのでいったん消す
+            poolSe.Remove(key);
+        }
+        poolSe.Add(key, new AudioList(key, resName));
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -45,10 +110,15 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
 	}
 
     // BGMの変更
-    public void BGMChange(string scene)
+    public void BGMChange(string key)
     {
+        // リソース作成
+        var _data = poolBgm[key];
+        myAudio[0].clip = _data.Clip;
+        myAudio[0].Play();
+
         // シーンごとに音楽を設定
-        switch(scene)
+        switch(key)
         {
             case "Title":
                 BGMstate = BGM_STATE.TITLE;
@@ -61,14 +131,19 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
                 break;
         }
 
-        myAudio[0].clip = BGM[(int)BGMstate];
-        myAudio[0].Play();
+        //myAudio[0].clip = BGM[(int)BGMstate];
+        //myAudio[0].Play();
     }
 
     // SEの再生
-    public void SEPlay(string audio)
+    public void SEPlay(string key)
     {
-        switch(audio)
+        // リソース作成
+        var _data = poolSe[key];
+        myAudio[1].clip = _data.Clip;
+        myAudio[1].Play();
+
+        switch (key)
         {
             case "Select":
                 SEstate = SE_STATE.SELECT;
@@ -83,18 +158,16 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
                 SEstate = SE_STATE.END;
                 break;
         }
-
-        myAudio[1].clip = SE[(int)SEstate];
-        myAudio[1].Play();
     }
 
     /// <summary>
     /// 他のSEを流す
     /// </summary>
     /// <param name="otherAudio">流したい効果音をもっているAudioSource</param>
-    public void OtherAuioPlay(AudioSource otherAudio, AudioClip playClip)
+    public void OtherAuioPlay(AudioSource otherAudio, string key)
     {
-        otherAudio.clip = playClip;
+        var _data = poolSe[key];
+        otherAudio.clip = _data.Clip;
         otherAudio.Play();
     }
 }
