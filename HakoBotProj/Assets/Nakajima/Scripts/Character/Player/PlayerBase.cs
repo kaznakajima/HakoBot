@@ -4,6 +4,21 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
+    // 流すSEのステートマシン
+    public enum SE_STATE
+    {
+        ATTACK = 0,
+        DAMAGE,
+        STAN,
+        RELEASE
+    }
+    public SE_STATE SEstate;
+
+    // 自身のAudio関連
+    [HideInInspector]
+    public AudioSource myAudio;
+    public AudioClip[] myClip;
+
     // 自身のAnimator
     [HideInInspector]
     public Animator myAnim;

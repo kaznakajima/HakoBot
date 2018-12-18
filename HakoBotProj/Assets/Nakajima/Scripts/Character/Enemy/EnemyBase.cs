@@ -8,7 +8,7 @@ using UnityEngine.AI;
 /// 敵AIが共通でつ処理、変数はここに書く
 /// </summary>
 public abstract class EnemyBase : MonoBehaviour
-{
+{ 
     // 敵のステートマシン
     public enum ENEMY_STATE
     {
@@ -16,6 +16,20 @@ public abstract class EnemyBase : MonoBehaviour
         TARGETMOVE // ターゲット追尾
     }
     public ENEMY_STATE state;
+
+    // 流すSEのステートマシン
+    public enum SE_STATE
+    {
+        ATTACK = 0,
+        DAMAGE,
+        STAN,
+        RELEASE
+    }
+    public SE_STATE SEstate;
+
+    // 自身のAudio関連
+    public AudioSource myAudio;
+    public AudioClip[] myClip;
 
     // ターゲットオブジェクトのリスト
     public List<PointArea> targetList = new List<PointArea>();

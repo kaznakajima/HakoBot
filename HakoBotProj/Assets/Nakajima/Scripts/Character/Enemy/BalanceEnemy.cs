@@ -96,6 +96,10 @@ public class BalanceEnemy : EnemyBase, Character
     // Update is called once per frame
     void Update()
     {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
+
         if (MainManager.Instance.isStart == false)
             return;
 
@@ -441,6 +445,8 @@ public class BalanceEnemy : EnemyBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        myRig.velocity = Vector3.zero;
+
         // チャージ中止
         //isCharge = false;
         //agent.updatePosition = true;
@@ -467,7 +473,10 @@ public class BalanceEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
-        
+
+        SEstate = SE_STATE.RELEASE;
+        AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
@@ -560,6 +569,9 @@ public class BalanceEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            SEstate = SE_STATE.DAMAGE;
+            AudioController.Instance.OtherAuioPlay(myAudio, myClip[(int)SEstate]);
+
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;

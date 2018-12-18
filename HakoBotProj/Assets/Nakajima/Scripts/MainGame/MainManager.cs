@@ -29,8 +29,13 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     [SerializeField]
     AnimationClip endClip;
 
+    // 自身のAudioSource
+    AudioSource myAudio;
+    bool isPlay;
+
 	// Use this for initialization
 	void Start () {
+        myAudio = GetComponent<AudioSource>();
 
         noise = FindObjectOfType<CRT>();
         noiseAnim = noise.gameObject.GetComponent<Animator>();
@@ -99,22 +104,62 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
             return;
         }
-           
 
-            CheckGameState();
+        CheckGameState();
+
+        // ポーズ処理
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (isStart) {
+                Pause();
+            }
+            else {
+                Resume();
+            }
+        }
 	}
+
+    /// <summary>
+    /// ポーズ処理
+    /// </summary>
+    void Pause()
+    {
+        Time.timeScale = 0.0f;
+        isStart = false;
+    }
+
+    /// <summary>
+    /// ポーズ解除
+    /// </summary>
+    void Resume()
+    {
+        Time.timeScale = 1.0f;
+        isStart = true;
+    }
 
     // ゲームの状況を判断
     void CheckGameState()
     {
-        if (isStart)
+        if (isStart || isPlay)
             return;
 
         if (noise.Alpha == 0.0f) {
+            isPlay = true;
+
             countDown.SetActive(true);
+
+            var disposable = new SingleAssignmentDisposable();
+            // 1秒ごとにカウント
+            disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+            {
+                AudioController.Instance.SEPlay("CountDown");
+            }).AddTo(this);
+
             // 3秒後に移動再開
             Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
             {
+                disposable.Dispose();
+                AudioController.Instance.SEPlay("Start");
                 isStart = true;
             }).AddTo(this);
         }
@@ -126,9 +171,19 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         Animation endAnim = countDown.GetComponent<Animation>();
         countDown.SetActive(true);
         endAnim.Play("CountDown_GameEnd");
+
+        var disposable = new SingleAssignmentDisposable();
+        // 1秒ごとにカウント
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        {
+            AudioController.Instance.SEPlay("CountDown");
+        }).AddTo(this);
+
         // 3秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            disposable.Dispose();
+            AudioController.Instance.SEPlay("End");
             isStart = false;
             noiseAnim.SetTrigger("switchOn");
             StartCoroutine(SceneNoise(2.0f, "Result"));
