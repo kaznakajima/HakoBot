@@ -105,13 +105,13 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 	}
 }
 
-#if UNITY_EDITOR
-[CustomEditor(typeof(PlayerSystem))]
-public class Editor_PlayerSystem : Editor
-{
-    public override void OnInspectorGUI()
-    {
+//#if UNITY_EDITOR
+//[CustomEditor(typeof(PlayerSystem))]
+//public class Editor_PlayerSystem : Editor
+//{
+//    public override void OnInspectorGUI()
+//    {
 
-    }
-}
-#endif
+//    }
+//}
+//#endif

@@ -9,6 +9,9 @@ public class ScoreController : MonoBehaviour
     int[] score = new int[4];
 
     [SerializeField]
+    private List<PlayerData> playerData = new List<PlayerData>();
+
+    [SerializeField]
     private Text[] scoreTex;
 
 	// Use this for initialization
@@ -26,6 +29,6 @@ public class ScoreController : MonoBehaviour
     {
         score[playerNo - 1] += 10;
         scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();
-        MainManager.Instance.playerPoint[playerNo - 1] = score[playerNo - 1];
+        playerData[playerNo - 1].point = score[playerNo - 1];
     }
 }

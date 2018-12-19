@@ -26,6 +26,9 @@ public class MissileRobot : MonoBehaviour
 
     private float m_SizeX = 3.0f, m_SizeZ = 3.0f;
 
+    [SerializeField]
+    private GameObject m_Marker;
+
     private void Start()
     {
         EventStart();
@@ -123,5 +126,7 @@ public class MissileRobot : MonoBehaviour
 
         var targetPos = new Vector3(x, 0, z);
         m_targetPos = targetPos;
+
+        Instantiate(m_Marker, targetPos, m_Marker.transform.rotation);
     }
 }

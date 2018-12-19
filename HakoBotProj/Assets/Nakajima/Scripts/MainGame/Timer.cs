@@ -24,11 +24,10 @@ public class Timer : SingletonMonobeBehaviour<Timer> {
 	
 	// Update is called once per frame
 	void Update () {
-        //もしtotalTimeが0以下なら何もしない
-        if (totalTime <= 0f)
-        {
+
+        if (MainManager.Instance.isStart == false)
             return;
-        }
+
         //一旦制限時間を計測する
         totalTime = minute * 60 + seconds;
         //制限時間を減らす
@@ -42,17 +41,20 @@ public class Timer : SingletonMonobeBehaviour<Timer> {
         {
             TimerText.text = minute.ToString("00") + ":" + ((int)seconds).ToString("00");
         }
-        //oldsecondsを設定する
-        oldseconds = seconds;
+
         //制限時間が0になったら、EndGameメソッドを呼ぶ
-        if (totalTime <= 0f)
+        if (totalTime <= 4.0f)
         {
             EndGame();
+            return;
         }
+        //oldsecondsを設定する
+        oldseconds = seconds;
 	}
     //制限時間が0になったら呼ばれる
     void EndGame()
     {
-　　　　//ここに処理を書き込む
+        //ここに処理を書き込む
+        MainManager.Instance.GameEnd();
     }
 }

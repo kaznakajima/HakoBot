@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
+    // 自身のAudio関連
+    [HideInInspector]
+    public AudioSource myAudio;
+
     // 自身のAnimator
     [HideInInspector]
     public Animator myAnim;
@@ -24,7 +28,7 @@ public class PlayerBase : MonoBehaviour
 
     // 移動スピード
     [HideInInspector]
-    public float runSpeed = 6.0f;
+    public float runSpeed = 7.0f;
 
     // 自身のRig
     [HideInInspector]

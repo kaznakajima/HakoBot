@@ -8,16 +8,17 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class PlayerEntry : MonoBehaviour
 {
-
-    // 操作するキャラクターのリスト
+    // エントリー用アニメーション
     [SerializeField]
-    List<GameObject> playerList;
-
-    // プレイヤーがエントリーしたかどうか
-    public bool[] playerActive;
+    Animator[] playerEntryList;
 
     // プレイヤーが存在するか
-    bool isEntry;
+    bool[] isEntry = new bool[4];
+
+    bool isChange;
+
+    [SerializeField]
+    CRT noise;
 
     // Use this for initialization
 	void Start () {
@@ -34,24 +35,42 @@ public class PlayerEntry : MonoBehaviour
     /// </summary>
     void EntrySystem()
     {
+        if (Input.GetKeyDown(KeyCode.Z)) {
+            AudioController.Instance.SEPlay("Select");
+            noise.myAnim.SetTrigger("switchOn");
+            StartCoroutine(SceneNoise(2.0f));
+        }
+
+
+
         for(int i = 0;i < 4; i++)
         {
             if (PlayerSystem.Instance.Button_B(i + 1))
             {
                 Debug.Log("player" + i + 1 + "参加");
                 PlayerSystem.Instance.isActive[i] = true;
-                isEntry = true;
-                foreach(bool active in playerActive)
-                {
-                    Debug.Log(active);
-                }
+                playerEntryList[i].SetBool("isEntry", true);
+                isEntry[i] = true;
             }
-            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry)
+            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i])
             {
-                SceneManager.LoadScene("Prote");
+                playerEntryList[i].SetBool("isEntry", false);
+                PlayerSystem.Instance.isActive[i] = false;
             }
         }
-        if(Input.GetMouseButtonDown(0))
-            SceneManager.LoadScene("Prote");
+    }
+
+    // シーン変更
+    public IEnumerator SceneNoise(float _interval)
+    {
+        float time = 0.0f;
+        while (time <= _interval)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        AudioController.Instance.BGMChange("Main");
+        SceneManager.LoadScene("Prote");
     }
 }

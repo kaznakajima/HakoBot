@@ -30,7 +30,11 @@ public class Player : PlayerBase, Character
 
     public int myEnergy
     {
-        set { _myEnergy += value; }
+        set {
+            _myEnergy += value;
+            if (_myEnergy > 9)
+                _myEnergy = 9;
+        }
         get { return _myEnergy; }
     }
 
@@ -57,7 +61,7 @@ public class Player : PlayerBase, Character
 
     public bool isStan
     {
-        set { _isStan = value; }
+        set{ _isStan = value; }
         get { return _isStan; }
     }
 
@@ -76,6 +80,7 @@ public class Player : PlayerBase, Character
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
@@ -83,13 +88,20 @@ public class Player : PlayerBase, Character
 	
 	// Update is called once per frame
 	void Update () {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
+
+            if (isStan || MainManager.Instance.isStart == false)
+            return;
+
          PlayerInput();
 	}
 
     // 入力判定
     void PlayerInput()
     {
-        if (isAttack)
+        if (isAttack || isStan)
             return;
 
         /* ここから移動量判定 */
@@ -113,10 +125,6 @@ public class Player : PlayerBase, Character
 
         if (system.Button_B(myNumber))
         {
-            Charge();
-        }
-        if(system.ButtonUp_B(myNumber) && _chargeLevel != 0)
-        {
             Attack();
         }
     }
@@ -127,8 +135,6 @@ public class Player : PlayerBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-        if (isAttack || isStan)
-            return;
 
         // カメラの方向から、x-z平面の単位ベクトルを取得
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -163,7 +169,7 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (isAttack || _chargeLevel == 0)
+        if (isAttack)
             return;
 
         if (_chargeEffect != null)
@@ -179,25 +185,19 @@ public class Player : PlayerBase, Character
         // エネルギー計算
         StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
 
-        // チャージ段階に応じてアタック強化
-        switch (_chargeLevel)
-        {
-            case 3:
-                myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
-                break;
-            default:
-                myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
-                break;
-        }
-        
+        myRig.velocity = transform.forward * 10.0f;
 
-        // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(0.5f *  _chargeLevel)).Subscribe(time =>
+        // 1.5秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
+            myRig.velocity = Vector3.zero;
             myAnim.SetInteger("PlayAnimNum", 8);
-            // チャージ段階を初期化
-            _chargeLevel = 0;
             isAttack = false;
+
+            // オーバーヒート
+            if (_myEnergy >= 9) {
+                Stan();
+            }
 
         }).AddTo(this);
     }
@@ -219,8 +219,13 @@ public class Player : PlayerBase, Character
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
-        {
+        { 
+            _myEnergy = 0;
+            // エナジーゲージの初期化
+            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+
             Destroy(_stanEffect);
+
             isStan = false;
         }).AddTo(this);
     }
@@ -233,10 +238,7 @@ public class Player : PlayerBase, Character
     {
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
-
-        // チャージ中止
-        isCharge = false;
-        _chargeLevel = 0;
+        
         Destroy(_chargeEffect);
 
         // アイテムを所持
@@ -255,12 +257,13 @@ public class Player : PlayerBase, Character
     public void Release(bool isSteal, Vector3 opponentPos)
     {
         // アイテムを持っていないならリターン
-        if (itemObj == null || hasItem == false)
-        {
+        if (itemObj == null || hasItem == false) {
             itemObj = null;
             hasItem = false;
             return;
         }
+        
+        AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
@@ -278,7 +281,8 @@ public class Player : PlayerBase, Character
         // チャージ開始
         isCharge = true;
         _chargeLevel = 1;
-        emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
+        emitter.effectName = "Attack";
 
         // チャージエフェクト
         _chargeEffect = Instantiate(chargeEffect, transform);
@@ -331,6 +335,8 @@ public class Player : PlayerBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            AudioController.Instance.OtherAuioPlay(myAudio, "Release");
+
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
@@ -338,16 +344,6 @@ public class Player : PlayerBase, Character
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
                 return;
-
-            // アイテムを登録
-            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
-            // チャージが最大レベルなら
-            if (_chargeLevel == 3)
-            {
-                // アイテム放棄
-                character.Release(true, transform.position);
-                return;
-            }
 
             character.Release(false, Vector3.zero);
         }
