@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
+    // 自身のAudio関連
+    [HideInInspector]
+    public AudioSource myAudio;
+
     // 自身のAnimator
     [HideInInspector]
     public Animator myAnim;

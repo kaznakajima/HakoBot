@@ -14,7 +14,7 @@ public class TitleSystem : MonoBehaviour
     {
         this.UpdateAsObservable().Subscribe(_ =>
         {
-            if (m_TiteTimeline.state != PlayState.Playing && Input.GetMouseButtonDown(0))
+            if (m_TiteTimeline.time >= 10f)
             {
                 m_StartTimeline.Play();
             }

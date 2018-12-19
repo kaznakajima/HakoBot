@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using UniRx;
 
 /// <summary>
 /// ゲームの全体を管理するクラス
@@ -11,15 +13,38 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // プレイヤーの得点
     public int[] playerPoint = new int[4];
 
+    // ゲームがスタートしているか
+    [HideInInspector]
+    public bool isStart;
+
+    // ノイズ発生スクリプト参照
+    CRT noise;
     // ノイズ用アニメーション
     Animator noiseAnim;
+    // カウントダウン用アニメーション
+    [SerializeField]
+    GameObject countDown;
+
+    // ゲーム終了処理
+    [SerializeField]
+    AnimationClip endClip;
+
+    // 自身のAudioSource
+    AudioSource myAudio;
+    bool isPlay;
 
 	// Use this for initialization
 	void Start () {
-        DontDestroyOnLoad(this);
+        myAudio = GetComponent<AudioSource>();
 
-        noiseAnim = FindObjectOfType<CRT>().gameObject.GetComponent<Animator>();
+        noise = FindObjectOfType<CRT>();
+        noiseAnim = noise.gameObject.GetComponent<Animator>();
         noiseAnim.SetTrigger("switchOff");
+
+        if (SceneManager.GetActiveScene().name != "Prote")
+        {     
+            return;
+        }
 
         // Character配置
         for(int i = 0;i < 4; i++)
@@ -40,7 +65,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 GameObject character = Instantiate(PlayerSystem.Instance.enemyList[i]);
 
                 // ランダムで敵AIのタイプを決める
-                int enemyNum = Random.Range(0, 3);
+                int enemyNum = UnityEngine.Random.Range(0, 3);
                 switch (enemyNum)
                 {
                     // 攻撃AI
@@ -69,6 +94,118 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // Update is called once per frame
     void Update () {
-		
+        if (SceneManager.GetActiveScene().name != "Prote")
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                noiseAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise(2.0f, "Title"));
+            }
+
+            return;
+        }
+
+        CheckGameState();
+
+        // ポーズ処理
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (isStart) {
+                Pause();
+            }
+            else {
+                Resume();
+            }
+        }
 	}
+
+    /// <summary>
+    /// ポーズ処理
+    /// </summary>
+    void Pause()
+    {
+        Time.timeScale = 0.0f;
+        isStart = false;
+    }
+
+    /// <summary>
+    /// ポーズ解除
+    /// </summary>
+    void Resume()
+    {
+        Time.timeScale = 1.0f;
+        isStart = true;
+    }
+
+    // ゲームの状況を判断
+    void CheckGameState()
+    {
+        if (isStart || isPlay)
+            return;
+
+        if (noise.Alpha == 0.0f) {
+            isPlay = true;
+
+            countDown.SetActive(true);
+
+            var disposable = new SingleAssignmentDisposable();
+            // 1秒ごとにカウント
+            disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+            {
+                AudioController.Instance.SEPlay("CountDown");
+            }).AddTo(this);
+
+            // 3秒後に移動再開
+            Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+            {
+                disposable.Dispose();
+                AudioController.Instance.SEPlay("Start");
+                isStart = true;
+                isPlay = false;
+            }).AddTo(this);
+        }
+    }
+
+    // ゲーム終了
+    public void GameEnd()
+    {
+        if (isPlay)
+            return;
+
+        Animation endAnim = countDown.GetComponent<Animation>();
+        countDown.SetActive(true);
+        endAnim.Play("CountDown_GameEnd");
+
+        var disposable = new SingleAssignmentDisposable();
+        // 1秒ごとにカウント
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        {
+            AudioController.Instance.SEPlay("CountDown");
+        }).AddTo(this);
+
+        // 3秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+        {
+            disposable.Dispose();
+            AudioController.Instance.SEPlay("End");
+            isStart = false;
+            noiseAnim.SetTrigger("switchOn");
+            StartCoroutine(SceneNoise(2.0f, "Result"));
+        }).AddTo(this);
+
+        isPlay = true;
+    }
+
+    // シーン変更
+    public IEnumerator SceneNoise(float _interval, string sceneName)
+    {
+        float time = 0.0f;
+        while (time <= _interval)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        SceneManager.LoadScene(sceneName);
+    }
 }

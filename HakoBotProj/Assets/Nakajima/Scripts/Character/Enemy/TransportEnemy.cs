@@ -78,17 +78,32 @@ public class TransportEnemy : EnemyBase, Character
     GameObject _stanEffect;
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
         //emitter = GetComponentInChildren<EffekseerEmitter>();
+
+        for (int i = 0; i < GetPointArea().Length; i++)
+        {
+            targetList.Add(GetPointArea()[i]);
+        }
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
+
+        if (isStan || MainManager.Instance.isStart == false)
+            return;
+
         switch (state)
         {
             case ENEMY_STATE.PATROL:
@@ -161,8 +176,6 @@ public class TransportEnemy : EnemyBase, Character
         maxDistance = 0;
 
         if (itemObj == null) {
-            // リストを初期化
-            targetList.Clear();
             SearchTarget();
         }
         else {
@@ -178,8 +191,6 @@ public class TransportEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
-            // リストに追加
-            targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
@@ -223,7 +234,7 @@ public class TransportEnemy : EnemyBase, Character
             {
                 // 他のプレイヤーの方が近いならターゲットから除外
                 enemyDistacne[j] = GetTargetDistance(GetPointArea()[i].gameObject, GetCharacter()[j]);
-                if (minDistance > enemyDistacne[j] && GetCharacter()[j] != gameObject) {
+                if (minDistance > enemyDistacne[j] && GetCharacter()[j] != this) {
                     targetObj = null;
                 }
                 averageDistance[i] += enemyDistacne[j];
@@ -231,12 +242,13 @@ public class TransportEnemy : EnemyBase, Character
             averageDistance[i] *= 0.3f;
 
             // 平均的に一番遠い位置へ移動
-            if (averageDistance[i] > maxDistance) {
+            if (averageDistance[i] > maxDistance && GetPointArea()[i].isActive == true) {
                 maxDistance = averageDistance[i];
                 dummyTarget = GetPointArea()[i].targetObj;
             }
         }
 
+        // ターゲットが設定できたならリターン
         if (targetObj != null) {
             state = ENEMY_STATE.TARGETMOVE;
             return;
@@ -336,6 +348,8 @@ public class TransportEnemy : EnemyBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        myRig.velocity = Vector3.zero;
+
         // アイテムを所持
         itemObj = obj;
         itemObj.transform.parent = transform;
@@ -356,6 +370,8 @@ public class TransportEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
+        
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
