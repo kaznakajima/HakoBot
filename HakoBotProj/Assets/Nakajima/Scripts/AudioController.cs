@@ -32,22 +32,33 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     //SEにアクセスするためのテーブル
     Dictionary<string, AudioList> poolSe = new Dictionary<string, AudioList>();
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     // Use this for initialization
     void Start()
     {
         DontDestroyOnLoad(gameObject);
 
-        LoadBGM("Title", "Title");
-        LoadBGM("Main", "Main");
-        LoadSe("Select", "Select");
-        LoadSe("CountDown", "CountDown");
-        LoadSe("Start", "Start");
-        LoadSe("End", "End");
-        LoadSe("Damage", "Damage");
-        LoadSe("Release", "Release");
-        LoadSe("Entry", "Entry");
-        LoadSe("Warning", "Warning");
-        LoadSe("Cancel", "Cancel");
+        // BGM
+        LoadBGM("Title", "Title");  // タイトル
+        LoadBGM("Main", "Main"); // メインシーン
+        LoadBGM("Result", "Result");
+        // SE
+        LoadSe("Select", "Select");                    // 決定
+        LoadSe("CountDown", "CountDown");    // カウントダウン
+        LoadSe("Start", "Start");                       // ゲームスタート
+        LoadSe("End", "End");                          // ゲーム終了
+        LoadSe("Damage", "Damage");             // ダメージ
+        LoadSe("Release", "Release");               // 荷物リリース
+        LoadSe("Entry", "Entry");                     // エントリー
+        LoadSe("Warning", "Warning");            // 警告音
+        LoadSe("Cancel", "Cancel");                 // キャンセル音
+        LoadSe("Shutter", "Shutter");              // シャッター開閉
+        LoadSe("Bomb", "Bomb");                  // 爆破音
+        LoadSe("Stan", "Stan");                      // スタン
     }
 
     //サウンドのロード
@@ -80,11 +91,6 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         }
         poolSe.Add(key, new AudioList(key, resName));
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     // BGMの変更
     public void BGMChange(string key)

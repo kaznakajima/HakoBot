@@ -23,9 +23,13 @@ public class PointArea : MonoBehaviour
     // ターゲットポイント
     public GameObject targetObj;
 
+    // 自身のAudioSource
+    AudioSource myAudio;
+
     // Use this for initialization
     void Start () {
         myAnim = GetComponent<Animator>();
+        myAudio = GetComponent<AudioSource>();
         score = FindObjectOfType<ScoreController>();
     }
 	
@@ -42,6 +46,8 @@ public class PointArea : MonoBehaviour
         // 機能していないフラグ
         isActive = false;
 
+        AudioController.Instance.OtherAuioPlay(myAudio, "Warning");
+
         LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.RED);
 
         myAnim.SetBool(gameObject.name + "_Close", true);
@@ -53,6 +59,8 @@ public class PointArea : MonoBehaviour
     public void Open()
     {
         myAnim.SetBool(gameObject.name + "_Close", false);
+        
+        AudioController.Instance.OtherAuioPlay(myAudio, "Shutter");
 
         LampController.Instance.LampChange(lampRenderer, LampController.LAMP_LIGHT.BLUE);
 

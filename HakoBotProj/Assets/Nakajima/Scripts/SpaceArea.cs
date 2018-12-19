@@ -7,10 +7,15 @@ public class SpaceArea : MonoBehaviour
     // 自身のAnimator
     Animator myAnim;
 
+    // 自身のAudioSource;
+    AudioSource myAudio;
+
 	// Use this for initialization
 	void Start () {
         myAnim = GetComponent<Animator>();
-        myAnim.SetBool(gameObject.name + "_Close", true);
+        myAudio = GetComponent<AudioSource>();
+        //myAnim.SetBool(gameObject.name + "_Close", true);
+        //AudioController.Instance.OtherAuioPlay(myAudio, "Shutter");
 	}
 	
 	// Update is called once per frame

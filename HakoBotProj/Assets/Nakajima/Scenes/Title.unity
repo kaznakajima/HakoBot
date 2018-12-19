@@ -360,7 +360,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 130137277}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51f7c53317cfa3544ab12801e007ca78, type: 3}
   m_Name: 
@@ -421,7 +421,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 8400000, guid: e015da4e1d0073942b46a7e09fdfd576, type: 2}
+  m_Texture: {fileID: 8400000, guid: 35f1aec3e952a1a429bc86880fe5de81, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1195,7 +1195,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 8400000, guid: fc88783f2c82b7848a8e3d678d696882, type: 2}
+  m_Texture: {fileID: 8400000, guid: e015da4e1d0073942b46a7e09fdfd576, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2201,7 +2201,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 8400000, guid: 9e5f34d603a843c459187c38ede5213f, type: 2}
+  m_Texture: {fileID: 8400000, guid: fc88783f2c82b7848a8e3d678d696882, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3894,7 +3894,8 @@ AudioSource:
   m_GameObject: {fileID: 1390360470}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 243292025928675398, guid: 34e4ed92ceab76d48a07ddc72fc6b400,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -3989,7 +3990,8 @@ AudioSource:
   m_GameObject: {fileID: 1390360470}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 34e4ed92ceab76d48a07ddc72fc6b400,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: b94b1d3a56530bb48a5ad78f04390013, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -4653,6 +4655,46 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &1603112860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1603112862}
+  - component: {fileID: 1603112861}
+  m_Layer: 0
+  m_Name: Vibration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1603112861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1603112860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a3183af7fef704eba54115f44a03de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1603112862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1603112860}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1608271071 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 422084, guid: cb68e2208587a5145ad4d4c81c021d70,
@@ -5260,7 +5302,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 8400000, guid: 35f1aec3e952a1a429bc86880fe5de81, type: 2}
+  m_Texture: {fileID: 8400000, guid: 9e5f34d603a843c459187c38ede5213f, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0

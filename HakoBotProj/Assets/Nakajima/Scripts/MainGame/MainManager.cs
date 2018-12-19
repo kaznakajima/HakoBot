@@ -206,6 +206,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             yield return null;
         }
 
+        AudioController.Instance.BGMChange(sceneName);
         SceneManager.LoadScene(sceneName);
     }
 }

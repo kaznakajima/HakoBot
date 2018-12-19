@@ -50,7 +50,7 @@ public abstract class SingletonMonobeBehaviour<T> : MonoBehaviour where T : Mono
         {
             return true;
         }
-        Destroy(this);
+        Destroy(gameObject);
         return false;
     }
 }
