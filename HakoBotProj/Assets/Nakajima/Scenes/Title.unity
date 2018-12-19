@@ -308,7 +308,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 3a94898129cebbb4799a33855d58a036, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 0
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -1475,6 +1475,7 @@ MonoBehaviour:
   - {fileID: 1074333216}
   - {fileID: 248461569}
   noise: {fileID: 1110515089}
+  title: {fileID: 130137281}
 --- !u!1 &668566480
 GameObject:
   m_ObjectHideFlags: 0
@@ -3924,19 +3925,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb06acb5721f304bb449da049d3a792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BGMstate: 0
-  SEstate: 0
   myAudio:
   - {fileID: 1390360472}
   - {fileID: 1390360471}
-  BGM:
-  - {fileID: 8300000, guid: b94b1d3a56530bb48a5ad78f04390013, type: 3}
-  - {fileID: 8300000, guid: 4552c291dd868d746bdc0992b0c7c482, type: 3}
-  SE:
-  - {fileID: 8300000, guid: 0596bb0c095a97140ba0ef8bcc0a8f9f, type: 3}
-  - {fileID: 8300000, guid: 1731c738639d01e498e89b587021dd06, type: 3}
-  - {fileID: 8300000, guid: e4ed7119918bc2844ae18620f43304b2, type: 3}
-  - {fileID: 8300000, guid: 4d64890c397613149ac18ca6e1076798, type: 3}
 --- !u!4 &1390360474
 Transform:
   m_ObjectHideFlags: 0

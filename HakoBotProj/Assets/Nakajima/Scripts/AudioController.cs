@@ -23,35 +23,9 @@ class AudioList
 
 public class AudioController : SingletonMonobeBehaviour<AudioController>
 {
-    // 流すBGMのステートマシン
-    public enum BGM_STATE
-    {
-        TITLE,
-        MAIN,
-        RESULT
-    }
-    public BGM_STATE BGMstate;
-
-    // 流すSEのステートマシン
-    public enum SE_STATE
-    {
-        SELECT,
-        COUNTDOWN,
-        START,
-        END
-    }
-    public SE_STATE SEstate;
-
     // BGM、SE用のAudioSource
     [SerializeField]
     public AudioSource[] myAudio;
-
-    // BGMのリスト
-    [SerializeField]
-    AudioClip[] BGM;
-    // SEのリスト
-    [SerializeField]
-    AudioClip[] SE;
 
     //BGMにアクセスするためのテーブル
     Dictionary<string, AudioList> poolBgm = new Dictionary<string, AudioList>();
@@ -71,6 +45,9 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         LoadSe("End", "End");
         LoadSe("Damage", "Damage");
         LoadSe("Release", "Release");
+        LoadSe("Entry", "Entry");
+        LoadSe("Warning", "Warning");
+        LoadSe("Cancel", "Cancel");
     }
 
     //サウンドのロード
@@ -116,48 +93,18 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         var _data = poolBgm[key];
         myAudio[0].clip = _data.Clip;
         myAudio[0].Play();
-
-        // シーンごとに音楽を設定
-        switch(key)
-        {
-            case "Title":
-                BGMstate = BGM_STATE.TITLE;
-                break;
-            case "Main":
-                BGMstate = BGM_STATE.MAIN;
-                break;
-            case "Result":
-                BGMstate = BGM_STATE.TITLE;
-                break;
-        }
-
-        //myAudio[0].clip = BGM[(int)BGMstate];
-        //myAudio[0].Play();
     }
 
     // SEの再生
     public void SEPlay(string key)
     {
+        if (myAudio[1].isPlaying == true && myAudio[1].clip == poolSe[key].Clip)
+            return;
+
         // リソース作成
         var _data = poolSe[key];
         myAudio[1].clip = _data.Clip;
         myAudio[1].Play();
-
-        switch (key)
-        {
-            case "Select":
-                SEstate = SE_STATE.SELECT;
-                break;
-            case "CountDown":
-                SEstate = SE_STATE.COUNTDOWN;
-                break;
-            case "Start":
-                SEstate = SE_STATE.START;
-                break;
-            case "End":
-                SEstate = SE_STATE.END;
-                break;
-        }
     }
 
     /// <summary>
