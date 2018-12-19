@@ -8,6 +8,7 @@ using UniRx.Triggers;
 
 public class Ranking : MonoBehaviour
 {
+    [SerializeField]
     private List<PlayerData> playerData = new List<PlayerData>();
 
     public void RankingStart()

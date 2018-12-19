@@ -1,16 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
 
 public class Sample : MonoBehaviour
 {
-    //ミサイル発射準備Script
 
-    
-
-    private void Start()
-    {
-    }
 }
