@@ -14,10 +14,10 @@ public class TextController : SingletonMonobeBehaviour<TextController>
     void Start () {
         RankingStart();
 
-        scoreText[0].text = "1位" + PlayerCheck(1) + playerData[0].point;
-        scoreText[1].text = "2位" + PlayerCheck(2) + playerData[1].point;
-        scoreText[2].text = "3位" + PlayerCheck(3) + playerData[2].point;
-        scoreText[3].text = "4位" + PlayerCheck(4) + playerData[3].point;
+        scoreText[0].text = "1位" + playerData[0].point + "ポイント" + PlayerCheck(1).ToString() + "P";
+        scoreText[1].text = "2位" + playerData[1].point + "ポイント" + PlayerCheck(2).ToString() + "P";
+        scoreText[2].text = "3位" + playerData[2].point + "ポイント" + PlayerCheck(3).ToString() + "P";
+        scoreText[3].text = "4位" + playerData[3].point + "ポイント" + PlayerCheck(4).ToString() + "P";
     }
 	
 	// Update is called once per frame

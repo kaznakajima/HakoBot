@@ -36,6 +36,7 @@ public class PlayerEntry : MonoBehaviour
     void EntrySystem()
     {
         if (Input.GetKeyDown(KeyCode.Z)) {
+            AudioController.Instance.SEPlay("Select");
             noise.myAnim.SetTrigger("switchOn");
             StartCoroutine(SceneNoise(2.0f));
         }
@@ -69,6 +70,7 @@ public class PlayerEntry : MonoBehaviour
             yield return null;
         }
 
+        AudioController.Instance.BGMChange("Main");
         SceneManager.LoadScene("Prote");
     }
 }

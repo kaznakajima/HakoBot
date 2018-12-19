@@ -80,6 +80,7 @@ public class Player : PlayerBase, Character
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
@@ -87,8 +88,11 @@ public class Player : PlayerBase, Character
 	
 	// Update is called once per frame
 	void Update () {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
 
-        if (isStan || MainManager.Instance.isStart == false)
+            if (isStan || MainManager.Instance.isStart == false)
             return;
 
          PlayerInput();
@@ -120,10 +124,6 @@ public class Player : PlayerBase, Character
         }
 
         if (system.Button_B(myNumber))
-        {
-            Charge();
-        }
-        if(system.ButtonUp_B(myNumber) && _chargeLevel != 0)
         {
             Attack();
         }
@@ -169,7 +169,7 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (isAttack || _chargeLevel == 0)
+        if (isAttack)
             return;
 
         if (_chargeEffect != null)
@@ -185,27 +185,13 @@ public class Player : PlayerBase, Character
         // エネルギー計算
         StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
 
-        // チャージ段階に応じてアタック強化
-        switch (_chargeLevel)
-        {
-            case 3:
-                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
-                break;
-            default:
-                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 10.0f;
-                break;
-        }
-        
+        myRig.velocity = transform.forward * 10.0f;
 
-        // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(0.5f *  _chargeLevel)).Subscribe(time =>
+        // 1.5秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
         {
             myRig.velocity = Vector3.zero;
             myAnim.SetInteger("PlayAnimNum", 8);
-            // チャージ段階を初期化
-            _chargeLevel = 0;
             isAttack = false;
 
             // オーバーヒート
@@ -252,10 +238,7 @@ public class Player : PlayerBase, Character
     {
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
-
-        // チャージ中止
-        isCharge = false;
-        _chargeLevel = 0;
+        
         Destroy(_chargeEffect);
 
         // アイテムを所持
@@ -280,6 +263,8 @@ public class Player : PlayerBase, Character
             return;
         }
         
+        AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
+
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
         itemObj = null;
@@ -350,6 +335,8 @@ public class Player : PlayerBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            AudioController.Instance.OtherAuioPlay(myAudio, "Release");
+
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
@@ -357,16 +344,6 @@ public class Player : PlayerBase, Character
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
                 return;
-
-            // アイテムを登録
-            GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
-            // チャージが最大レベルなら
-            if (_chargeLevel == 3)
-            {
-                // アイテム放棄
-                character.Release(true, transform.position);
-                return;
-            }
 
             character.Release(false, Vector3.zero);
         }

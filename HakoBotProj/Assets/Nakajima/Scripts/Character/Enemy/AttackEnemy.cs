@@ -85,6 +85,7 @@ public class AttackEnemy : EnemyBase, Character
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
@@ -99,6 +100,10 @@ public class AttackEnemy : EnemyBase, Character
     // Update is called once per frame
     void Update ()
     {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
+
         if (MainManager.Instance.isStart == false)
             return;
 
@@ -437,6 +442,8 @@ public class AttackEnemy : EnemyBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        myRig.velocity = Vector3.zero;
+
         //// チャージ中止
         //isCharge = false;
         //agent.updatePosition = true;
@@ -463,7 +470,9 @@ public class AttackEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
-        
+
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
+
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
@@ -556,6 +565,8 @@ public class AttackEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
+            AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
+
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;

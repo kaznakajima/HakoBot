@@ -78,9 +78,11 @@ public class TransportEnemy : EnemyBase, Character
     GameObject _stanEffect;
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         pointPos = GetComponentInChildren<EffekseerEmitter>().gameObject.transform;
+        myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
@@ -95,6 +97,10 @@ public class TransportEnemy : EnemyBase, Character
 	// Update is called once per frame
 	void Update ()
     {
+        // ポーズ中は動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f))
+            return;
+
         if (isStan || MainManager.Instance.isStart == false)
             return;
 
@@ -342,6 +348,8 @@ public class TransportEnemy : EnemyBase, Character
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
 
+        myRig.velocity = Vector3.zero;
+
         // アイテムを所持
         itemObj = obj;
         itemObj.transform.parent = transform;
@@ -363,6 +371,8 @@ public class TransportEnemy : EnemyBase, Character
             return;
         }
         
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
+
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;
