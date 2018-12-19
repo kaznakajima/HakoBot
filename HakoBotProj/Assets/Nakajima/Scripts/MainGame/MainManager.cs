@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System;
+using UniRx;
 
 /// <summary>
 /// ゲームの全体を管理するクラス
@@ -10,8 +13,29 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // プレイヤーの得点
     public int[] playerPoint = new int[4];
 
+    // ゲームがスタートしているか
+    [HideInInspector]
+    public bool isStart;
+
+    // ノイズ発生スクリプト参照
+    CRT noise;
+    // ノイズ用アニメーション
+    Animator noiseAnim;
+    // カウントダウン用アニメーション
+    [SerializeField]
+    GameObject countDown;
+
+    // ゲーム終了処理
+    [SerializeField]
+    AnimationClip endClip;
+
 	// Use this for initialization
 	void Start () {
+
+        noise = FindObjectOfType<CRT>();
+        noiseAnim = noise.gameObject.GetComponent<Animator>();
+        noiseAnim.SetTrigger("switchOff");
+
         // Character配置
         for(int i = 0;i < 4; i++)
         {
@@ -31,7 +55,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 GameObject character = Instantiate(PlayerSystem.Instance.enemyList[i]);
 
                 // ランダムで敵AIのタイプを決める
-                int enemyNum = Random.Range(0, 3);
+                int enemyNum = UnityEngine.Random.Range(0, 3);
                 switch (enemyNum)
                 {
                     // 攻撃AI
@@ -57,9 +81,53 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             }
         }
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+    // Update is called once per frame
+    void Update () {
+        CheckGameState();
 	}
+
+    // ゲームの状況を判断
+    void CheckGameState()
+    {
+        if (isStart)
+            return;
+
+        if (noise.Alpha == 0.0f) {
+            countDown.SetActive(true);
+            // 3秒後に移動再開
+            Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+            {
+                isStart = true;
+            }).AddTo(this);
+        }
+    }
+
+    // ゲーム終了
+    public void GameEnd()
+    {
+        Animation endAnim = countDown.GetComponent<Animation>();
+        countDown.SetActive(true);
+        endAnim.Play("CountDown_GameEnd");
+        // 3秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+        {
+            isStart = false;
+            noiseAnim.SetTrigger("switchOn");
+            StartCoroutine(SceneNoise(2.0f));
+        }).AddTo(this);
+    }
+
+    // シーン変更
+    public IEnumerator SceneNoise(float _interval)
+    {
+        float time = 0.0f;
+        while (time <= _interval)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        SceneManager.LoadScene("Result");
+    }
 }

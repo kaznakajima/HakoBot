@@ -9,18 +9,12 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Nakajima/Scenes/EntryTest.unity
-    guid: f2c684e4b2e87cd40af9de0325208ce8
+    path: Assets/Nakajima/Scenes/Title.unity
+    guid: 19e3d52b582961d40a91147a85d61394
   - enabled: 1
     path: Assets/Nakajima/Scenes/Prote.unity
     guid: 8ac8bc189fc92db4f8a143c6ca8e501d
   - enabled: 1
-    path: Assets/Sawada/Test.unity
-    guid: 910b629cd235c5a4480f26e0c0ce3a40
-  - enabled: 1
-    path: Assets/Sawada/Test2.unity
-    guid: b8b801c48cbf4b5439ea2c3dc5cb8b24
-  - enabled: 1
-    path: Assets/Sawada/Test3.unity
-    guid: 7f085c3c1be51bb439af738d5ceec142
+    path: Assets/Osada/Scene/Result.unity
+    guid: 0156caccb0ee65444a45651fbdcf4774
   m_configObjects: {}

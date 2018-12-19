@@ -89,11 +89,19 @@ public class AttackEnemy : EnemyBase, Character
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
         emitter.effectName = "Attack";
+
+        for(int i = 0;i < GetPointArea().Length; i++)
+        {
+            targetList.Add(GetPointArea()[i]);
+        }
     }
 
     // Update is called once per frame
     void Update ()
     {
+        if (MainManager.Instance.isStart == false)
+            return;
+
         // オーバーヒート中はリターン
         if (isStan || isAttack)
             return;
@@ -129,13 +137,6 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="_targetObj">ターゲットオブジェクト</param>
     public override void CheckTarget(GameObject _targetObj)
     {
-        // ターゲットリスト更新
-        for(int i = 0;i < targetList.Count; i++) {
-            if(targetList[i] == null) {
-                targetList.RemoveAt(i);
-            }
-        }
-
         if (_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
@@ -176,8 +177,6 @@ public class AttackEnemy : EnemyBase, Character
         maxDistance = 0;
 
         if (itemObj == null) {
-            // リストを初期化
-            targetList.Clear();
             SearchTarget();
         }
         else {
@@ -215,8 +214,6 @@ public class AttackEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
-            // リストに追加
-            targetList.Add(GetItems()[i].gameObject);
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
@@ -268,12 +265,13 @@ public class AttackEnemy : EnemyBase, Character
             averageDistance[i] *= 0.3f;
 
             // 平均的に一番遠い位置へ移動
-            if (averageDistance[i] > maxDistance) {
+            if (averageDistance[i] > maxDistance && GetPointArea()[i].isActive == true) {
                 maxDistance = averageDistance[i];
                 dummyTarget = GetPointArea()[i].targetObj;
             }
         }
 
+        // ターゲットが設定できたならリターン
         if (targetObj != null) {
             state = ENEMY_STATE.TARGETMOVE;
             return;
@@ -308,7 +306,7 @@ public class AttackEnemy : EnemyBase, Character
             }
 
             // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 8.0f) {
+            if (GetTargetDistance(targetObj, gameObject) < 6.0f) {
                 Attack();
             }
         }
@@ -465,7 +463,7 @@ public class AttackEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
-
+        
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
         hasItem = false;

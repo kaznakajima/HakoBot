@@ -18,7 +18,7 @@ public abstract class EnemyBase : MonoBehaviour
     public ENEMY_STATE state;
 
     // ターゲットオブジェクトのリスト
-    public List<GameObject> targetList = new List<GameObject>();
+    public List<PointArea> targetList = new List<PointArea>();
 
     // ナビメッシュ
     [HideInInspector]

@@ -87,6 +87,10 @@ public class Player : PlayerBase, Character
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (isStan || MainManager.Instance.isStart == false)
+            return;
+
          PlayerInput();
 	}
 
@@ -270,13 +274,12 @@ public class Player : PlayerBase, Character
     public void Release(bool isSteal, Vector3 opponentPos)
     {
         // アイテムを持っていないならリターン
-        if (itemObj == null || hasItem == false)
-        {
+        if (itemObj == null || hasItem == false) {
             itemObj = null;
             hasItem = false;
             return;
         }
-
+        
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
         itemObj = null;

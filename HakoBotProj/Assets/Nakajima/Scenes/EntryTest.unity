@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerList:
-  - {fileID: 0}
+  - {fileID: 1883406603049842, guid: 8b6416bb7d0b4e24abb14929f4d164c2, type: 2}
   - {fileID: 197136, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
   - {fileID: 185094, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
   - {fileID: 187418, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}

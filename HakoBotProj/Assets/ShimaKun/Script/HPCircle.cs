@@ -49,7 +49,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
         float energy = 0.0f;
         while (time < 1.0f)
         {
-            time += Time.deltaTime / 1.0f;
+            time += Time.deltaTime;
             energy = Mathf.Lerp(energy, character.myEnergy, time);
             _param[playerNum - 1].energyImage[(int)energy].SetActive(true);
             yield return null;
@@ -69,10 +69,10 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
 
         float time = 0.0f;
         float energy = 10.0f;
-        while (time < 1.0f)
+        while (time < 1.5f)
         {
-            time += Time.deltaTime / 1.5f;
-            energy = Mathf.Lerp(energy, character.myEnergy, time);
+            time += Time.deltaTime;
+            energy = Mathf.Lerp(energy, character.myEnergy, time / 1.5f);
             _param[playerNum - 1].energyImage[(int)energy].SetActive(false);
             yield return null;
         }
