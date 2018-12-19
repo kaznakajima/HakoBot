@@ -28,8 +28,8 @@ public class PlayerEntry : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-       
-	}
+        title.m_TiteTimeline.Play();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -43,10 +43,7 @@ public class PlayerEntry : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (PlayerSystem.Instance.Button_B(i + 1) && title.m_TiteTimeline.time == 0.0f) {
-                title.m_TiteTimeline.Play();
-            }
-            else if(PlayerSystem.Instance.Button_B(i + 1) && title.m_TiteTimeline.time != 0.0f) {
+            if(PlayerSystem.Instance.Button_B(i + 1) && title.m_TiteTimeline.time != 0.0f) {
                 title.m_TiteTimeline.time = 12.5f;
                 title.m_StartTimeline.Play();
             }
