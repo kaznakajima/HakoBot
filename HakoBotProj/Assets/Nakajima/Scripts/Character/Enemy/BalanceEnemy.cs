@@ -417,15 +417,22 @@ public class BalanceEnemy : EnemyBase, Character
 
     public void Stan()
     {
+        myAudio.loop = true;
+        AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
+
         isStan = true;
         myRig.velocity = Vector3.zero;
 
+        // スタンエフェクト生成
         _stanEffect = Instantiate(stanEffect, transform);
         _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            myAudio.loop = false;
+            myAudio.Stop();
+
             _myEnergy = 0;
             // エナジーゲージの初期化
             StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
@@ -569,8 +576,6 @@ public class BalanceEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-            AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
-
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
@@ -579,18 +584,7 @@ public class BalanceEnemy : EnemyBase, Character
             if (character.hasItem == false)
                 return;
 
-            // アイテムを登録
-            //GameObject itemObj = col.gameObject.GetComponentInChildren<Item>().gameObject;
-            // チャージが最大レベルなら
-            //if (_chargeLevel == 3)
-            //{
-            //    //character.hasItem = false;
-            //    //// アイテムを奪う
-            //    //Catch(itemObj);
-            //    // アイテム放棄
-            //    character.Release(true, transform.position);
-            //    return;
-            //}
+            AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
             character.Release(false, Vector3.zero);
         }

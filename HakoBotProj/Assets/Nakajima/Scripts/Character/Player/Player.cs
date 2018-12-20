@@ -211,7 +211,11 @@ public class Player : PlayerBase, Character
     // スタン
     public void Stan()
     {
+        myAudio.loop = true;
+        AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
+
         isStan = true;
+        myRig.velocity = Vector3.zero;
 
         // スタンエフェクト生成
         _stanEffect = Instantiate(stanEffect, transform);
@@ -219,7 +223,10 @@ public class Player : PlayerBase, Character
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
-        { 
+        {
+            myAudio.loop = false;
+            myAudio.Stop();
+
             _myEnergy = 0;
             // エナジーゲージの初期化
             StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
@@ -262,8 +269,9 @@ public class Player : PlayerBase, Character
             hasItem = false;
             return;
         }
-        
-        AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
+
+        VibrationController.Instance.PlayVibration(myNumber - 1, true);
+        AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
@@ -335,8 +343,6 @@ public class Player : PlayerBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-            AudioController.Instance.OtherAuioPlay(myAudio, "Release");
-
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
@@ -344,6 +350,8 @@ public class Player : PlayerBase, Character
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)
                 return;
+
+            AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
             character.Release(false, Vector3.zero);
         }
