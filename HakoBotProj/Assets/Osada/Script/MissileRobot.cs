@@ -24,7 +24,7 @@ public class MissileRobot : MonoBehaviour
     private Vector3 m_Velocity = Vector3.zero;
     private float m_Speed = 1.0f;
 
-    private float m_SizeX = 3.0f, m_SizeZ = 3.0f;
+    private float m_SizeX = 15.0f, m_SizeZ = 9.0f;
 
     [SerializeField]
     private GameObject m_Marker;
@@ -124,7 +124,7 @@ public class MissileRobot : MonoBehaviour
         var x = Random.Range(-m_SizeX, m_SizeX);
         var z = Random.Range(-m_SizeZ, m_SizeZ);
 
-        var targetPos = new Vector3(x, 0, z);
+        var targetPos = new Vector3(x, 0.2f, z);
         m_targetPos = targetPos;
 
         Instantiate(m_Marker, targetPos, m_Marker.transform.rotation);

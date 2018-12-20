@@ -42,6 +42,7 @@ public class Missile : MonoBehaviour
                 yield return null;
             else
             {
+                m_Explosion.transform.parent = null;
                 m_Explosion.SetActive(true);
                 Observable.Timer(System.TimeSpan.FromSeconds(0.5f)).Subscribe(__ => Destroy(gameObject)).AddTo(this);
                 m_Moved.Value = false;

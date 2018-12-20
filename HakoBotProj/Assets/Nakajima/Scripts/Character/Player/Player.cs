@@ -348,4 +348,9 @@ public class Player : PlayerBase, Character
             character.Release(false, Vector3.zero);
         }
     }
+
+    void OnParticleCollision(GameObject other)
+    {
+        
+    }
 }
