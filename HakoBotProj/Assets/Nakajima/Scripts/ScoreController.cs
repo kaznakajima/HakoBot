@@ -25,7 +25,7 @@ public class ScoreController : MonoBehaviour
 	}
 
     // スコア加点
-    public void AddScore(int playerNo)
+    public void AddScore(int playerNo, int point)
     {
         score[playerNo - 1] += 10;
         scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();

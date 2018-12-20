@@ -274,7 +274,7 @@ public class Player : PlayerBase, Character
         AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position, transform.position, isSteal);
+        itemObj.GetComponent<Item>().ReleaseItem();
         itemObj = null;
         hasItem = false;
     }

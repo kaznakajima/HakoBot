@@ -29,6 +29,9 @@ public class Item : MonoBehaviour
     // 障害認識
     NavMeshObstacle navMeshObs;
 
+    // 得点
+    public int point;
+
 	// Use this for initialization
 	void Start () {
         isCatch = true;
@@ -36,6 +39,8 @@ public class Item : MonoBehaviour
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
         navMeshObs = GetComponentInChildren<NavMeshObstacle>();
+
+        ReleaseItem();
 	}
 	
 	// Update is called once per frame
@@ -99,9 +104,7 @@ public class Item : MonoBehaviour
     /// <summary>
     /// 取得状態から放棄する
     /// </summary>
-    /// <param name="playerPos">取得しているプレイヤー座標</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>>
-    public void ReleaseItem(Vector3 playerPos, Vector3 opponentPos, bool isSteal)
+    public void ReleaseItem()
     {
         gameObject.layer = 9;
         transform.parent = null;
@@ -109,26 +112,13 @@ public class Item : MonoBehaviour
         myRig.useGravity = true;
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        if (isSteal)
-        {
-            // 目標地点
-            Vector3 throwPos = opponentPos;
-            // 射出角度、方向を取得
-            float angle = 70.0f;
-            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
-            // 射出
-            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
-        }
-        else
-        {
-            // 目標地点
-            Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-10.0f, 10.0f));
-            // 射出角度、方向を取得
-            float angle = 70.0f;
-            Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
-            // 射出
-            myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
-        }
+        // 目標地点
+        Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-7.0f, 7.1f));
+        // 射出角度、方向を取得
+        float angle = 30.0f;
+        Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
+        // 射出
+        myRig.AddForce(velocity * myRig.mass, ForceMode.Impulse);
     }
 
     /// <summary>
