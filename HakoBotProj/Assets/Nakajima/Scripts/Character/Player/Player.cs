@@ -211,6 +211,9 @@ public class Player : PlayerBase, Character
     // スタン
     public void Stan()
     {
+        if (isStan == true)
+            return;
+
         myAudio.loop = true;
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
 

@@ -1660,6 +1660,7 @@ MonoBehaviour:
   - {fileID: 1074333216}
   noise: {fileID: 1110515089}
   title: {fileID: 130137281}
+  titleAnim: {fileID: 898639222}
 --- !u!1 &668566480
 GameObject:
   m_ObjectHideFlags: 0
@@ -2304,7 +2305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

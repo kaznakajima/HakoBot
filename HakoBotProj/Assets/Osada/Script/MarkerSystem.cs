@@ -27,7 +27,7 @@ public class MarkerSystem : MonoBehaviour
                 add += 0.001f * Time.deltaTime;
             }).AddTo(this);
 
-        Observable.Timer(System.TimeSpan.FromSeconds(5.0f))
+        Observable.Timer(System.TimeSpan.FromSeconds(10.0f))
             .Subscribe(_ =>
             {
                 Destroy(gameObject);

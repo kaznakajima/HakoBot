@@ -31,7 +31,7 @@ public class MissileRobot : MonoBehaviour
 
     private void Start()
     {
-        EventStart();
+        //EventStart();
 
         m_Moved.Where(c => c)
             .Subscribe(c =>
@@ -74,6 +74,8 @@ public class MissileRobot : MonoBehaviour
                 scr.Setting(m_targetPos);
                 obj.transform.parent = null;
 
+                // ミサイル発射音
+                AudioController.Instance.OtherAuioPlay(obj.GetComponent<Missile>().myAudio, "Missile");
                 StartCoroutine("Return");
                 break;
             }
@@ -84,6 +86,7 @@ public class MissileRobot : MonoBehaviour
     private IEnumerator Return()
     {
         var pos = m_MoveStartPosition;
+
         while (true)
         {
             var dir = (pos - transform.position).normalized;

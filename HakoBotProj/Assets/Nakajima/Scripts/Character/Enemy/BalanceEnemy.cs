@@ -417,6 +417,9 @@ public class BalanceEnemy : EnemyBase, Character
 
     public void Stan()
     {
+        if (isStan == true)
+            return;
+
         myAudio.loop = true;
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
 

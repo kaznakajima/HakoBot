@@ -17,14 +17,21 @@ public class Missile : MonoBehaviour
     [SerializeField]
     private GameObject m_Explosion;
 
+    // 自身のAudioSource
+    [HideInInspector]
+    public AudioSource myAudio;
+
     private void Start()
     {
+        myAudio = GetComponent<AudioSource>();
+
         m_Moved.Where(c => c)
             .Subscribe(c => StartCoroutine("Move")).AddTo(this);
     }
 
     private IEnumerator Move()
     {
+
         while (true)
         {
             var dir = (m_Route[m_Count] - transform.position).normalized;
@@ -44,6 +51,9 @@ public class Missile : MonoBehaviour
             {
                 m_Explosion.transform.parent = null;
                 m_Explosion.SetActive(true);
+
+                // 爆発音
+                AudioController.Instance.OtherAuioPlay(myAudio, "Bomb");
                 Observable.Timer(System.TimeSpan.FromSeconds(0.5f)).Subscribe(__ => Destroy(gameObject)).AddTo(this);
                 m_Moved.Value = false;
                 break;

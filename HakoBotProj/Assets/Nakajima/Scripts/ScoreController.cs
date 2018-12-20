@@ -24,10 +24,14 @@ public class ScoreController : MonoBehaviour
 		
 	}
 
-    // スコア加点
+    /// <summary>
+    /// スコア加点
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <param name="point">加算する点数</param>
     public void AddScore(int playerNo, int point)
     {
-        score[playerNo - 1] += 10;
+        score[playerNo - 1] += point;
         scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();
         playerData[playerNo - 1].point = score[playerNo - 1];
     }

@@ -59,6 +59,7 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         LoadSe("Shutter", "Shutter");              // シャッター開閉
         LoadSe("Bomb", "Bomb");                  // 爆破音
         LoadSe("Stan", "Stan");                      // スタン
+        LoadSe("Missile", "Missile");                // ミサイル
     }
 
     //サウンドのロード
