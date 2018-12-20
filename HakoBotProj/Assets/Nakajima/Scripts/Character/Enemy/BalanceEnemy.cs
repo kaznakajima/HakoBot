@@ -485,7 +485,7 @@ public class BalanceEnemy : EnemyBase, Character
         AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
+        itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
         ResetTarget();
     }

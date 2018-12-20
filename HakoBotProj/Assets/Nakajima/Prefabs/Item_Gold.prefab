@@ -229,6 +229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCatch: 0
   isTarget: 0
+  point: 50
 --- !u!208 &208960876645648392
 NavMeshObstacle:
   m_ObjectHideFlags: 1

@@ -17,7 +17,7 @@ public class Poibot_Throwing : MonoBehaviour
     private Transform startPoint;
     private Vector3 targetPoint;
     // 射出角度
-    private float angle = 60f;
+    private float angle = 30.0f;
     //投てき範囲（現在は正方形バージョン）
     [SerializeField]
     private float range;
@@ -38,7 +38,7 @@ public class Poibot_Throwing : MonoBehaviour
     {
         var posx = Random.Range(-range, range);
         var posz = Random.Range(-range, range);
-        Vector3 pos = new Vector3(posx, 1, posz);
+        Vector3 pos = new Vector3(posx, 0.5f, posz);
         return pos;
     }
 
@@ -55,16 +55,16 @@ public class Poibot_Throwing : MonoBehaviour
             if (t == 0) throwingObj = highPointBaggage;
         }
 
-        var obj = Instantiate(throwingObj, startPoint.position, Quaternion.identity) as GameObject;
+        var obj = Instantiate(throwingObj, transform.position, Quaternion.identity) as GameObject;
         // 標的の座標
-        Vector3 targetPosition = targetPoint;
+        //Vector3 targetPosition = targetPoint;
 
         // 射出速度を算出
-        Vector3 velocity = CalculateVelocity(startPoint.position, targetPosition, angle);
+        //Vector3 velocity = CalculateVelocity(transform.position, targetPosition, angle);
 
         // 射出
-        Rigidbody rid = obj.GetComponent<Rigidbody>();
-        rid.AddForce(velocity * rid.mass, ForceMode.Impulse);
+        //Rigidbody rid = obj.GetComponent<Rigidbody>();
+        //rid.AddForce(velocity * rid.mass, ForceMode.Impulse);
     }
 
     /// <summary>

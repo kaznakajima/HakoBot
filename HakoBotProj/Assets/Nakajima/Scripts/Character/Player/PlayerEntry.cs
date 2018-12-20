@@ -58,10 +58,48 @@ public class PlayerEntry : MonoBehaviour
             StartCoroutine(SceneNoise(2.0f));
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            // ゲームパッドの番号のプレイヤーをアクティブにする
+            PlayerSystem.Instance.isActive[0] = true;
+            playerEntryList[0].SetBool("isEntry", true);
+            AudioController.Instance.SEPlay("Entry");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            // ゲームパッドの番号のプレイヤーをアクティブにする
+            PlayerSystem.Instance.isActive[1] = true;
+            playerEntryList[1].SetBool("isEntry", true);
+            AudioController.Instance.SEPlay("Entry");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            // ゲームパッドの番号のプレイヤーをアクティブにする
+            PlayerSystem.Instance.isActive[2] = true;
+            playerEntryList[2].SetBool("isEntry", true);
+            AudioController.Instance.SEPlay("Entry");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            // ゲームパッドの番号のプレイヤーをアクティブにする
+            PlayerSystem.Instance.isActive[3] = true;
+            playerEntryList[3].SetBool("isEntry", true);
+            AudioController.Instance.SEPlay("Entry");
+        }
+
         for (int i = 0;i < 4; i++)
         {
+            // エントリー解除
+            if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i])
+            {
+                // ゲームパッドの番号のプレイヤーを非アクティブにする
+                PlayerSystem.Instance.isActive[i] = false;
+                playerEntryList[i].SetBool("isEntry", false);
+                AudioController.Instance.SEPlay("Cancel");
+
+                isEntry[i] = false;
+            }
             // エントリーさせる
-            if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i] == false)
+            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
             {
                 // コントローラーの振動
                 VibrationController.Instance.PlayVibration(i, true);
@@ -72,16 +110,6 @@ public class PlayerEntry : MonoBehaviour
                 AudioController.Instance.SEPlay("Entry");
 
                 isEntry[i] = true;
-            }
-            // エントリー解除
-            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i])
-            {
-                // ゲームパッドの番号のプレイヤーを非アクティブにする
-                PlayerSystem.Instance.isActive[i] = false;
-                playerEntryList[i].SetBool("isEntry", false);
-                AudioController.Instance.SEPlay("Cancel");
-
-                isEntry[i] = false;
             }
         }
     }
