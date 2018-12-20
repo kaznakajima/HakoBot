@@ -35,6 +35,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
 	// Use this for initialization
 	void Start () {
+        DontDestroyOnLoad(gameObject);
+
         myAudio = GetComponent<AudioSource>();
 
         noise = FindObjectOfType<CRT>();

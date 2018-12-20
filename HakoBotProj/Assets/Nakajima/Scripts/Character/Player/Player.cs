@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using XInputDotNetPure;
 
 /// <summary>
 /// プレイヤークラス
@@ -169,7 +170,7 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (isAttack)
+        if (hasItem)
             return;
 
         if (_chargeEffect != null)

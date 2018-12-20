@@ -61,7 +61,7 @@ public class PlayerEntry : MonoBehaviour
         {
             AudioController.Instance.SEPlay("Select");
             noise.myAnim.SetTrigger("switchOn");
-            StartCoroutine(SceneNoise(2.0f));
+            StartCoroutine(SceneNoise("Main", 2.0f));
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -131,8 +131,13 @@ public class PlayerEntry : MonoBehaviour
         }
     }
 
-    // シーン変更
-    public IEnumerator SceneNoise(float _interval)
+    /// <summary>
+    ///  シーン変更
+    /// </summary>
+    /// <param name="sceneName">シーン名</param>
+    /// <param name="_interval">インターバル</param>
+    /// <returns></returns>
+    public IEnumerator SceneNoise(string sceneName, float _interval)
     {
         float time = 0.0f;
         while (time <= _interval)
@@ -141,7 +146,7 @@ public class PlayerEntry : MonoBehaviour
             yield return null;
         }
 
-        AudioController.Instance.BGMChange("Main");
-        SceneManager.LoadScene("Prote");
+        AudioController.Instance.BGMChange(sceneName);
+        SceneManager.LoadScene(sceneName);
     }
 }
