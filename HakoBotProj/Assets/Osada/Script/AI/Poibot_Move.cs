@@ -42,17 +42,17 @@ public class Poibot_Move : MonoBehaviour
     /// <returns>移動目標地点</returns>
     private Vector3 SearchMoveTarget()
     {
-        var t = Random.Range(-range, range);
+        //var t = Random.Range(-range, range);
         Vector3 pos = transform.position;
-        switch (direction)
-        {
-            case Direction.Horizontal:
-                pos.x = t;
-                break;
-            case Direction.vertical:
-                pos.z = t;
-                break;
-        }
+        //switch (direction)
+        //{
+        //    case Direction.Horizontal:
+        //        pos.x = t;
+        //        break;
+        //    case Direction.vertical:
+        //        pos.z = t;
+        //        break;
+        //}
         return pos;
     }
 

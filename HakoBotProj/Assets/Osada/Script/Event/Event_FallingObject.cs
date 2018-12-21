@@ -39,7 +39,7 @@ public class Event_FallingObject : Event
                 var posX = Random.Range(-width + objectData[number].sizeX, width - objectData[number].sizeX);
                 var posZ = Random.Range(-length + objectData[number].sizeZ, length - objectData[number].sizeZ);
 
-                Instantiate(objectData[number].obj, new Vector3(posX, 5.0f, posZ), transform.rotation);
+                Instantiate(objectData[number].obj, transform.position, transform.rotation);
 
                 time.Value = Random.Range(1f, 3f);
             }).AddTo(disposables);

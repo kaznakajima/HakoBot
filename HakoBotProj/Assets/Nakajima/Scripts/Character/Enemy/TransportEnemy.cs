@@ -320,15 +320,25 @@ public class TransportEnemy : EnemyBase, Character
     // スタン
     public void Stan()
     {
+        if (isStan == true)
+            return;
+
+        myAudio.loop = true;
+        AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
+
         isStan = true;
         myRig.velocity = Vector3.zero;
 
+        // スタンエフェクト生成
         _stanEffect = Instantiate(stanEffect, transform);
         _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
 
         // しばらく動けなくなる
-        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time => 
+        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            myAudio.loop = false;
+            myAudio.Stop();
+
             _myEnergy = 0;
             // エナジーゲージの初期化
             StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
@@ -374,15 +384,9 @@ public class TransportEnemy : EnemyBase, Character
         AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
         myAnim.SetInteger("PlayAnimNum", 10);
-        itemObj.GetComponent<Item>().ReleaseItem(transform.position, opponentPos, isSteal);
+        itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
         ResetTarget();
-    }
-
-    // 充電
-    public void Charge()
-    {
-
     }
 
     /// <summary>

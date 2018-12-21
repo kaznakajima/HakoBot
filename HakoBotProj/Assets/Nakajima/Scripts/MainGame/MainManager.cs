@@ -33,21 +33,24 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     AudioSource myAudio;
     bool isPlay;
 
+    // シーン上のAudioSource
+    List<AudioSource> playingAudioSource = new List<AudioSource>();
+
 	// Use this for initialization
 	void Start () {
+        DontDestroyOnLoad(gameObject);
+
         myAudio = GetComponent<AudioSource>();
 
         noise = FindObjectOfType<CRT>();
         noiseAnim = noise.gameObject.GetComponent<Animator>();
         noiseAnim.SetTrigger("switchOff");
 
-        if (SceneManager.GetActiveScene().name != "Prote")
-        {     
+        if (SceneManager.GetActiveScene().name != "Main")
             return;
-        }
 
         // Character配置
-        for(int i = 0;i < 4; i++)
+        for (int i = 0;i < 4; i++)
         {
             // プレイヤーがエントリーしているならプレイヤー操作にする
             if (PlayerSystem.Instance.isActive[i])
@@ -94,14 +97,13 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // Update is called once per frame
     void Update () {
-        if (SceneManager.GetActiveScene().name != "Prote")
+        if (SceneManager.GetActiveScene().name != "Main")
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 noiseAnim.SetTrigger("switchOn");
                 StartCoroutine(SceneNoise(2.0f, "Title"));
             }
-
             return;
         }
 
@@ -110,7 +112,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         // ポーズ処理
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isStart) {
+            if (Time.timeScale != 0.0f) {
+                AudioController.Instance.SEPlay("Pause");
                 Pause();
             }
             else {
@@ -124,8 +127,17 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     /// </summary>
     void Pause()
     {
+
         Time.timeScale = 0.0f;
-        isStart = false;
+
+        // 再生中なら一時停止
+        foreach(var audio in GetAudioSource())
+        {
+            if (audio.isPlaying && audio != AudioController.Instance.myAudio[1]) {
+                audio.Pause();
+                playingAudioSource.Add(audio);
+            }
+        }
     }
 
     /// <summary>
@@ -134,7 +146,18 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     void Resume()
     {
         Time.timeScale = 1.0f;
-        isStart = true;
+
+        // 再開
+        foreach (var audio in playingAudioSource)
+        {
+            audio.UnPause();
+        }
+        playingAudioSource.Clear();
+    }
+
+    AudioSource[] GetAudioSource()
+    {
+        return FindObjectsOfType<AudioSource>();
     }
 
     // ゲームの状況を判断
@@ -206,6 +229,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             yield return null;
         }
 
+        AudioController.Instance.BGMChange(sceneName);
         SceneManager.LoadScene(sceneName);
     }
 }
