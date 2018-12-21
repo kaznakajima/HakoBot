@@ -24,7 +24,6 @@ class AudioList
 public class AudioController : SingletonMonobeBehaviour<AudioController>
 {
     // BGM、SE用のAudioSource
-    [SerializeField]
     public AudioSource[] myAudio;
 
     //BGMにアクセスするためのテーブル
@@ -47,7 +46,7 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         LoadBGM("Main", "Main"); // メインシーン
         LoadBGM("Result", "Result");
         // SE
-        LoadSe("Select", "Select");                    // 決定
+        LoadSe("Select", "Select");                     // 決定
         LoadSe("CountDown", "CountDown");    // カウントダウン
         LoadSe("Start", "Start");                       // ゲームスタート
         LoadSe("End", "End");                          // ゲーム終了
@@ -60,7 +59,8 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         LoadSe("Bomb", "Bomb");                  // 爆破音
         LoadSe("Stan", "Stan");                      // スタン
         LoadSe("Missile", "Missile");                // ミサイル
-        LoadSe("AddScore", "AddScore");           // スコア加算
+        LoadSe("AddScore", "AddScore");       // スコア加算
+        LoadSe("Pause", "Pause");                 // ポーズ
     }
 
     //サウンドのロード

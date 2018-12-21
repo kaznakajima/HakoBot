@@ -367,7 +367,7 @@ public class BalanceEnemy : EnemyBase, Character
             Destroy(_chargeEffect);
 
         // エフェクト再生
-        emitter.Play();
+        emitter.Play("Attack_Lv1");
 
         // エネルギー計算
         StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
@@ -491,67 +491,6 @@ public class BalanceEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
         ResetTarget();
-    }
-
-    /// <summary>
-    /// パワーチャージ
-    /// </summary>
-    public void Charge()
-    {
-        if (_chargeLevel != 0 || hasItem)
-            return;
-
-        // 移動制限
-        isCharge = true;
-        agent.updatePosition = false;
-
-        // チャージ開始
-        _chargeLevel = 1;
-        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-        emitter.effectName = "Attack";
-
-        // チャージエフェクト生成
-        _chargeEffect = Instantiate(chargeEffect, transform);
-        _chargeEffect.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
-        chargeMaterial = _chargeEffect.GetComponent<ParticleSystem>().main;
-
-        var disposable = new SingleAssignmentDisposable();
-        // 1.0秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(750)).Subscribe(time =>
-        {
-            // 3段階上昇、または攻撃で終了
-            if (_chargeLevel >= 3 || isAttack) {
-                Attack();
-                disposable.Dispose();
-            }
-            else if (_chargeLevel == 0) {
-                Destroy(_chargeEffect);
-                disposable.Dispose();
-            }
-
-            // チャージ段階上昇
-            _chargeLevel++;
-            emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-
-            // エフェクトが生成しきれていないならリターン
-            if (_chargeEffect == null)
-                return;
-
-            // チャージ段階に応じてエフェクトの見た目変更
-            switch (_chargeLevel)
-            {
-                case 1:
-                    chargeMaterial.startColor = Color.white;
-                    break;
-                case 2:
-                    chargeMaterial.startColor = Color.yellow;
-                    break;
-                case 3:
-                    chargeMaterial.startColor = Color.red;
-                    break;
-            }
-
-        }).AddTo(this);
     }
 
     /// <summary>

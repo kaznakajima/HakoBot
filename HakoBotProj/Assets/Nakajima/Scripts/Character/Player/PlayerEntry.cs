@@ -46,7 +46,7 @@ public class PlayerEntry : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f)
+            if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f || Input.GetKeyDown(KeyCode.Space))
             {
                 title.m_TiteTimeline.time = 12.5f;
                 title.m_StartTimeline.Play();

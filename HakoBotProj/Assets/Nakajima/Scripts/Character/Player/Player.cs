@@ -80,6 +80,7 @@ public class Player : PlayerBase, Character
         chargeEffect = Resources.Load("Charge") as GameObject;
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
+        emitter.effectName = "Attack";
         pointPos = emitter.gameObject.transform;
         myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
@@ -177,7 +178,7 @@ public class Player : PlayerBase, Character
             Destroy(_chargeEffect);
 
         // エフェクト再生
-        emitter.Play();
+        emitter.Play("Attack_Lv1");
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
@@ -282,59 +283,6 @@ public class Player : PlayerBase, Character
         itemObj = null;
         hasItem = false;
     }
-
-    // パワーチャージ
-    public void Charge()
-    {
-        // すでにチャージ中、アイテムを持っているならリターン
-        if (isCharge || hasItem)
-            return;
-
-        // チャージ開始
-        isCharge = true;
-        _chargeLevel = 1;
-        //emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-        emitter.effectName = "Attack";
-
-        // チャージエフェクト
-        _chargeEffect = Instantiate(chargeEffect, transform);
-        _chargeEffect.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
-        chargeMaterial = _chargeEffect.GetComponent<ParticleSystem>().main;
-
-        var disposable = new SingleAssignmentDisposable();
-        // 0.5秒ごとにチャージ
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(750)).Subscribe(time =>
-        {
-            // 3段階上昇、または攻撃で終了
-            if (_chargeLevel >= 2 || isAttack)
-            {
-                disposable.Dispose();
-            }
-
-            // チャージ段階上昇
-            _chargeLevel++;
-            emitter.effectName = "Attack_Lv" + _chargeLevel.ToString();
-
-            if (_chargeEffect == null)
-                return;
-
-            // チャージ段階に応じてエフェクトの見た目変更
-            switch (_chargeLevel)
-            {
-                case 1:
-                    chargeMaterial.startColor = Color.white;
-                    break;
-                case 2:
-                    chargeMaterial.startColor = Color.yellow;
-                    break;
-                case 3:
-                    chargeMaterial.startColor = Color.red;
-                    break;
-            }
-
-        }).AddTo(this);
-    }
-
     // 当たり判定
     void OnCollisionEnter(Collision col)
     {

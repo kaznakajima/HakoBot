@@ -389,12 +389,6 @@ public class TransportEnemy : EnemyBase, Character
         ResetTarget();
     }
 
-    // 充電
-    public void Charge()
-    {
-
-    }
-
     /// <summary>
     /// 巡回地点の取得
     /// </summary>
