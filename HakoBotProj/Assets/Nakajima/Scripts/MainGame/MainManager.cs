@@ -42,8 +42,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
         myAudio = GetComponent<AudioSource>();
 
-        noise = FindObjectOfType<CRT>();
-        noiseAnim = noise.gameObject.GetComponent<Animator>();
+        GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
 
         if (SceneManager.GetActiveScene().name != "Main")
@@ -99,11 +98,22 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     void Update () {
         if (SceneManager.GetActiveScene().name != "Main")
         {
-            if (Input.GetKeyDown(KeyCode.Z))
+            GetNoiseBase();
+
+            for(int i = 0;i < 4; i++)
             {
-                noiseAnim.SetTrigger("switchOn");
-                StartCoroutine(SceneNoise(2.0f, "Title"));
+                if (PlayerSystem.Instance.Button_A(i + 1))
+                {
+                    noiseAnim.SetTrigger("switchOn");
+                    StartCoroutine(SceneNoise(2.0f, "Title"));
+                }
+                if (PlayerSystem.Instance.Button_B(i + 1))
+                {
+                    noiseAnim.SetTrigger("switchOn");
+                    StartCoroutine(SceneNoise(2.0f, "Main"));
+                }
             }
+           
             return;
         }
 
@@ -121,6 +131,22 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             }
         }
 	}
+
+    /// <summary>
+    /// ノイズ発生用キャンバスの設定
+    /// </summary>
+    void GetNoiseBase()
+    {
+        foreach(CRT _noise in FindObjectsOfType<CRT>())
+        {
+            if(_noise.gameObject.name == "Noise") {
+                noise = _noise;
+                noiseAnim = noise.gameObject.GetComponent<Animator>();
+            }
+        }
+
+        
+    }
 
     /// <summary>
     /// ポーズ処理
@@ -207,7 +233,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         }).AddTo(this);
 
         // 3秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(4.0f)).Subscribe(time =>
         {
             disposable.Dispose();
             AudioController.Instance.SEPlay("End");
@@ -231,5 +257,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
         AudioController.Instance.BGMChange(sceneName);
         SceneManager.LoadScene(sceneName);
+
+        if (sceneName != "Result")
+            Destroy(gameObject);
     }
 }
