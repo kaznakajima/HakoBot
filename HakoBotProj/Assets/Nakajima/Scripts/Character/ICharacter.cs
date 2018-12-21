@@ -26,9 +26,6 @@ public interface Character
     /// <param name="vec">移動方向</param>
     void Move(Vector3 vec);
 
-    // チャージ
-    void Charge();
-
     // タックル
     void Attack();
 

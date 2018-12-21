@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 /// <summary>
 /// エントリー機能(仮実装)
@@ -24,6 +25,10 @@ public class PlayerEntry : MonoBehaviour
     // TimeLine
     public TitleSystem title;
 
+    // タイトルテキスト
+    [SerializeField]
+    GameObject titleAnim;
+
     // Use this for initialization
     void Start () {
         title.m_TiteTimeline.Play();
@@ -41,10 +46,11 @@ public class PlayerEntry : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (PlayerSystem.Instance.Button_B(i + 1) && title.m_TiteTimeline.time != 0.0f)
+            if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f || Input.GetKeyDown(KeyCode.Space))
             {
                 title.m_TiteTimeline.time = 12.5f;
                 title.m_StartTimeline.Play();
+                titleAnim.SetActive(false);
             }
         }
 
@@ -55,10 +61,13 @@ public class PlayerEntry : MonoBehaviour
         {
             AudioController.Instance.SEPlay("Select");
             noise.myAnim.SetTrigger("switchOn");
-            StartCoroutine(SceneNoise(2.0f));
+            StartCoroutine(SceneNoise("Main", 2.0f));
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            // コントローラーの振動
+            VibrationController.Instance.PlayVibration(0, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[0] = true;
             playerEntryList[0].SetBool("isEntry", true);
@@ -66,6 +75,8 @@ public class PlayerEntry : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
+            // コントローラーの振動
+            VibrationController.Instance.PlayVibration(1, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[1] = true;
             playerEntryList[1].SetBool("isEntry", true);
@@ -73,6 +84,8 @@ public class PlayerEntry : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
+            // コントローラーの振動
+            VibrationController.Instance.PlayVibration(2, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[2] = true;
             playerEntryList[2].SetBool("isEntry", true);
@@ -80,6 +93,9 @@ public class PlayerEntry : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
+            // コントローラーの振動
+            VibrationController.Instance.PlayVibration(3, true);
+
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[3] = true;
             playerEntryList[3].SetBool("isEntry", true);
@@ -101,6 +117,7 @@ public class PlayerEntry : MonoBehaviour
             // エントリーさせる
             if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
             {
+
                 // コントローラーの振動
                 VibrationController.Instance.PlayVibration(i, true);
 
@@ -114,8 +131,13 @@ public class PlayerEntry : MonoBehaviour
         }
     }
 
-    // シーン変更
-    public IEnumerator SceneNoise(float _interval)
+    /// <summary>
+    ///  シーン変更
+    /// </summary>
+    /// <param name="sceneName">シーン名</param>
+    /// <param name="_interval">インターバル</param>
+    /// <returns></returns>
+    public IEnumerator SceneNoise(string sceneName, float _interval)
     {
         float time = 0.0f;
         while (time <= _interval)
@@ -124,7 +146,7 @@ public class PlayerEntry : MonoBehaviour
             yield return null;
         }
 
-        AudioController.Instance.BGMChange("Main");
-        SceneManager.LoadScene("Prote");
+        AudioController.Instance.BGMChange(sceneName);
+        SceneManager.LoadScene(sceneName);
     }
 }
