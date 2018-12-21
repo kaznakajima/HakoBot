@@ -3,88 +3,77 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AI;
 using UniRx;
 using UniRx.Triggers;
 
-//ポイボットAI改良
+//ケイボット改良
 public class Sample : MonoBehaviour
 {
-    public enum ItemType
-    {
-        
-    }
-    //投てき物用構造体
-    private struct Item
-    {
-        public GameObject m_ItemObj;
-        public ItemType m_ItemType;
-        public bool m_Event;
-    }
     [SerializeField]
-    private Item[] m_Item;
-    [SerializeField]
-    private Transform m_GenerationPosition;
-    [SerializeField]
-    private GameObject m_Marker;
+    private Transform[] m_Player = new Transform[4];
 
+    private Transform m_Target;
     [SerializeField]
-    private Vector3 m_ThrowPosition;
-    [SerializeField]
-    private Vector3 m_PreparationPosition;
+    private NavMeshAgent m_Nav;
 
-    private Vector3 m_Velocity = Vector3.zero;
-    private float m_Speed = 1.0f;
-
-    private bool m_Throwing;
+    private int m_HP = 10;
 
     private void Start()
     {
-        PrepareForThrowing();
+        TargetSearch();
+
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (m_Target != null)
+                {
+                    var dis = Vector3.Distance(transform.position, m_Target.position);
+                    //指定距離まで近づけば
+                    if (dis > 5f) Attack();
+                }
+            }).AddTo(this);
     }
 
-    private void PrepareForThrowing()
+    //ターゲット決定　ポイント差によって狙われる確率を変更させる予定
+    private void TargetSearch()
     {
-        m_Throwing = true;
-        StartCoroutine(Move(m_ThrowPosition));
+        //各プレイヤーのポイントと合計ポイントを計算
+        var point = new int[] { 0, 0, 0, 0 };
+        var pointAll = 0;
+        foreach (int c in point) pointAll += c;
+        //ターゲットナンバーを決定(１～１００)
+        var number = Random.Range(1, 101);
+        //各プレイヤーのナンバーを決定
+        var rank1 = Mathf.RoundToInt(100 * (point[0] / pointAll));
+        var rank2 = Mathf.RoundToInt(100 * (point[1] / pointAll)) + rank1;
+        var rank3 = Mathf.RoundToInt(100 * (point[2] / pointAll)) + rank2;
+        var rank4 = Mathf.RoundToInt(100 * (point[3] / pointAll)) + rank3;
+        //ターゲットの決定
+        if (number <= rank1) m_Target = m_Player[0];
+        else if (number <= rank2) m_Target = m_Player[1];
+        else if (number <= rank3) m_Target = m_Player[2];
+        else m_Target = m_Player[3];
+
+        Move();
     }
 
-    private void Throwing()
+    //ターゲット付近まで移動
+    private void Move()
     {
-        var objList = m_Item.Where(c => c.m_Event).ToList();
-        var objNumber = Random.Range(0, objList.Count());
-
-        switch (m_Item[objNumber].m_ItemType)
-        {
-
-        }
-
-        m_Throwing = false;
-        StartCoroutine(Move(m_PreparationPosition));
+        m_Nav.SetDestination(m_Target.position);
     }
 
-    private IEnumerator Move(Vector3 position)
+    //ターゲットに対して攻撃を実行
+    private void Attack()
     {
-        while (true)
-        {
-            var dir = (position - transform.position).normalized;
-            var dis = Vector3.Distance(transform.position, position);
-            var currentVelocity = m_Velocity;
-            m_Velocity = dis > 0.3f ? dir * m_Speed : Vector3.zero;
-            m_Velocity = Vector3.Lerp(currentVelocity, m_Velocity, Mathf.Min(Time.deltaTime + 5.0f, 1));
-
-
-            Quaternion characterTargetRotation = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, characterTargetRotation, 360.0f * Time.deltaTime);
-            transform.position += m_Velocity * Time.deltaTime;
-
-            if (dis < 0.3f)
-                break;
-
-            yield return null;
-        }
-        if (m_Throwing)
-            Throwing();
-        else
-            PrepareForThrowing();
+        //移動を停止
+        m_Nav.SetDestination(transform.position);
+        //攻撃処理
+        var chr = GetComponent(typeof(Character)) as Character;
+        chr.Attack();
+        //ターゲット再検索
+        Observable.Timer(System.TimeSpan.FromSeconds(2.0f))
+            .Subscribe(_ => TargetSearch());
     }
 }
