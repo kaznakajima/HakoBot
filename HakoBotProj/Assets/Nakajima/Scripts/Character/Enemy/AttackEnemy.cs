@@ -418,14 +418,20 @@ public class AttackEnemy : EnemyBase, Character
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
 
         isStan = true;
+        myRig.velocity = Vector3.zero;
+        agent.updatePosition = false;
+
+        myAnim.SetInteger("PlayAnimNum", 3);
 
         // スタンエフェクト生成
         _stanEffect = Instantiate(stanEffect, transform);
-        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.25f, 0.0f);
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            agent.updatePosition = true;
+
             myAudio.loop = false;
             myAudio.Stop();
 
