@@ -8,17 +8,19 @@ public class AI_Poibot : MonoBehaviour
 {
     public enum ItemType
     {
-
+        Baggage,
+        HighBaggage,
+        Missile,
+        Keibot
     }
     //投てき物用構造体
-    private struct Item
+    public struct Item
     {
         public GameObject m_ItemObj;
         public ItemType m_ItemType;
         public bool m_Event;
     }
-    [SerializeField]
-    private Item[] m_Item;
+    public Item[] m_Item;
     [SerializeField]
     private Transform m_GenerationPosition;
     [SerializeField]
