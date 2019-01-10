@@ -39,15 +39,6 @@ public class Player : PlayerBase, Character
         get { return _myEnergy; }
     }
 
-    // チャージ段階
-    private int _chargeLevel;
-
-    public int chargeLevel
-    {
-        set { }
-        get { return _chargeLevel; }
-    }
-
     // アイテムを所持しているか
     private bool _hasItem;
 
@@ -185,12 +176,12 @@ public class Player : PlayerBase, Character
         isCharge = false;
 
         // エネルギー計算
-        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
 
         myRig.velocity = transform.forward * 10.0f;
 
-        // 1.5秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        // 1秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             myRig.velocity = Vector3.zero;
             myAnim.SetInteger("PlayAnimNum", 8);
@@ -259,6 +250,7 @@ public class Player : PlayerBase, Character
         itemObj = obj;
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
+        gameObject.layer = 11;
 
         hasItem = true;
     }
@@ -284,6 +276,7 @@ public class Player : PlayerBase, Character
         itemObj.GetComponent<Item>().ReleaseItem();
         itemObj = null;
         hasItem = false;
+        gameObject.layer = 0;
     }
     // 当たり判定
     void OnCollisionEnter(Collision col)

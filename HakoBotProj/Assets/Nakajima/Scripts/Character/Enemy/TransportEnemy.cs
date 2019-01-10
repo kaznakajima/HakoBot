@@ -12,7 +12,7 @@ using System.Linq;
 public class TransportEnemy : EnemyBase, Character
 {
     // エフェクト再生
-    //EffekseerEmitter emitter;
+    // EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     public int _myNumber;
@@ -34,15 +34,6 @@ public class TransportEnemy : EnemyBase, Character
                 _myEnergy = 9;
         }
         get { return _myEnergy; }
-    }
-
-    // チャージ段階
-    private int _chargeLevel;
-
-    public int chargeLevel
-    {
-        set { }
-        get { return _chargeLevel; }
     }
 
     // アイテムを所持しているか
@@ -86,7 +77,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
-        //emitter = GetComponentInChildren<EffekseerEmitter>();
+        // emitter = GetComponentInChildren<EffekseerEmitter>();
 
         for (int i = 0; i < GetPointArea().Length; i++)
         {
@@ -191,6 +182,16 @@ public class TransportEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            // 高得点アイテムを最優先
+            if (GetItems()[i].point > 10 && GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
+                if(GetItems()[i].isCarry == false)
+                {
+                    minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
+                    targetObj = GetItems()[i].gameObject;
+                }
+                break;
+            }
+
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
@@ -371,6 +372,7 @@ public class TransportEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
+        gameObject.layer = 11;
         SetTarget();
     }
 
@@ -391,6 +393,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
+        gameObject.layer = 0;
         ResetTarget();
     }
 

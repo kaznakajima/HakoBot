@@ -11,9 +11,6 @@ public interface Character
     // エネルギー残量
     int myEnergy { get; set; }
 
-    // チャージ段階
-    int chargeLevel { get; set; }
-
     // アイテムを所持しているか
     bool hasItem { get; set; }
 

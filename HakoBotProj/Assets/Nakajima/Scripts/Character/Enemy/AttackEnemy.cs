@@ -32,15 +32,6 @@ public class AttackEnemy : EnemyBase, Character
         get { return _myEnergy; }
     }
 
-    // チャージ段階
-    private int _chargeLevel;
-
-    public int chargeLevel
-    {
-        set { }
-        get { return _chargeLevel; }
-    }
-
     // アイテムを所持しているか
     private bool _hasItem;
 
@@ -217,6 +208,16 @@ public class AttackEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            // 高得点アイテムを最優先
+            if (GetItems()[i].point > 10 && GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
+                if (GetItems()[i].isCarry == false)
+                {
+                    minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
+                    targetObj = GetItems()[i].gameObject;
+                }
+                break;
+            }
+
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
@@ -363,31 +364,19 @@ public class AttackEnemy : EnemyBase, Character
         emitter.Play("Attack_Lv1");
 
         // エネルギー計算
-        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
-        // チャージ段階に応じてアタック強化
-        switch (_chargeLevel)
-        {
-            case 3:
-                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
-                break;
-            default:
-                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 10.0f;
-                break;
-        }
+        // アタック
+        myRig.velocity = transform.forward * 10.0f;
 
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
-            // チャージ段階を初期化
-            _chargeLevel = 0;
             myRig.velocity = Vector3.zero;
 
             // 移動制限解除
@@ -469,6 +458,7 @@ public class AttackEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
+        gameObject.layer = 11;
         SetTarget();
     }
 
@@ -489,6 +479,7 @@ public class AttackEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
+        gameObject.layer = 0;
         ResetTarget();
     }
 

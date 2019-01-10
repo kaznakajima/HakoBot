@@ -42,7 +42,7 @@ public class ScoreController : MonoBehaviour
 
         var disposable = new SingleAssignmentDisposable();
         // だんだんスコア加算
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(10)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(50)).Subscribe(time =>
         {
             score[playerNo - 1]++;
             scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();

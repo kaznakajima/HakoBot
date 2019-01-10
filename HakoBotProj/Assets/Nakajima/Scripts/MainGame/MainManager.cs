@@ -29,8 +29,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     [SerializeField]
     AnimationClip endClip;
 
-    // 自身のAudioSource
-    AudioSource myAudio;
     bool isPlay;
 
     // シーン上のAudioSource
@@ -39,8 +37,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 	// Use this for initialization
 	void Start () {
         DontDestroyOnLoad(gameObject);
-
-        myAudio = GetComponent<AudioSource>();
 
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");

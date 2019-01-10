@@ -2254,7 +2254,7 @@ MonoBehaviour:
     type: 2}
   startPoint: {fileID: 635421118}
   range: 8
-  playEvent: 0
+  playEvent: 1
 --- !u!4 &635421118
 Transform:
   m_ObjectHideFlags: 0
