@@ -11,24 +11,30 @@ public class AI_Poibot : MonoBehaviour
         Baggage,
         HighBaggage,
         Missile,
-        Keibot
+        Keibot,
+        Rod
     }
     //投てき物用構造体
+    [System.Serializable]
     public struct Item
     {
+        [Header("投てき物")]
         public GameObject m_ItemObj;
+        [Header("アイテムタイプ")]
         public ItemType m_ItemType;
+        [Header("投げていいものかの判断（触るの禁止）")]
         public bool m_Event;
     }
+    [SerializeField,Header("投てき物リスト")]
     public Item[] m_Item;
-    [SerializeField]
+    [SerializeField,Header("投てき物出現地点")]
     private Transform m_GenerationPosition;
-    [SerializeField]
+    [SerializeField,Header("投てき位置マークオブジェクト")]
     private GameObject m_Marker;
 
-    [SerializeField]
+    [SerializeField,Header("投てき位置")]
     private Vector3 m_ThrowPosition;
-    [SerializeField]
+    [SerializeField, Header("補充位置")]
     private Vector3 m_PreparationPosition;
 
     private Vector3 m_Velocity = Vector3.zero;
@@ -54,7 +60,15 @@ public class AI_Poibot : MonoBehaviour
 
         switch (m_Item[objNumber].m_ItemType)
         {
-
+            case ItemType.Baggage:
+            case ItemType.HighBaggage:
+                break;
+            case ItemType.Missile:
+                break;
+            case ItemType.Keibot:
+                break;
+            case ItemType.Rod:
+                break;
         }
 
         m_Throwing = false;
