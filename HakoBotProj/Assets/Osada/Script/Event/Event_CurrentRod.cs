@@ -4,35 +4,48 @@ using UnityEngine;
 
 public class Event_CurrentRod : Event
 {
-    [SerializeField]
-    private AI_Poibot m_Poibot;
+    private List<Rod> m_RodList = new List<Rod>();
 
     [SerializeField]
-    private Vector3 m_CenterPos;
-    [SerializeField]
-    private float m_Width, m_Depth;
+    private GameObject m_RodPre;
 
-    private List<Vector3> m_ThrowPosList = new List<Vector3>();
+    [SerializeField]
+    private List<Vector3> m_CenterPosList = new List<Vector3>();
+    [SerializeField]
+    private float m_Range;
 
     public override void EventStart()
     {
-
+        //ココ適当後で治す
+        foreach(Vector3 centerPos in m_CenterPosList)
+        {
+            var list = Search(centerPos, m_Range);
+            foreach(Vector3 pos in list)
+            {
+                var obj = Instantiate(m_RodPre, pos, transform.rotation) as GameObject;
+                m_RodList.Add(obj.GetComponent<Rod>());
+            }
+        }
     }
 
     public override void EventEnd()
     {
-
+        foreach(Rod rod in m_RodList)
+        {
+            rod.Destroy();
+        }
     }
 
-    //投てき位置検索
-    public void ThrowPositionSearch(int n)
+    public List<Vector3> Search(Vector3 CenterPos, float Range)
     {
-
-    }
-
-    //投てき範囲List作成
-    public void CreateThrowingRange()
-    {
-        
+        //ココ適当後で治す
+        List<Vector3> posList = new List<Vector3>();
+        for (int i = 0; i < 3; i++)  
+        {
+            var x = Random.Range(CenterPos.x - Range, CenterPos.x + Range);
+            var z = Random.Range(CenterPos.z - Range, CenterPos.z + Range);
+            posList.Add(new Vector3(x, 1, z));
+        }
+        return posList;
     }
 }

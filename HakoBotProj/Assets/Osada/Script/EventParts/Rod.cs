@@ -6,7 +6,19 @@ public class Rod : MonoBehaviour
 {
     public bool m_Activation
     {
-        set { m_Activation = value; }
+        set
+        {
+            m_Activation = value;
+            if (m_Activation)
+            {
+
+            }
+        }
         get { return m_Activation; }
+    }
+
+    public void Destroy()
+    {
+
     }
 }
