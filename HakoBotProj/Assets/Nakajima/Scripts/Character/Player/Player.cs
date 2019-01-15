@@ -57,9 +57,6 @@ public class Player : PlayerBase, Character
         get { return _isStan; }
     }
 
-
-    // チャージエフェクトの一時保存用
-    GameObject _chargeEffect;
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
     // チャージエフェクト用マテリアル
@@ -67,8 +64,8 @@ public class Player : PlayerBase, Character
     
 
     // Use this for initialization
-    void Start () {
-        chargeEffect = Resources.Load("Charge") as GameObject;
+    void Start ()
+    {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         emitter.effectName = "Attack";
@@ -94,7 +91,7 @@ public class Player : PlayerBase, Character
     // 入力判定
     void PlayerInput()
     {
-        if (isAttack || isStan)
+        if (isAttack)
             return;
 
         /* ここから移動量判定 */
@@ -135,24 +132,17 @@ public class Player : PlayerBase, Character
         // 方向キーの入力値とカメラの向きから、移動方向の決定
         Vector3 moveForward = cameraForward * vec.z + Camera.main.transform.right * vec.x;
 
-        if(isCharge == false)
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
         {
-            if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
-            {
-                myAnim.SetInteger("PlayAnimNum", 11);
-            }
-            else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
-            {
-                myAnim.SetInteger("PlayAnimNum", 4);
-            }
+            myAnim.SetInteger("PlayAnimNum", 11);
+        }
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
+        {
+            myAnim.SetInteger("PlayAnimNum", 4);
+        }
 
-            // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
-            myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
-        }
-        else
-        {
-            myRig.velocity = Vector3.zero;
-        }
+        // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
+        myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
 
         // キャラクターの向きを進行方向に
         transform.rotation = Quaternion.LookRotation(moveForward);
@@ -165,15 +155,11 @@ public class Player : PlayerBase, Character
         if (hasItem)
             return;
 
-        if (_chargeEffect != null)
-            Destroy(_chargeEffect);
-
         // エフェクト再生
         emitter.Play("Attack_Lv1");
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
-        isCharge = false;
 
         // エネルギー計算
         StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
@@ -243,14 +229,12 @@ public class Player : PlayerBase, Character
     {
         if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
             return;
-        
-        Destroy(_chargeEffect);
 
         // アイテムを所持
         itemObj = obj;
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
-        gameObject.layer = 11;
+        gameObject.layer = 12;
 
         hasItem = true;
     }
@@ -276,8 +260,19 @@ public class Player : PlayerBase, Character
         itemObj.GetComponent<Item>().ReleaseItem();
         itemObj = null;
         hasItem = false;
-        gameObject.layer = 0;
+        gameObject.layer = 11;
     }
+
+    /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    public void ItemCarry()
+    {
+        itemObj = null;
+        hasItem = false;
+        gameObject.layer = 11;
+    }
+
     // 当たり判定
     void OnCollisionEnter(Collision col)
     {

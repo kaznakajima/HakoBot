@@ -44,4 +44,9 @@ public interface Character
     /// <param name="isSteal">アイテムを奪うかどうか</param>
     /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
     void Release(bool isSteal, Vector3 opponentPos);
+
+    /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    void ItemCarry();
 }

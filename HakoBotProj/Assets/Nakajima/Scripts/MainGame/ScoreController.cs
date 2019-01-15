@@ -49,7 +49,7 @@ public class ScoreController : MonoBehaviour
             playerData[playerNo - 1].point = score[playerNo - 1];
 
             // 目標に達したらストップ
-            if (score[playerNo - 1] == nextScore)
+            if (score[playerNo - 1] >= nextScore)
                 disposable.Dispose();
 
         }).AddTo(this);

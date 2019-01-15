@@ -398,6 +398,16 @@ public class TransportEnemy : EnemyBase, Character
     }
 
     /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    public void ItemCarry()
+    {
+        itemObj = null;
+        hasItem = false;
+        gameObject.layer = 11;
+    }
+
+    /// <summary>
     /// 巡回地点の取得
     /// </summary>
     /// <returns>ステージ上のランダム座標</returns>

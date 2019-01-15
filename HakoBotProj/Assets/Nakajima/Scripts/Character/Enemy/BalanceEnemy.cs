@@ -58,9 +58,7 @@ public class BalanceEnemy : EnemyBase, Character
 
     // 自身のAnimator
     Animator myAnim;
-
-    // チャージエフェクトの一時保存用
-    GameObject _chargeEffect;
+    
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
     // チャージエフェクト用マテリアル
@@ -69,7 +67,6 @@ public class BalanceEnemy : EnemyBase, Character
     // Use this for initialization
     void Start()
     {
-        chargeEffect = Resources.Load("Charge") as GameObject;
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
@@ -363,10 +360,6 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public void Attack()
     {
-
-        if (_chargeEffect != null)
-            Destroy(_chargeEffect);
-
         // エフェクト再生
         emitter.Play("Attack_Lv1");
 
@@ -386,7 +379,6 @@ public class BalanceEnemy : EnemyBase, Character
             myAnim.SetInteger("PlayAnimNum", 8);
             myRig.velocity = Vector3.zero;
             // 移動制限解除
-            isCharge = false;
             isAttack = false;
 
             // オーバーヒート
@@ -452,12 +444,6 @@ public class BalanceEnemy : EnemyBase, Character
 
         myRig.velocity = Vector3.zero;
 
-        // チャージ中止
-        //isCharge = false;
-        //agent.updatePosition = true;
-        //_chargeLevel = 0;
-        Destroy(_chargeEffect);
-
         // アイテムを所持
         itemObj = obj;
         itemObj.transform.parent = transform;
@@ -487,6 +473,16 @@ public class BalanceEnemy : EnemyBase, Character
         hasItem = false;
         gameObject.layer = 0;
         ResetTarget();
+    }
+
+    /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    public void ItemCarry()
+    {
+        itemObj = null;
+        hasItem = false;
+        gameObject.layer = 11;
     }
 
     /// <summary>
