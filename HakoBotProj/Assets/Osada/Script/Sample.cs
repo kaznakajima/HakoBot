@@ -9,6 +9,9 @@ using UniRx.Triggers;
 
 public class Sample : MonoBehaviour
 {
+    [SerializeField]
+    private TrailRenderer_Current m_TrailRenderer;
+
     //外側のロッドの位置
     [SerializeField]
     private Vector3[] m_OuterRodPos = new Vector3[4];
@@ -24,6 +27,7 @@ public class Sample : MonoBehaviour
     //内側に設置するロッドの本数
     [SerializeField]
     private int m_MaxRodNumber;
+
     //設置したロッドの保存用List
     private List<Rod> m_RodList = new List<Rod>();
 
@@ -67,11 +71,14 @@ public class Sample : MonoBehaviour
             {
                 //通過する順で有効化するロッドの番号を取得する
                 var rodNumberList = DecideTheRodToActivate();
-                //後で記述する予定あり
-                for(int i = 0; i < rodNumberList.Count(); i++)
+                var pos = new List<Vector3>();
+                //指定されたロッドの電流化を有効化させ、座標をTrailRendererに設定させる
+                for (int i = 0; i < rodNumberList.Count(); i++)
                 {
-
+                    m_RodList[rodNumberList[i]].m_Activation = true;
+                    pos.Add(m_RodList[rodNumberList[i]].gameObject.transform.position);
                 }
+                m_TrailRenderer.SetPosition(pos.ToArray());
             }).AddTo(this);
     }
 
