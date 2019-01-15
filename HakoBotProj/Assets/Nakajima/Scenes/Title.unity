@@ -1849,7 +1849,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &745672173
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4734,9 +4734,8 @@ GameObject:
   - component: {fileID: 1535578956}
   - component: {fileID: 1535578959}
   - component: {fileID: 1535578958}
-  - component: {fileID: 1535578957}
   m_Layer: 5
-  m_Name: TitleText
+  m_Name: TitleLogo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4760,21 +4759,6 @@ RectTransform:
   m_AnchoredPosition: {x: -3.8, y: -348.7}
   m_SizeDelta: {x: 1131.7, y: 671.6}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!111 &1535578957
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1535578955}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: f3c00c22cb9f8f84e925ebb322b630e1, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: f3c00c22cb9f8f84e925ebb322b630e1, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!114 &1535578958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5458,7 +5442,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: c1d5611ee29d4344ca2860c3fee0019a, type: 2}
-  - {fileID: 2100000, guid: 02cad9bddcb129649922401aae7978cd, type: 2}
+  - {fileID: 2100000, guid: 04dd65d6b95a5bf4c83576577c75abe9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

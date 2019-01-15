@@ -94,7 +94,7 @@ public class AttackEnemy : EnemyBase, Character
             return;
 
         // オーバーヒート中はリターン
-        if (isStan || isAttack)
+        if (isStan)
             return;
 
         switch (state)
@@ -307,7 +307,7 @@ public class AttackEnemy : EnemyBase, Character
             }
 
             // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 6.0f) {
+            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) {
                 Attack();
             }
         }
@@ -363,7 +363,7 @@ public class AttackEnemy : EnemyBase, Character
         isAttack = true;
 
         // アタック
-        myRig.velocity = transform.forward * 10.0f;
+        myRig.velocity += transform.forward * 7.5f;
 
 
         // 1秒後に移動再開
