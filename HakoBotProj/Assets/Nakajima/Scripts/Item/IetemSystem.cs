@@ -20,8 +20,6 @@ public class IetemSystem : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
-        var x = Random.Range(-max_H, max_H);
-        var y = Random.Range(-max_V, max_V);
         var obj = Instantiate(ietemPre, transform.position, transform.rotation);
         ietem[0] = obj;
 
@@ -33,8 +31,6 @@ public class IetemSystem : MonoBehaviour
                 {
                     if (ietem[i] == null)
                     {
-                        var x2 = Random.Range(-max_H, max_H);
-                        var y2 = Random.Range(-max_V, max_V);
                         var obj2 = Instantiate(ietemPre, transform.position, transform.rotation);
                         ietem[i] = obj2;
                         break;

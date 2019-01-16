@@ -73,7 +73,7 @@ public class PointArea : MonoBehaviour
         if(col.gameObject.tag == "Item")
         {
             var character = col.gameObject.GetComponentInParent(typeof(Character)) as Character;
-            character.hasItem = false;
+            character.ItemCarry();
             
             score.AddScore(character.myNumber, col.gameObject.GetComponent<Item>().point);
             col.gameObject.GetComponent<Item>().ItemCarry(gameObject, dir);

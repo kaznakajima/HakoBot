@@ -87,11 +87,33 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         }
     }
 
+    /// <summary>
+    /// Aボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
     public bool Button_A(int playerNo)
     {
         if (state[playerNo] != null)
         {
             return state[playerNo].A;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Xボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool Button_X(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].X;
         }
         else
         {
