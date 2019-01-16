@@ -6,9 +6,6 @@ using UniRx;
 
 public class Event_CurrentRod : Event
 {
-    [SerializeField]
-    private TrailRenderer_Current m_TrailRenderer;
-
     //外側のロッドの位置
     [SerializeField]
     private Vector3[] m_OuterRodPos = new Vector3[4];
@@ -17,17 +14,26 @@ public class Event_CurrentRod : Event
     private Vector3 m_CenterPos;
     //設置を行っていい中心からの範囲（半径）
     [SerializeField]
-    private float m_Range;
+    private float m_Range = 5.0f;
+
     //設置を行うロッド
     [SerializeField]
     private GameObject m_RodPre;
     //内側に設置するロッドの本数
-    [SerializeField]
-    private int m_MaxRodNumber;
+    private int m_MaxRodNumber = 3;
 
     //設置したロッドの保存用List
     private List<Rod> m_RodList = new List<Rod>();
 
+    //ライン表示用オブジェクト
+    [SerializeField]
+    private GameObject m_LineObj;
+
+    private void Start()
+    {
+        //設置を行う
+        PerformRodInstallation();
+    }
 
     public override void EventStart()
     {
@@ -72,10 +78,16 @@ public class Event_CurrentRod : Event
                 //指定されたロッドの電流化を有効化させ、座標をTrailRendererに設定させる
                 for (int i = 0; i < rodNumberList.Count(); i++)
                 {
-                    m_RodList[rodNumberList[i]].m_Activation = true;
-                    pos.Add(m_RodList[rodNumberList[i]].gameObject.transform.position);
+                    var number = rodNumberList[i];
+                    m_RodList[number].m_Activation.Value = true;
+                    pos.Add(m_RodList[number].gameObject.transform.position);
                 }
-                m_TrailRenderer.SetPosition(pos.ToArray());
+                var lineRenderer = m_LineObj.GetComponent<LineRenderer>();
+                lineRenderer.positionCount = pos.Count();
+                for (int i = 0; i < pos.Count; i++)
+                {
+                    lineRenderer.SetPosition(i, pos[i]);
+                }
             }).AddTo(this);
     }
 
@@ -94,18 +106,15 @@ public class Event_CurrentRod : Event
         //有効化する内側のロッドの本数を決める
         var number = Random.Range(1, m_MaxRodNumber + 1);
         var count = 0;
-        while (true)
+        while (count < number)
         {
             //有効化する内側のロッドの決定
-            var rodNumber = Random.Range(m_OuterRodPos.Length + 1, m_RodList.Count());
+            var rodNumber = Random.Range(m_OuterRodPos.Length, m_RodList.Count());
             //もう選択されているロッドではなかった場合、Listに追加しカウントを増やす
-            if (routeRodNumber.Any(c => c != rodNumber))
+            if (routeRodNumber.All(c => c != rodNumber))
             {
                 routeRodNumber.Add(rodNumber);
                 count += 1;
-                //指定の本数に到達したら終了
-                if (count >= number)
-                    break;
             }
         }
 
