@@ -18,10 +18,6 @@ public class PlayerBase : MonoBehaviour
     [HideInInspector]
     public Transform pointPos;
 
-    // チャージ判定
-    [HideInInspector]
-    public bool isCharge;
-
     // 攻撃判定
     [HideInInspector]
     public bool isAttack;
@@ -39,7 +35,6 @@ public class PlayerBase : MonoBehaviour
     public GameObject itemObj;
 
     // エフェクト用オブジェクト
-    protected GameObject chargeEffect;
     protected GameObject stanEffect;
 
     // Use this for initialization

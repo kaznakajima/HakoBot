@@ -32,15 +32,6 @@ public class AttackEnemy : EnemyBase, Character
         get { return _myEnergy; }
     }
 
-    // チャージ段階
-    private int _chargeLevel;
-
-    public int chargeLevel
-    {
-        set { }
-        get { return _chargeLevel; }
-    }
-
     // アイテムを所持しているか
     private bool _hasItem;
 
@@ -69,8 +60,6 @@ public class AttackEnemy : EnemyBase, Character
     // 自身のAnimator
     Animator myAnim;
 
-    // チャージエフェクトの一時保存用
-    GameObject _chargeEffect;
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
     // チャージエフェクト用マテリアル
@@ -80,7 +69,6 @@ public class AttackEnemy : EnemyBase, Character
     // Use this for initialization
     void Start()
     {
-        chargeEffect = Resources.Load("Charge") as GameObject;
         stanEffect = Resources.Load("PlayerStan") as GameObject;
         emitter = GetComponentInChildren<EffekseerEmitter>();
         pointPos = emitter.gameObject.transform;
@@ -106,7 +94,7 @@ public class AttackEnemy : EnemyBase, Character
             return;
 
         // オーバーヒート中はリターン
-        if (isStan || isAttack)
+        if (isStan)
             return;
 
         switch (state)
@@ -217,6 +205,16 @@ public class AttackEnemy : EnemyBase, Character
         // ステージ上のアイテムすべてにアクセス
         for (int i = 0; i < GetItems().Length; i++)
         {
+            // 高得点アイテムを最優先
+            if (GetItems()[i].point > 10 && GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
+                if (GetItems()[i].isCarry == false)
+                {
+                    minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
+                    targetObj = GetItems()[i].gameObject;
+                }
+                break;
+            }
+
             // 最短距離のアイテムをターゲットに設定
             if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
                 // 最短距離の格納
@@ -309,7 +307,7 @@ public class AttackEnemy : EnemyBase, Character
             }
 
             // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 6.0f) {
+            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) {
                 Attack();
             }
         }
@@ -355,43 +353,26 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public void Attack()
     {
-
-        if (_chargeEffect != null)
-            Destroy(_chargeEffect);
-
         // エフェクト再生
         emitter.Play("Attack_Lv1");
 
         // エネルギー計算
-        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber, _chargeLevel));
+        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
 
-        // チャージ段階に応じてアタック強化
-        switch (_chargeLevel)
-        {
-            case 3:
-                //myRig.AddForce(transform.forward * (_chargeLevel - 1) * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 5.0f * _chargeLevel;
-                break;
-            default:
-                //myRig.AddForce(transform.forward * _chargeLevel * 200.0f, ForceMode.Acceleration);
-                myRig.velocity = transform.forward * 10.0f;
-                break;
-        }
+        // アタック
+        myRig.velocity += transform.forward * 7.5f;
 
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(time =>
+        Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
-            // チャージ段階を初期化
-            _chargeLevel = 0;
             myRig.velocity = Vector3.zero;
 
             // 移動制限解除
-            isCharge = false;
             isAttack = false;
 
             // オーバーヒート
@@ -418,14 +399,20 @@ public class AttackEnemy : EnemyBase, Character
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
 
         isStan = true;
+        myRig.velocity = Vector3.zero;
+        agent.updatePosition = false;
+
+        myAnim.SetInteger("PlayAnimNum", 3);
 
         // スタンエフェクト生成
         _stanEffect = Instantiate(stanEffect, transform);
-        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.0f, 0.0f);
+        _stanEffect.transform.localPosition = new Vector3(0.0f, 1.25f, 0.0f);
 
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            agent.updatePosition = true;
+
             myAudio.loop = false;
             myAudio.Stop();
 
@@ -451,18 +438,13 @@ public class AttackEnemy : EnemyBase, Character
 
         myRig.velocity = Vector3.zero;
 
-        //// チャージ中止
-        //isCharge = false;
-        //agent.updatePosition = true;
-        //_chargeLevel = 0;
-        Destroy(_chargeEffect);
-
         // アイテムを所持
         itemObj = obj;
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
+        gameObject.layer = 11;
         SetTarget();
     }
 
@@ -483,7 +465,18 @@ public class AttackEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
+        gameObject.layer = 0;
         ResetTarget();
+    }
+
+    /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    public void ItemCarry()
+    {
+        itemObj = null;
+        hasItem = false;
+        gameObject.layer = 11;
     }
 
     /// <summary>

@@ -27,7 +27,11 @@ public class PlayerEntry : MonoBehaviour
 
     // タイトルテキスト
     [SerializeField]
-    GameObject titleAnim;
+    GameObject[] titleAnim;
+    [SerializeField]
+    GameObject startAnim;
+
+    int num = 0;
 
     // Use this for initialization
     void Start () {
@@ -46,56 +50,38 @@ public class PlayerEntry : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f || Input.GetKeyDown(KeyCode.Space))
+            if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f)
             {
                 title.m_TiteTimeline.time = 12.5f;
                 title.m_StartTimeline.Play();
-                titleAnim.SetActive(false);
+                titleAnim[0].SetActive(false);
+                titleAnim[1].SetActive(false);
             }
         }
 
         if (title.m_StartTimeline.time < 4.0f)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            AudioController.Instance.SEPlay("Select");
-            noise.myAnim.SetTrigger("switchOn");
-            StartCoroutine(SceneNoise("Main", 2.0f));
-        }
-
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            // コントローラーの振動
-            VibrationController.Instance.PlayVibration(0, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[0] = true;
             playerEntryList[0].SetBool("isEntry", true);
             AudioController.Instance.SEPlay("Entry");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        }  if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            // コントローラーの振動
-            VibrationController.Instance.PlayVibration(1, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[1] = true;
             playerEntryList[1].SetBool("isEntry", true);
             AudioController.Instance.SEPlay("Entry");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        }if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            // コントローラーの振動
-            VibrationController.Instance.PlayVibration(2, true);
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[2] = true;
             playerEntryList[2].SetBool("isEntry", true);
             AudioController.Instance.SEPlay("Entry");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
+        }if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            // コントローラーの振動
-            VibrationController.Instance.PlayVibration(3, true);
-
             // ゲームパッドの番号のプレイヤーをアクティブにする
             PlayerSystem.Instance.isActive[3] = true;
             playerEntryList[3].SetBool("isEntry", true);
@@ -104,6 +90,7 @@ public class PlayerEntry : MonoBehaviour
 
         for (int i = 0;i < 4; i++)
         {
+
             // エントリー解除
             if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i])
             {
@@ -111,13 +98,14 @@ public class PlayerEntry : MonoBehaviour
                 PlayerSystem.Instance.isActive[i] = false;
                 playerEntryList[i].SetBool("isEntry", false);
                 AudioController.Instance.SEPlay("Cancel");
-
                 isEntry[i] = false;
+
+                num--;
+                if (num == 0) startAnim.SetActive(false);
             }
             // エントリーさせる
             if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
             {
-
                 // コントローラーの振動
                 VibrationController.Instance.PlayVibration(i, true);
 
@@ -127,6 +115,23 @@ public class PlayerEntry : MonoBehaviour
                 AudioController.Instance.SEPlay("Entry");
 
                 isEntry[i] = true;
+                num++;
+                if (num == 1)  startAnim.SetActive(true);
+            }
+
+            // Xボタンでゲームスタート
+            if (PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive[i] == true)
+            {
+                AudioController.Instance.SEPlay("Select");
+                noise.myAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise("Main", 2.0f));
+            }
+            // スペースボタンでゲームスタート
+            if (Input.GetKeyDown(KeyCode.Space) && PlayerSystem.Instance.isActive[i] == true)
+            {
+                AudioController.Instance.SEPlay("Select");
+                noise.myAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise("Main", 2.0f));
             }
         }
     }

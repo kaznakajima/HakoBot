@@ -36,7 +36,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     /// <param name="playerObj">プレイヤーオブジェクト</param>
     /// <param name="playerNum">プレイヤー番号</param>
     /// <param name="_chargeLevel">チャージ段階</param>
-    public IEnumerator CheckOverHeat(GameObject playerObj, int playerNum, int _chargeLevel)
+    public IEnumerator CheckOverHeat(GameObject playerObj, int playerNum)
     {
         // キャラクターのインターフェイスを取得
         var character = playerObj.GetComponent(typeof(Character)) as Character;
@@ -69,7 +69,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
 
         float time = 0.0f;
         float energy = 10.0f;
-        while (time < 1.5f)
+        while (time < 2.0f)
         {
             time += Time.deltaTime;
             energy = Mathf.Lerp(energy, character.myEnergy, time / 1.5f);
