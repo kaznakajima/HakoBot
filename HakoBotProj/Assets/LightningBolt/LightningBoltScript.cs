@@ -42,13 +42,14 @@ namespace DigitalRuby.LightningBolt
     [RequireComponent(typeof(LineRenderer))]
     public class LightningBoltScript : MonoBehaviour
     {
-        [Tooltip("The game object where the lightning will emit from. If null, StartPosition is used.")]
+
+        //始点のオブジェクト
         public GameObject StartObject;
 
         [Tooltip("The start position where the lightning will emit from. This is in world space if StartObject is null, otherwise this is offset from StartObject position.")]
         public Vector3 StartPosition;
 
-        [Tooltip("The game object where the lightning will end at. If null, EndPosition is used.")]
+       // 終点のオブジェクト
         public GameObject EndObject;
 
         [Tooltip("The end position where the lightning will end at. This is in world space if EndObject is null, otherwise this is offset from EndObject position.")]
