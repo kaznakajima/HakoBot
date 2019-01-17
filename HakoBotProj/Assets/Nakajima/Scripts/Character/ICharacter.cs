@@ -11,9 +11,6 @@ public interface Character
     // エネルギー残量
     int myEnergy { get; set; }
 
-    // チャージ段階
-    int chargeLevel { get; set; }
-
     // アイテムを所持しているか
     bool hasItem { get; set; }
 
@@ -47,4 +44,9 @@ public interface Character
     /// <param name="isSteal">アイテムを奪うかどうか</param>
     /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
     void Release(bool isSteal, Vector3 opponentPos);
+
+    /// <summary>
+    /// 荷物配達完了
+    /// </summary>
+    void ItemCarry();
 }

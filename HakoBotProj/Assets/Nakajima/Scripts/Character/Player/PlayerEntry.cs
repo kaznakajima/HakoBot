@@ -27,9 +27,11 @@ public class PlayerEntry : MonoBehaviour
 
     // タイトルテキスト
     [SerializeField]
-    GameObject titleAnim;
+    GameObject[] titleAnim;
     [SerializeField]
     GameObject startAnim;
+
+    int num = 0;
 
     // Use this for initialization
     void Start () {
@@ -52,8 +54,8 @@ public class PlayerEntry : MonoBehaviour
             {
                 title.m_TiteTimeline.time = 12.5f;
                 title.m_StartTimeline.Play();
-                titleAnim.SetActive(false);
-                startAnim.SetActive(true);
+                titleAnim[0].SetActive(false);
+                titleAnim[1].SetActive(false);
             }
         }
 
@@ -88,6 +90,7 @@ public class PlayerEntry : MonoBehaviour
 
         for (int i = 0;i < 4; i++)
         {
+
             // エントリー解除
             if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i])
             {
@@ -96,6 +99,9 @@ public class PlayerEntry : MonoBehaviour
                 playerEntryList[i].SetBool("isEntry", false);
                 AudioController.Instance.SEPlay("Cancel");
                 isEntry[i] = false;
+
+                num--;
+                if (num == 0) startAnim.SetActive(false);
             }
             // エントリーさせる
             if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
@@ -109,10 +115,19 @@ public class PlayerEntry : MonoBehaviour
                 AudioController.Instance.SEPlay("Entry");
 
                 isEntry[i] = true;
+                num++;
+                if (num == 1)  startAnim.SetActive(true);
             }
 
             // Xボタンでゲームスタート
             if (PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive[i] == true)
+            {
+                AudioController.Instance.SEPlay("Select");
+                noise.myAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise("Main", 2.0f));
+            }
+            // スペースボタンでゲームスタート
+            if (Input.GetKeyDown(KeyCode.Space) && PlayerSystem.Instance.isActive[i] == true)
             {
                 AudioController.Instance.SEPlay("Select");
                 noise.myAnim.SetTrigger("switchOn");

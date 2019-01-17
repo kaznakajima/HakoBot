@@ -21,13 +21,10 @@ public class Item : MonoBehaviour
 
     // コンベアに乗ったかどうか
     [HideInInspector]
-    bool isCarry;
+    public bool isCarry;
 
     // 移動方向
     Vector3 dir;
-
-    // 障害認識
-    NavMeshObstacle navMeshObs;
 
     // 得点
     public int point;
@@ -38,7 +35,6 @@ public class Item : MonoBehaviour
         isTarget = false;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
-        navMeshObs = GetComponentInChildren<NavMeshObstacle>();
 
         ReleaseItem();
 	}
@@ -86,8 +82,6 @@ public class Item : MonoBehaviour
         if(isCatch == false)
             return;
 
-        navMeshObs.enabled = false;
-
         // プレイヤーの取得位置に配置
         transform.position = point.position;
         // 向きを修正
@@ -106,14 +100,14 @@ public class Item : MonoBehaviour
     /// </summary>
     public void ReleaseItem()
     {
-        gameObject.layer = 9;
+        gameObject.layer = 10;
         transform.parent = null;
         myCol.isTrigger = false;
         myRig.useGravity = true;
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-10.0f, 10.0f), 0.5f, Random.Range(-7.0f, 7.1f));
+        Vector3 throwPos = new Vector3(Random.Range(-15.0f, 15.0f), 0.5f, Random.Range(-7.0f, 7.1f));
         // 射出角度、方向を取得
         float angle = 30.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
@@ -157,8 +151,7 @@ public class Item : MonoBehaviour
     {
         if(col.gameObject.name == "st")
         {
-            navMeshObs.enabled = true;
-            gameObject.layer = 0;
+            gameObject.layer = 9;
             isCatch = true;
             isTarget = false;
         }
