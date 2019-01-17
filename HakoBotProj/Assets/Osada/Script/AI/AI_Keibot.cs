@@ -9,11 +9,11 @@ using UniRx.Triggers;
 public class AI_Keibot : MonoBehaviour
 {
     [SerializeField]
-    private Transform[] player = new Transform[4];
+    private Transform[] m_Player = new Transform[4];
     
-    private Transform target;
+    private Transform m_Target;
     [SerializeField]
-    private NavMeshAgent nav;
+    private NavMeshAgent m_Nav;
 
     private void Start()
     {
@@ -22,9 +22,9 @@ public class AI_Keibot : MonoBehaviour
         this.UpdateAsObservable()
             .Subscribe(_ =>
             {
-                if (target != null)
+                if (m_Target != null)
                 {
-                    var dis = Vector3.Distance(transform.position, target.position);
+                    var dis = Vector3.Distance(transform.position, m_Target.position);
                     //指定距離まで近づけば
                     if (dis > 5f) Attack();
                 }
@@ -46,10 +46,10 @@ public class AI_Keibot : MonoBehaviour
         var rank3 = Mathf.RoundToInt(100 * (point[2] / pointAll)) + rank2;
         var rank4 = Mathf.RoundToInt(100 * (point[3] / pointAll)) + rank3;
         //ターゲットの決定
-        if (number <= rank1) target = player[0];
-        else if (number <= rank2) target = player[1];
-        else if (number <= rank3) target = player[2];
-        else target = player[3];
+        if (number <= rank1) m_Target = m_Player[0];
+        else if (number <= rank2) m_Target = m_Player[1];
+        else if (number <= rank3) m_Target = m_Player[2];
+        else m_Target = m_Player[3];
 
         Move();
     }
@@ -57,14 +57,14 @@ public class AI_Keibot : MonoBehaviour
     //ターゲット付近まで移動
     private void Move()
     {
-        nav.SetDestination(target.position);
+        m_Nav.SetDestination(m_Target.position);
     }
 
     //ターゲットに対して攻撃を実行
     private void Attack()
     {
         //移動を停止
-        nav.SetDestination(transform.position);
+        m_Nav.SetDestination(transform.position);
         //攻撃処理
         var chr = GetComponent(typeof(Character)) as Character;
         chr.Attack();

@@ -8,39 +8,38 @@ using UniRx.Triggers;
 public class EventManagement : MonoBehaviour
 {
     [SerializeField]
-    private List<Event> eventList = new List<Event>();
+    private List<Event> m_eventList = new List<Event>();
 
-    private BoolReactiveProperty play = new BoolReactiveProperty(false);
+    private BoolReactiveProperty m_Action = new BoolReactiveProperty(false);
 
-    private float eventTime = 30f;
-    private float eventInterval = 30f;
-
-    private int target;
+    private float m_EventTime = 30f;
+    private float m_EventInterval = 30f;
 
     private void Start()
     {
+        var number = 0;
         //イベント開始
-        play.Where(c => !c).Subscribe(c =>
+        m_Action.Where(c => !c).Subscribe(c =>
           {
-              Observable.Timer(System.TimeSpan.FromSeconds(eventInterval))
+              Observable.Timer(System.TimeSpan.FromSeconds(m_EventInterval))
               .Subscribe(x =>
               {
-                  target = Random.Range(0, eventList.Count);
-                  eventList[target].EventStart();
-                  Debug.Log("イベント" + target + "スタート");
-                  play.Value = true;
+                  number = Random.Range(0, m_eventList.Count);
+                  m_eventList[number].EventStart();
+                  Debug.Log("イベント" + number + "スタート");
+                  m_Action.Value = true;
               }).AddTo(this);
           }).AddTo(this);
 
         //イベント終了
-        play.Where(c => c).Subscribe(c =>
+        m_Action.Where(c => c).Subscribe(c =>
           {
-              Observable.Timer(System.TimeSpan.FromSeconds(eventTime))
+              Observable.Timer(System.TimeSpan.FromSeconds(m_EventTime))
               .Subscribe(x =>
               {
-                  eventList[target].EventEnd();
-                  Debug.Log("イベント" + target + "終了");
-                  play.Value = false;
+                  m_eventList[number].EventEnd();
+                  Debug.Log("イベント" + number + "終了");
+                  m_Action.Value = false;
               }).AddTo(this);
           }).AddTo(this);
     }
