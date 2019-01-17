@@ -39,17 +39,19 @@ public class ScoreController : MonoBehaviour
 
         // 目標の得点を格納
         int nextScore = score[playerNo - 1] + point;
+        int _score = score[playerNo - 1];
+        score[playerNo - 1] = nextScore;
 
         var disposable = new SingleAssignmentDisposable();
         // だんだんスコア加算
         disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(50)).Subscribe(time =>
         {
-            score[playerNo - 1]++;
-            scoreTex[playerNo - 1].text = score[playerNo - 1].ToString();
+            _score++;
+            scoreTex[playerNo - 1].text = _score.ToString();
             playerData[playerNo - 1].point = score[playerNo - 1];
 
             // 目標に達したらストップ
-            if (score[playerNo - 1] >= nextScore)
+            if (_score == nextScore)
                 disposable.Dispose();
 
         }).AddTo(this);

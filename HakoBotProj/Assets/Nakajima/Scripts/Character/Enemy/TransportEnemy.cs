@@ -347,7 +347,7 @@ public class TransportEnemy : EnemyBase, Character
 
             _myEnergy = 0;
             // エナジーゲージの初期化
-            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            HPCircle.Instance.EnergyReset(gameObject, _myNumber);
 
             Destroy(_stanEffect);
             isStan = false;
@@ -372,7 +372,7 @@ public class TransportEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
-        gameObject.layer = 11;
+        gameObject.layer = 12;
         SetTarget();
     }
 
@@ -393,7 +393,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
-        gameObject.layer = 0;
+        gameObject.layer = 11;
         ResetTarget();
     }
 

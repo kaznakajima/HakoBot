@@ -357,7 +357,7 @@ public class AttackEnemy : EnemyBase, Character
         emitter.Play("Attack_Lv1");
 
         // エネルギー計算
-        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
+        HPCircle.Instance.CheckOverHeat(gameObject, _myNumber);
 
         myAnim.SetInteger("PlayAnimNum", 1);
         isAttack = true;
@@ -418,7 +418,7 @@ public class AttackEnemy : EnemyBase, Character
 
             _myEnergy = 0;
             // エナジーゲージの初期化
-            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            HPCircle.Instance.EnergyReset(gameObject, _myNumber);
 
             Destroy(_stanEffect);
 
@@ -444,7 +444,7 @@ public class AttackEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
-        gameObject.layer = 11;
+        gameObject.layer = 12;
         SetTarget();
     }
 
@@ -465,7 +465,7 @@ public class AttackEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
-        gameObject.layer = 0;
+        gameObject.layer = 11;
         ResetTarget();
     }
 
