@@ -19,12 +19,12 @@ namespace DigitalRuby.LightningBolt
         //出現させたエフェクト保存用
         private List<GameObject> m_EffectList = new List<GameObject>();
 
-        //ライン表示用オブジェクト
-        [SerializeField]
-        private GameObject m_LineObj;
         //電流エフェクト
         [SerializeField]
         private GameObject m_CurrentEffect;
+        //ライン表示用オブジェクト
+        [SerializeField]
+        private GameObject m_CurrentLine;
 
         //後で削除予定
         private void Start()
@@ -43,8 +43,6 @@ namespace DigitalRuby.LightningBolt
         }
         public override void EventEnd()
         {
-            var line = m_LineObj.GetComponent<LineRenderer>();
-            line.positionCount = 0;
             foreach (GameObject obj in m_EffectList)
                 Destroy(obj);
 
@@ -58,10 +56,8 @@ namespace DigitalRuby.LightningBolt
         {
             //外側のロッドの設置
             foreach (Vector3 pos in m_RodData.m_OuterRodPos)
-            {
-                var RodObj = Instantiate(m_RodPre, new Vector3(pos.x, m_RodData.m_Height, pos.z), transform.rotation) as GameObject;
-                m_RodList.Add(RodObj);
-            }
+                m_RodList.Add(Instantiate(m_RodPre, new Vector3(pos.x, m_RodData.m_Height, pos.z), transform.rotation) as GameObject);
+
             //内側のロッドの設置位置を決めて、設置
             var count = 0;
             while (count < m_RodData.m_MaxRodNumber)
@@ -72,13 +68,12 @@ namespace DigitalRuby.LightningBolt
                 var pos = new Vector3(x, m_RodData.m_Height, z);
                 //ここの距離は現在適当　後で修正予定
                 var rodPosList = m_RodList.Select(c => c.transform.position).ToList();
+
                 if (rodPosList.Any(c => Vector3.Distance(c, pos) < m_RodData.m_Distance))
-                {
                     continue;
-                }
+
                 count++;
-                var RodObj = Instantiate(m_RodPre, pos, transform.rotation) as GameObject;
-                m_RodList.Add(RodObj);
+                m_RodList.Add(Instantiate(m_RodPre, pos, transform.rotation) as GameObject);
             }
 
             Observable.FromCoroutine(DropTheRod, publishEveryYield: false).
@@ -100,7 +95,9 @@ namespace DigitalRuby.LightningBolt
                 pos.Add(m_RodList[number].transform.position);
             }
             //LineRendererでどこに電流が流れる予定か表示する
-            var lineRenderer = m_LineObj.GetComponent<LineRenderer>();
+            var lineObj = Instantiate(m_CurrentLine, pos[0], transform.rotation);
+            m_EffectList.Add(lineObj);
+            var lineRenderer = lineObj.GetComponent<LineRenderer>();
             lineRenderer.positionCount = pos.Count();
             for (int i = 0; i < pos.Count; i++)
             {
@@ -186,9 +183,8 @@ namespace DigitalRuby.LightningBolt
                     rod.transform.position += vector * 5.0f * Time.deltaTime;
                 }
                 if(m_RodList.Select(c=>c.transform.position).All(c=>Vector3.Distance(c,new Vector3(c.x, 0, c.z)) < 0.1f))
-                {
                     break;
-                }
+
                 yield return null;
             }
         }
