@@ -6,29 +6,23 @@ using UniRx;
 
 public class Event_CurrentRod : Event
 {
-    //外側のロッドの位置
+    //配置を行うためのロッドデータ
     [SerializeField]
-    private Vector3[] m_OuterRodPos = new Vector3[4];
-    //ステージの中心座標
-    [SerializeField]
-    private Vector3 m_CenterPos;
-    //設置を行っていい中心からの範囲（半径）
-    [SerializeField]
-    private float m_Range = 5.0f;
-
+    private CurrentRodData m_RodData;
     //設置を行うロッド
     [SerializeField]
     private GameObject m_RodPre;
-    //内側に設置するロッドの本数
-    private int m_MaxRodNumber = 3;
-
     //設置したロッドの保存用List
     private List<Rod> m_RodList = new List<Rod>();
 
     //ライン表示用オブジェクト
     [SerializeField]
     private GameObject m_LineObj;
+    //電流エフェクト
+    [SerializeField]
+    private GameObject m_CurrentEffect;
 
+    //後で削除予定
     private void Start()
     {
         //設置を行う
@@ -54,41 +48,58 @@ public class Event_CurrentRod : Event
     private void PerformRodInstallation()
     {
         //外側のロッドの設置
-        foreach (Vector3 pos in m_OuterRodPos)
+        foreach (Vector3 pos in m_RodData.m_OuterRodPos)
         {
             var RodObj = Instantiate(m_RodPre, pos, transform.rotation) as GameObject;
             m_RodList.Add(RodObj.GetComponent<Rod>());
         }
         //内側のロッドの設置位置を決めて、設置
-        for (int i = 0; i < m_MaxRodNumber; ++i)
+        var count = 0;
+        while (count < m_RodData.m_MaxRodNumber)
         {
-            var x = Random.Range(m_CenterPos.x - m_Range, m_CenterPos.x + m_Range);
-            var z = Random.Range(m_CenterPos.z - m_Range, m_CenterPos.z + m_Range);
-            var pos = new Vector3(x, m_CenterPos.y, z);
+            var range = m_RodData.m_Range;
+            var x = Random.Range(m_RodData.m_CenterPos.x - range, m_RodData.m_CenterPos.x + range);
+            var z = Random.Range(m_RodData.m_CenterPos.z - range, m_RodData.m_CenterPos.z + range);
+            var pos = new Vector3(x, m_RodData.m_CenterPos.y, z);
+            //ここの距離は現在適当　後で修正予定
+            var rodPosList = m_RodList.Select(c => c.gameObject.transform.position).ToList();
+            if (rodPosList.Any(c => Vector3.Distance(c, pos) < m_RodData.m_Distance))
+            {
+                continue;
+            }
+            count++;
             var RodObj = Instantiate(m_RodPre, pos, transform.rotation) as GameObject;
             m_RodList.Add(RodObj.GetComponent<Rod>());
         }
-        //設置が終了したら指定された時間後有効化するロッドを決めて、有効化を行う
-        Observable.Timer(System.TimeSpan.FromSeconds(3.0f))
-            .Subscribe(_ =>
-            {
-                //通過する順で有効化するロッドの番号を取得する
-                var rodNumberList = DecideTheRodToActivate();
-                var pos = new List<Vector3>();
-                //指定されたロッドの電流化を有効化させ、座標をTrailRendererに設定させる
-                for (int i = 0; i < rodNumberList.Count(); i++)
-                {
-                    var number = rodNumberList[i];
-                    m_RodList[number].m_Activation.Value = true;
-                    pos.Add(m_RodList[number].gameObject.transform.position);
-                }
-                var lineRenderer = m_LineObj.GetComponent<LineRenderer>();
-                lineRenderer.positionCount = pos.Count();
-                for (int i = 0; i < pos.Count; i++)
-                {
-                    lineRenderer.SetPosition(i, pos[i]);
-                }
-            }).AddTo(this);
+
+        Observable.Timer(System.TimeSpan.FromSeconds(1.0f)).
+            Subscribe(_ => ActivateRod()).AddTo(this);
+    }
+
+    /// <summary>
+    /// ロッドの有効化を行う
+    /// </summary>
+    private void ActivateRod()
+    {
+        //通過する順で有効化するロッドの番号を取得する
+        var rodNumberList = DecideTheRodToActivate();
+        var pos = new List<Vector3>();
+        //指定されたロッドの電流化を有効化させ、座標をLineRendererに設定させる
+        for (int i = 0; i < rodNumberList.Count(); i++)
+        {
+            var number = rodNumberList[i];
+            m_RodList[number].m_Activation.Value = true;
+            pos.Add(m_RodList[number].gameObject.transform.position);
+        }
+        //LineRendererでどこに電流が流れる予定か表示する
+        var lineRenderer = m_LineObj.GetComponent<LineRenderer>();
+        lineRenderer.positionCount = pos.Count();
+        for (int i = 0; i < pos.Count; i++)
+        {
+            lineRenderer.SetPosition(i, pos[i]);
+        }
+
+        //準備時間を設けてから電流を流す（予定）
     }
 
     /// <summary>
@@ -100,16 +111,16 @@ public class Event_CurrentRod : Event
         //ルート用List
         List<int> routeRodNumber = new List<int>();
         //開始のロッドを決める
-        var startRodNumber = Random.Range(0, m_OuterRodPos.Length);
+        var startRodNumber = Random.Range(0, m_RodData.m_OuterRodPos.Count());
         routeRodNumber.Add(startRodNumber);
 
         //有効化する内側のロッドの本数を決める
-        var number = Random.Range(1, m_MaxRodNumber + 1);
+        var number = Random.Range(1, m_RodData.m_MaxRodNumber + 1);
         var count = 0;
         while (count < number)
         {
             //有効化する内側のロッドの決定
-            var rodNumber = Random.Range(m_OuterRodPos.Length, m_RodList.Count());
+            var rodNumber = Random.Range(m_RodData.m_OuterRodPos.Count(), m_RodList.Count());
             //もう選択されているロッドではなかった場合、Listに追加しカウントを増やす
             if (routeRodNumber.All(c => c != rodNumber))
             {
@@ -121,7 +132,7 @@ public class Event_CurrentRod : Event
         //目標地点のロッドを決める
         while (true)
         {
-            var endRodNumber = Random.Range(0, m_OuterRodPos.Length);
+            var endRodNumber = Random.Range(0, m_RodData.m_OuterRodPos.Count());
             //開始のロッドと被っていないか確認
             if (startRodNumber != endRodNumber)
             {
