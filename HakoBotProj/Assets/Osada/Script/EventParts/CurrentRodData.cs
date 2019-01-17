@@ -14,6 +14,7 @@ public class CurrentRodData : ScriptableObject
     public float m_Range;
     public int m_MaxRodNumber;
     public float m_Distance;
+    public float m_Height;
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(CurrentRodData))]
@@ -50,6 +51,7 @@ public class CurrentRodData : ScriptableObject
             d.m_Range = EditorGUILayout.FloatField("ステージの半径", d.m_Range);
             d.m_MaxRodNumber = EditorGUILayout.IntSlider("内側のロッドの本数", d.m_MaxRodNumber, 1, 5);
             d.m_Distance = EditorGUILayout.FloatField("ロッド間の距離", d.m_Distance);
+            d.m_Height = EditorGUILayout.FloatField("ロッドの出現高さ", d.m_Height);
         }
     }
 #endif
