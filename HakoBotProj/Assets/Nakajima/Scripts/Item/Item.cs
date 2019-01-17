@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using UniRx;
+using System;
 
 public class Item : MonoBehaviour
 {
@@ -36,7 +37,10 @@ public class Item : MonoBehaviour
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
 
-        ReleaseItem();
+        // 1秒後に移動再開
+        Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(time => {
+            ReleaseItem();
+        }).AddTo(this);
 	}
 	
 	// Update is called once per frame
@@ -107,7 +111,7 @@ public class Item : MonoBehaviour
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         // 目標地点
-        Vector3 throwPos = new Vector3(Random.Range(-15.0f, 15.0f), 0.5f, Random.Range(-7.0f, 7.1f));
+        Vector3 throwPos = new Vector3(UnityEngine.Random.Range(-15.0f, 15.0f), 0.5f, UnityEngine.Random.Range(-7.0f, 7.1f));
         // 射出角度、方向を取得
         float angle = 30.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
