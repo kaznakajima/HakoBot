@@ -24,6 +24,10 @@ public class Poibot_Throwing : MonoBehaviour
 
     public bool playEvent = false;
 
+    // 投げるロボット
+    [SerializeField]
+    ThrowEnemy th_Enemy;
+
     public void ThrowingsetUp(System.Action action)
     {
         targetPoint = SearchThrowingTarget();
@@ -56,6 +60,8 @@ public class Poibot_Throwing : MonoBehaviour
         }
 
         var obj = Instantiate(throwingObj, transform.position, Quaternion.identity) as GameObject;
+        th_Enemy.item = obj.GetComponent<Item>();
+        th_Enemy.Throw();
         // 標的の座標
         //Vector3 targetPosition = targetPoint;
 

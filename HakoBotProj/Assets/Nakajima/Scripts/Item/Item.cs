@@ -24,6 +24,10 @@ public class Item : MonoBehaviour
     [HideInInspector]
     public bool isCarry;
 
+    // 目標地点
+    [HideInInspector]
+    public Vector3 throwPos = Vector3.zero;
+
     // 移動方向
     Vector3 dir;
 
@@ -111,7 +115,7 @@ public class Item : MonoBehaviour
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         // 目標地点
-        Vector3 throwPos = new Vector3(UnityEngine.Random.Range(-15.0f, 15.0f), 0.5f, UnityEngine.Random.Range(-7.0f, 7.1f));
+        throwPos = new Vector3(UnityEngine.Random.Range(-15.0f, 15.0f), 0.5f, UnityEngine.Random.Range(-7.0f, 7.1f));
         // 射出角度、方向を取得
         float angle = 30.0f;
         Vector3 velocity = CalculateVeclocity(transform.position, throwPos, angle);
