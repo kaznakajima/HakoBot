@@ -6,6 +6,8 @@ using UniRx.Triggers;
 
 public class Rod : MonoBehaviour
 {
+
+
     private BoolReactiveProperty m_Activation = new BoolReactiveProperty(false);
 
     private void Start()
