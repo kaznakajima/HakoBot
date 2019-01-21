@@ -41,8 +41,14 @@ public class LineRendererCollision : MonoBehaviour
 
             // 衝突判定
             if (Physics.Raycast(lineRay, out lineHit, distance)) {
-                if (lineHit.collider.gameObject.tag == "Character")
-                    Debug.Log("HIT!!");
+                if (lineHit.collider.gameObject.tag == "Character") {
+                    // キャラクターのインターフェイスのインスタンス
+                    var character = lineHit.collider.gameObject.GetComponent(typeof(Character)) as Character;
+
+                    // コントローラーのバイブレーション
+                    VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
+                    character.Stan();
+                }
             }
 
         }
