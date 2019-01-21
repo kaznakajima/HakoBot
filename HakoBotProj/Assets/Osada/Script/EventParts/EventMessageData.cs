@@ -9,15 +9,8 @@ using UnityEditor;
 [CreateAssetMenu]
 public class EventMessageData : ScriptableObject 
 {
-    public enum EventType
-    {
-        //ここにイベントを全部名称を付けて記入
-        Missail,
-    }
-
     public struct Message
     {
-        public EventType m_Type;
         public string m_EventMessage;
     }
     public Message[] message = new Message[1];
@@ -40,8 +33,8 @@ public class EventMessageData : ScriptableObject
             {
                 for(int i = 0; i < len; i++)
                 {
-                    t.message[i].m_Type = (EventType)EditorGUILayout.EnumPopup("イベントの種類", t.message[i].m_Type);
-                    EditorGUILayout.LabelField("イベントメッセージ");
+
+                    EditorGUILayout.LabelField("イベント番号 " + i + " イベントメッセージ");
                     t.message[i].m_EventMessage = EditorGUILayout.TextArea(t.message[i].m_EventMessage, GUILayout.Height(80));
                 }
             }

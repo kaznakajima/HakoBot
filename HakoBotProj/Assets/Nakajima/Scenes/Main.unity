@@ -315,6 +315,52 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 33881589}
   m_CullTransparentMesh: 0
+--- !u!1 &51743695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51743697}
+  - component: {fileID: 51743696}
+  m_Layer: 0
+  m_Name: Rod
+  m_TagString: Untagged
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &51743696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 51743695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43edb3af0bb45e449b5325bf009df914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RodData: {fileID: 11400000, guid: fc4d75c5734c94b49b4fc6c396f03812, type: 2}
+  m_RodPre: {fileID: 1877467337860200, guid: 8ec1b1ce98fb57845ae18dcce6141b9a, type: 2}
+  m_CurrentEffect: {fileID: 1186440224134106, guid: 369168ea803132e46a3546323d6b9be2,
+    type: 2}
+  m_CurrentLine: {fileID: 1604889233484722, guid: 76a327e004674de48bf13335eb777f58,
+    type: 2}
+--- !u!4 &51743697
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 51743695}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &87907135
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,8 +1661,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 987458302b2393740bd25998ce231323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwing:
-  - {fileID: 635421117}
 --- !u!4 &513594878
 Transform:
   m_ObjectHideFlags: 0
@@ -1657,13 +1701,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ffe0086e997b049952ca3a3cc5697c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectData:
-  - obj: {fileID: 1582754998552444, guid: 4018936863db8ab45ad6018cde1730db, type: 2}
-    sizeX: 1
-    sizeZ: 1
-  - obj: {fileID: 1817690546810474, guid: bc6e2221a813bcb4c8ec50b5a1ebea68, type: 2}
-    sizeX: 1
-    sizeZ: 1
 --- !u!4 &519491306
 Transform:
   m_ObjectHideFlags: 0
@@ -2297,8 +2334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c18e19e006e3f4e87c9724e303c364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 0
-  range: 5
 --- !u!114 &635421120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2310,10 +2345,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c697155def9d7124db151a4ad367d5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move: {fileID: 635421119}
-  throwing: {fileID: 635421117}
-  moveEnd:
-    value: 0
+  m_Item: []
+  m_GenerationPosition: {fileID: 0}
+  m_Marker: {fileID: 0}
+  m_ThrowPosition: {x: 0, y: 0, z: 0}
+  m_PreparationPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &699038832
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,7 +2671,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ffe0086e997b049952ca3a3cc5697c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectData: []
 --- !u!1 &893774704
 GameObject:
   m_ObjectHideFlags: 0
@@ -7313,10 +7348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88c378bbbcdafde448a161ed05365f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventList:
-  - {fileID: 513594877}
-  - {fileID: 2065250432}
-  - {fileID: 1714059166}
+  m_eventList: []
 --- !u!4 &2061400053
 Transform:
   m_ObjectHideFlags: 0
