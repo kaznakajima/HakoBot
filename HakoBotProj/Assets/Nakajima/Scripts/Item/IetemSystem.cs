@@ -18,8 +18,12 @@ public class IetemSystem : MonoBehaviour
     [SerializeField]
     private float max_V;
 
-	// Use this for initialization
-	void Start () {
+    // 投げるロボット
+    [SerializeField]
+    ThrowEnemy th_Enemy;
+
+    // Use this for initialization
+    void Start () {
         var obj = Instantiate(ietemPre, transform.position, transform.rotation);
         ietem[0] = obj;
 
@@ -33,6 +37,8 @@ public class IetemSystem : MonoBehaviour
                     {
                         var obj2 = Instantiate(ietemPre, transform.position, transform.rotation);
                         ietem[i] = obj2;
+                        th_Enemy.item = obj2.GetComponent<Item>();
+                        th_Enemy.Throw();
                         break;
                     }
                 }

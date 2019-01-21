@@ -91,8 +91,8 @@ public class Player : PlayerBase, Character
     // 入力判定
     void PlayerInput()
     {
-        //if (isAttack)
-        //    return;
+        if (isAttack)
+            return;
 
         /* ここから移動量判定 */
         if (system.LeftStickAxis(myNumber) != Vector2.zero)
@@ -113,7 +113,7 @@ public class Player : PlayerBase, Character
             }
         }
 
-        if (system.Button_B(myNumber) && isAttack == false)
+        if (system.Button_B(myNumber))
         {
             Attack();
         }
@@ -162,9 +162,9 @@ public class Player : PlayerBase, Character
         isAttack = true;
 
         // エネルギー計算
-        StartCoroutine(HPCircle.Instance.CheckOverHeat(gameObject, _myNumber));
+        HPCircle.Instance.CheckOverHeat(gameObject, _myNumber);
 
-        myRig.velocity += transform.forward * 7.5f;
+        myRig.velocity += transform.forward * 8.5f;
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
@@ -213,11 +213,10 @@ public class Player : PlayerBase, Character
 
             _myEnergy = 0;
             // エナジーゲージの初期化
-            StartCoroutine(HPCircle.Instance.EnergyReset(gameObject, _myNumber));
+            HPCircle.Instance.EnergyReset(gameObject, _myNumber);
 
             Destroy(_stanEffect);
 
-            isStan = false;
         }).AddTo(this);
     }
 

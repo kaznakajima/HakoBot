@@ -121,6 +121,23 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         }
     }
 
+    /// <summary>
+    /// ポーズボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool Button_Pause(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].Start;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     // Update is called once per frame
     void Update () {
 		
