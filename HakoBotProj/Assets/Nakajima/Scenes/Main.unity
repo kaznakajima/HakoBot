@@ -330,7 +330,7 @@ GameObject:
   m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &51743696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1686,9 +1686,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 513594876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 987458302b2393740bd25998ce231323, type: 3}
+  m_Script: {fileID: 11500000, guid: 9feae4813da3d084ca3eb4f621b73c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Poibot:
+  - {fileID: 536229647}
+  - {fileID: 1601131509}
 --- !u!4 &513594878
 Transform:
   m_ObjectHideFlags: 0
@@ -2306,8 +2309,6 @@ GameObject:
   m_Component:
   - component: {fileID: 635421118}
   - component: {fileID: 635421117}
-  - component: {fileID: 635421120}
-  - component: {fileID: 635421119}
   m_Layer: 0
   m_Name: ThrowObj
   m_TagString: Untagged
@@ -2331,7 +2332,7 @@ MonoBehaviour:
     type: 2}
   startPoint: {fileID: 635421118}
   range: 8
-  playEvent: 1
+  playEvent: 0
   th_Enemy: {fileID: 1601131508}
 --- !u!4 &635421118
 Transform:
@@ -2346,35 +2347,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &635421119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 635421116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6c18e19e006e3f4e87c9724e303c364, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &635421120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 635421116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c697155def9d7124db151a4ad367d5ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Item: []
-  m_GenerationPosition: {fileID: 0}
-  m_Marker: {fileID: 0}
-  m_ThrowPosition: {x: 0, y: 0, z: 0}
-  m_PreparationPosition: {x: 0, y: 0, z: 0}
-  m_SizeX: 0
-  m_SizeZ: 0
 --- !u!1 &699038832
 GameObject:
   m_ObjectHideFlags: 0
@@ -6661,7 +6633,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 3:00
 --- !u!222 &1863349198
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7424,7 +7396,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88c378bbbcdafde448a161ed05365f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eventList: []
+  m_eventList:
+  - {fileID: 2065250432}
+  - {fileID: 513594877}
+  - {fileID: 1714059166}
   m_MessageData: {fileID: 0}
 --- !u!4 &2061400053
 Transform:
