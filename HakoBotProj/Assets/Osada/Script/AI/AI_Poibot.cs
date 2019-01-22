@@ -71,6 +71,8 @@ public class AI_Poibot : MonoBehaviour
                 Observable.FromCoroutine(Move, publishEveryYield: false).
                     Subscribe(_ =>
                     {
+                        var collider = obj.GetComponent<Collider>();
+                        collider.isTrigger = false;
                         obj.transform.parent = null;
                         // 射出
                         Rigidbody rid = obj.GetComponent<Rigidbody>();
@@ -82,6 +84,8 @@ public class AI_Poibot : MonoBehaviour
                 Observable.FromCoroutine(Move, publishEveryYield: false).
                     Subscribe(_ =>
                     {
+                        var collider = obj.GetComponent<Collider>();
+                        collider.isTrigger = false;
                         var missile = obj.GetComponent<Missile>();
                         missile.Setting(targetPos);
                         obj.transform.parent = null;
