@@ -97,6 +97,10 @@ public class Item : MonoBehaviour
         isCatch = false;
         myCol.isTrigger = true;
         myRig.useGravity = false;
+
+        // 動き、向きを固定
+        myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ |
+            RigidbodyConstraints.FreezeRotationY;
     }
 
     /// <summary>
@@ -108,6 +112,7 @@ public class Item : MonoBehaviour
         transform.parent = null;
         myCol.isTrigger = false;
         myRig.useGravity = true;
+        myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         // 目標地点
         throwPos = new Vector3(UnityEngine.Random.Range(-15.0f, 15.0f), 0.5f, UnityEngine.Random.Range(-7.0f, 7.1f));
