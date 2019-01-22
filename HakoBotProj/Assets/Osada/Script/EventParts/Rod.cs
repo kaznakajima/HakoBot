@@ -6,20 +6,22 @@ using UniRx;
 public class Rod : MonoBehaviour
 {
     [SerializeField]
-    private ParticleSystem m_Explosion;
+    private ParticleSystem[] m_Explosion;
     [SerializeField]
-    private ParticleSystem m_Current;
+    private ParticleSystem[] m_Current;
 
     public void Activation()
     {
-        m_Current.Play();
+        foreach (ParticleSystem s in m_Current)
+            s.Play();
     }
 
     //破壊処理
     public void Destroy()
     {
-        m_Explosion.Play();
-        Observable.Timer(System.TimeSpan.FromSeconds(1.0f)).
+        foreach (ParticleSystem s in m_Explosion)
+            s.Play();
+        Observable.Timer(System.TimeSpan.FromSeconds(0.8f)).
             Subscribe(_ =>
             {
                 Destroy(gameObject);
