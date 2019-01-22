@@ -1,22 +1,32 @@
 fileFormatVersion: 2
-guid: d598813cdf6abc641852400bb0689887
+guid: 90ec356684fbfba4a9adbc2c194dc3db
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: denki
-    100002: //RootNode
-    100004: denki2
-    400000: denki
-    400002: //RootNode
-    400004: denki2
+    100000: //RootNode
+    100002: denki_h
+    100004: denki_h_w01
+    100006: denki_h_w02
+    100008: denki_h_w03
+    400000: //RootNode
+    400002: denki_h
+    400004: denki_h_w01
+    400006: denki_h_w02
+    400008: denki_h_w03
     2100000: 'Material #11'
     2100002: 'Material #12'
-    2300000: denki
-    2300002: denki2
-    3300000: denki
-    3300002: denki2
-    4300000: denki
-    4300002: denki2
+    2300000: denki_h
+    2300002: denki_h_w01
+    2300004: denki_h_w02
+    2300006: denki_h_w03
+    3300000: denki_h
+    3300002: denki_h_w01
+    3300004: denki_h_w02
+    3300006: denki_h_w03
+    4300000: denki_h
+    4300002: denki_h_w01
+    4300004: denki_h_w02
+    4300006: denki_h_w03
   externalObjects: {}
   materials:
     importMaterials: 1
