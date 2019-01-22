@@ -66,6 +66,7 @@ public class AI_Poibot : MonoBehaviour
         {
             case ItemType.Baggage:
             case ItemType.HighBaggage:
+                Rigidbody rid = obj.GetComponent<Rigidbody>();
                 // 射出速度を算出
                 Vector3 velocity = CalculateVelocity(this.transform.position, targetPos, 60.0f);
                 Observable.FromCoroutine(Move, publishEveryYield: false).
@@ -74,8 +75,8 @@ public class AI_Poibot : MonoBehaviour
                         var collider = obj.GetComponent<Collider>();
                         collider.isTrigger = false;
                         obj.transform.parent = null;
+                        rid.useGravity = true;
                         // 射出
-                        Rigidbody rid = obj.GetComponent<Rigidbody>();
                         rid.AddForce(velocity * rid.mass, ForceMode.Impulse);
                         StartCoroutine(Move());
                     });
