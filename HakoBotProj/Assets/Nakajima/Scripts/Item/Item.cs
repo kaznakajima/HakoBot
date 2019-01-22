@@ -42,9 +42,9 @@ public class Item : MonoBehaviour
         myRig = GetComponent<Rigidbody>();
 
         // 1秒後に移動再開
-        Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(time => {
-            ReleaseItem();
-        }).AddTo(this);
+        //Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(time => {
+        //    ReleaseItem();
+        //}).AddTo(this);
 	}
 	
 	// Update is called once per frame

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4557470220976878}
   - component: {fileID: 33099921289742074}
   - component: {fileID: 23753531484629532}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: denki_h_w01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4503166930203430}
   - component: {fileID: 33610173643114252}
   - component: {fileID: 23055215655957844}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: denki_h_w02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4138779390357772}
   - component: {fileID: 33630793779328186}
   - component: {fileID: 23875811581529556}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: denki_h
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 4550254954932312}
   - component: {fileID: 136301348789313860}
   - component: {fileID: 208143565274095574}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Pawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 4397485263380356}
   - component: {fileID: 33877102837649730}
   - component: {fileID: 23520117817997184}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: denki_h_w03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
