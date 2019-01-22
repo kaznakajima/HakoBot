@@ -120,6 +120,9 @@ namespace DigitalRuby.LightningBolt
                         {
                             b.StartObject = startPos.gameObject;
                             b.EndObject = endPos.gameObject;
+
+                            b.StartPosition = new Vector3(0, 1.6f, 0);
+                            b.EndPosition = new Vector3(0, 1.6f, 0);
                         }
                     }
                 }).AddTo(this);

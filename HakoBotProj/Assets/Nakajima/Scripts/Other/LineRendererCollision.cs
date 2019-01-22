@@ -32,12 +32,14 @@ public class LineRendererCollision : MonoBehaviour
             // 2点間の方向を取得
             Vector3 direction = myLine.GetPosition(num + 1) - myLine.GetPosition(num);
 
+            Vector3 rayPos = myLine.GetPosition(num) + new Vector3(0.0f, 1.6f, 0.0f);
+
             // 次の座標にRayを飛ばす
-            Ray lineRay = new Ray(myLine.GetPosition(num), myLine.GetPosition(num + 1));
+            Ray lineRay = new Ray(rayPos, direction);
             RaycastHit lineHit;
 
             // デバッグ表示
-            Debug.DrawRay(myLine.GetPosition(num), direction, Color.blue);
+            Debug.DrawRay(rayPos, direction, Color.blue);
 
             // 衝突判定
             if (Physics.Raycast(lineRay, out lineHit, distance)) {

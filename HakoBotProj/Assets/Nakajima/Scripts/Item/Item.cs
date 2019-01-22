@@ -163,6 +163,9 @@ public class Item : MonoBehaviour
             isCatch = true;
             isTarget = false;
         }
+        if(col.gameObject.tag == "Pawn") {
+            ReleaseItem();
+        }
     }
 
     void OnTriggerExit(Collider col)
