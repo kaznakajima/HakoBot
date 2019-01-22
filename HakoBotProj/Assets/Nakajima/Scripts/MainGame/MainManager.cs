@@ -116,6 +116,23 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         CheckGameState();
 
         // ポーズ処理
+        for (int i = 0; i < 4; i++)
+        {
+            if (PlayerSystem.Instance.Button_Pause(i + 1))
+            {
+                if (Time.timeScale != 0.0f)
+                {
+                    AudioController.Instance.SEPlay("Pause");
+                    Pause();
+                }
+                else
+                {
+                    Resume();
+                }
+            }
+        }
+
+        // ポーズ処理
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (Time.timeScale != 0.0f) {
@@ -140,8 +157,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 noiseAnim = noise.gameObject.GetComponent<Animator>();
             }
         }
-
-        
     }
 
     /// <summary>

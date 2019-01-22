@@ -9,6 +9,8 @@ public class EventManagement : MonoBehaviour
 {
     [SerializeField]
     private List<Event> m_eventList = new List<Event>();
+    [SerializeField]
+    private EventMessageData m_MessageData;
 
     private BoolReactiveProperty m_Action = new BoolReactiveProperty(false);
 
@@ -27,6 +29,10 @@ public class EventManagement : MonoBehaviour
                   number = Random.Range(0, m_eventList.Count);
                   m_eventList[number].EventStart();
                   Debug.Log("イベント" + number + "スタート");
+
+                  if (m_MessageData != null)
+                      SendMessage(m_MessageData.message[number].m_EventMessage);
+
                   m_Action.Value = true;
               }).AddTo(this);
           }).AddTo(this);
@@ -42,5 +48,11 @@ public class EventManagement : MonoBehaviour
                   m_Action.Value = false;
               }).AddTo(this);
           }).AddTo(this);
+    }
+
+    private void SendMessage(string message)
+    {
+        //メッセージ表示用Scriptを取得
+        //文字データを送信
     }
 }
