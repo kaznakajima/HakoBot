@@ -47,6 +47,12 @@ namespace DigitalRuby.LightningBolt
                 Destroy(obj);
 
             //指定された時間後ロッドも爆発させて破壊する
+            Observable.Timer(System.TimeSpan.FromSeconds(1.0f)).
+                Subscribe(_ =>
+                {
+                    foreach (GameObject rod in m_RodList)
+                        rod.GetComponent<Rod>().Destroy();
+                }).AddTo(this);
         }
 
         /// <summary>
@@ -87,21 +93,24 @@ namespace DigitalRuby.LightningBolt
         {
             //通過する順で有効化するロッドの番号を取得する
             var rodNumberList = DecideTheRodToActivate();
-            var pos = new List<Vector3>();
+            var posList = new List<Vector3>();
             //指定されたロッドの電流化を有効化させ、座標をLineRendererに設定させる
             for (int i = 0; i < rodNumberList.Count(); i++)
             {
                 var number = rodNumberList[i];
-                pos.Add(m_RodList[number].transform.position);
+                m_RodList[number].GetComponent<Rod>().Activation();
+                var pos = m_RodList[number].transform.position;
+                pos.y += 1.6f;
+                posList.Add(pos);
             }
             //LineRendererでどこに電流が流れる予定か表示する
-            var lineObj = Instantiate(m_CurrentLine, pos[0], transform.rotation);
+            var lineObj = Instantiate(m_CurrentLine, posList[0], transform.rotation);
             m_EffectList.Add(lineObj);
             var lineRenderer = lineObj.GetComponent<LineRenderer>();
-            lineRenderer.positionCount = pos.Count();
-            for (int i = 0; i < pos.Count; i++)
+            lineRenderer.positionCount = posList.Count();
+            for (int i = 0; i < posList.Count; i++)
             {
-                lineRenderer.SetPosition(i, pos[i]);
+                lineRenderer.SetPosition(i, posList[i]);
             }
 
             //準備時間を設けてから電流を流す（予定）

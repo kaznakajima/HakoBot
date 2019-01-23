@@ -2,26 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using UniRx.Triggers;
 
 public class Rod : MonoBehaviour
 {
+    [SerializeField]
+    private ParticleSystem[] m_Explosion;
+    [SerializeField]
+    private ParticleSystem[] m_Current;
 
-
-    private BoolReactiveProperty m_Activation = new BoolReactiveProperty(false);
-
-    private void Start()
+    public void Activation()
     {
-        m_Activation.
-            Subscribe(c =>
-            {
-
-            }).AddTo(this);
+        foreach (ParticleSystem s in m_Current)
+            s.Play();
     }
 
     //破壊処理
     public void Destroy()
     {
-
+        foreach (ParticleSystem s in m_Explosion)
+            s.Play();
+        Observable.Timer(System.TimeSpan.FromSeconds(0.8f)).
+            Subscribe(_ =>
+            {
+                Destroy(gameObject);
+            }).AddTo(this);
     }
 }
