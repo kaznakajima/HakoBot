@@ -330,7 +330,7 @@ GameObject:
   m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &51743696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1935,7 +1935,7 @@ MonoBehaviour:
     m_ItemType: 2
     m_Event: 0
   m_GenerationPosition: {fileID: 1771689467}
-  m_Marker: {fileID: 1957487388809720, guid: f57f3d1daa23b1e4ba039ba2762241c7, type: 2}
+  m_Marker: {fileID: 0}
   m_ThrowPosition: {x: 14, y: 6.85, z: 8.7}
   m_PreparationPosition: {x: 14, y: 6.85, z: 12}
   m_SizeX: 18
@@ -5485,7 +5485,7 @@ MonoBehaviour:
     m_ItemType: 2
     m_Event: 0
   m_GenerationPosition: {fileID: 442467577}
-  m_Marker: {fileID: 1957487388809720, guid: f57f3d1daa23b1e4ba039ba2762241c7, type: 2}
+  m_Marker: {fileID: 0}
   m_ThrowPosition: {x: -14, y: 6.85, z: 8.7}
   m_PreparationPosition: {x: -14, y: 6.85, z: 12}
   m_SizeX: 18
@@ -7356,9 +7356,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_eventList:
   - {fileID: 2065250432}
-  - {fileID: 513594877}
-  - {fileID: 1714059166}
-  m_MessageData: {fileID: 11400000, guid: 0d2cfc4cf5f6b5b49bd5f7f70e30f39c, type: 2}
+  - {fileID: 2065250432}
+  - {fileID: 2065250432}
+  m_MessageData: {fileID: 0}
 --- !u!4 &2061400053
 Transform:
   m_ObjectHideFlags: 0
