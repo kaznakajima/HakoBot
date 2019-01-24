@@ -28,8 +28,6 @@ public class AI_Poibot : MonoBehaviour
     public Item[] m_Item;
     [SerializeField,Header("投てき物出現地点")]
     private Transform m_GenerationPosition;
-    [SerializeField,Header("投てき位置マークオブジェクト")]
-    private GameObject m_Marker;
 
     [SerializeField,Header("投てき位置")]
     private Vector3 m_ThrowPosition;
@@ -159,7 +157,6 @@ public class AI_Poibot : MonoBehaviour
 
         var targetPos = new Vector3(x, 0.2f, z);
 
-        Instantiate(m_Marker, targetPos, m_Marker.transform.rotation);
         return targetPos;
     }
 }

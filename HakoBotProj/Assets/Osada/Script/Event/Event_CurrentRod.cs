@@ -26,15 +26,6 @@ namespace DigitalRuby.LightningBolt
         [SerializeField]
         private GameObject m_CurrentLine;
 
-        //後で削除予定
-        private void Start()
-        {
-            //設置を行う
-            PerformRodInstallation();
-
-            Observable.Timer(System.TimeSpan.FromSeconds(8)).
-                Subscribe(_ => EventEnd());
-        }
 
         public override void EventStart()
         {
