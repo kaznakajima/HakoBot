@@ -19,18 +19,13 @@ public class PoibotData : ScriptableObject
     //投てき物用構造体
     public struct Item
     {
-        [Header("投てき物")]
         public GameObject m_ItemObj;
-        [Header("アイテムタイプ")]
         public ItemType m_ItemType;
-        [Header("投げていいものかの判断（触るの禁止）")]
         public bool m_Event;
     }
     public Item[] m_Item = new Item[0];
 
-    [SerializeField, Header("横の半径")]
     private float m_SizeX;
-    [SerializeField, Header("奥行の半径")]
     private float m_SizeZ;
 
 #if UNITY_EDITOR

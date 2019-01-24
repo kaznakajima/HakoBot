@@ -15,7 +15,7 @@ public class AI_Poibot : MonoBehaviour
     }
     //投てき物用構造体
     [System.Serializable]
-    public struct Item
+    public class Item
     {
         [Header("投てき物")]
         public GameObject m_ItemObj;
@@ -25,7 +25,7 @@ public class AI_Poibot : MonoBehaviour
         public bool m_Event;
     }
     [SerializeField,Header("投てき物リスト")]
-    public Item[] m_Item;
+    public List<Item> m_Item;
     [SerializeField,Header("投てき物出現地点")]
     private Transform m_GenerationPosition;
 
