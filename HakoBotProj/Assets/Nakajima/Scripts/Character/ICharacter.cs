@@ -49,4 +49,10 @@ public interface Character
     /// 荷物配達完了
     /// </summary>
     void ItemCarry();
+
+    /// <summary>
+    /// 自身のレイヤーを変更する
+    /// </summary>
+    /// <param name="layerNum">レイヤー番号</param>
+    void LayerChange(int layerNum);
 }

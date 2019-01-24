@@ -192,6 +192,8 @@ public class Player : PlayerBase, Character
     {
         if (isStan == true)
             return;
+        
+        LayerChange(2);
 
         myAudio.loop = true;
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
@@ -214,9 +216,13 @@ public class Player : PlayerBase, Character
             _myEnergy = 0;
             // エナジーゲージの初期化
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
-
             Destroy(_stanEffect);
 
+            // 2秒間無敵
+            Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
+            {
+                LayerChange(11);
+            }).AddTo(this);
         }).AddTo(this);
     }
 
@@ -233,7 +239,7 @@ public class Player : PlayerBase, Character
         itemObj = obj;
         itemObj.transform.parent = transform;
         itemObj.GetComponent<Item>().GetItem(pointPos);
-        gameObject.layer = 12;
+        LayerChange(12);
 
         hasItem = true;
     }
@@ -259,7 +265,7 @@ public class Player : PlayerBase, Character
         itemObj.GetComponent<Item>().ReleaseItem();
         itemObj = null;
         hasItem = false;
-        gameObject.layer = 11;
+        LayerChange(11);
     }
 
     /// <summary>
@@ -269,7 +275,12 @@ public class Player : PlayerBase, Character
     {
         itemObj = null;
         hasItem = false;
-        gameObject.layer = 11;
+        LayerChange(11);
+    }
+
+    public void LayerChange(int layerNum)
+    {
+        gameObject.layer = layerNum;
     }
 
     // 当たり判定

@@ -324,6 +324,8 @@ public class TransportEnemy : EnemyBase, Character
         if (isStan == true)
             return;
 
+        LayerChange(2);
+
         myAudio.loop = true;
         AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
 
@@ -341,6 +343,7 @@ public class TransportEnemy : EnemyBase, Character
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
             agent.updatePosition = true;
+            isStan = false;
 
             myAudio.loop = false;
             myAudio.Stop();
@@ -348,9 +351,14 @@ public class TransportEnemy : EnemyBase, Character
             _myEnergy = 0;
             // エナジーゲージの初期化
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
-
             Destroy(_stanEffect);
-            isStan = false;
+
+            // 2秒間無敵
+            Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
+            {
+                LayerChange(11);
+            }).AddTo(this);
+
             SetTarget();
         }).AddTo(this);
     }
@@ -372,7 +380,7 @@ public class TransportEnemy : EnemyBase, Character
         itemObj.GetComponent<Item>().GetItem(pointPos);
 
         hasItem = true;
-        gameObject.layer = 12;
+        LayerChange(12);
         SetTarget();
     }
 
@@ -393,7 +401,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
-        gameObject.layer = 11;
+        LayerChange(11);
         ResetTarget();
     }
 
@@ -404,7 +412,12 @@ public class TransportEnemy : EnemyBase, Character
     {
         itemObj = null;
         hasItem = false;
-        gameObject.layer = 11;
+        LayerChange(11);
+    }
+
+    public void LayerChange(int layerNum)
+    {
+        gameObject.layer = layerNum;
     }
 
     /// <summary>
@@ -414,10 +427,10 @@ public class TransportEnemy : EnemyBase, Character
     public override Vector3 GetRandomPosition()
     {
         // ステージのサイズ
-        float stageSize = 6.0f;
+        float stageSizeX = 10.0f, stageSizeZ = 8.0f;
         // 巡回用の座標を保存
-        patrolPos = new Vector3(UnityEngine.Random.Range(-stageSize, stageSize), transform.position.y, UnityEngine.Random.Range(-stageSize, stageSize));
-        return patrolPos;
+        Vector3 nextPos = new Vector3(UnityEngine.Random.Range(-stageSizeX, stageSizeX), transform.position.y, UnityEngine.Random.Range(-stageSizeZ, stageSizeZ));
+        return nextPos;
     }
 
     // 当たり判定
