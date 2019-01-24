@@ -10,18 +10,20 @@ public class Event_HighPoint : Event
 
     public override void EventStart()
     {
-        foreach (AI_Poibot poibot in m_Poibot)
+        for(int i = 0; i < m_Poibot.Length; i++)
         {
-            var item = poibot.m_Item.FirstOrDefault(c => c.m_ItemType == AI_Poibot.ItemType.HighBaggage);
-            item.m_Event = true;
+            var item=m_Poibot[i].m_Item.FirstOrDefault(c => c.m_ItemType == AI_Poibot.ItemType.HighBaggage);
+            var number = m_Poibot[i].m_Item.IndexOf(item);
+            m_Poibot[i].m_Item[number].m_Event = true;
         }
     }
     public override void EventEnd()
     {
-        foreach (AI_Poibot poibot in m_Poibot)
+        for (int i = 0; i < m_Poibot.Length; i++)
         {
-            var item = poibot.m_Item.FirstOrDefault(c => c.m_ItemType == AI_Poibot.ItemType.HighBaggage);
-            item.m_Event = false;
+            var item = m_Poibot[i].m_Item.FirstOrDefault(c => c.m_ItemType == AI_Poibot.ItemType.HighBaggage);
+            var number = m_Poibot[i].m_Item.IndexOf(item);
+            m_Poibot[i].m_Item[number].m_Event = false;
         }
     }
 }
