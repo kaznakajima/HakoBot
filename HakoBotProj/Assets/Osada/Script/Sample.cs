@@ -29,11 +29,9 @@ public class Sample : MonoBehaviour
             if (point1 >= point2)
             {
                 text[0].text = ("チーム1 得点" + point1);
-                text[1].text = ("プレイヤー" + team1[0].playerID + "　ポイント" + team1[0].point +
-                    "プレイヤー" + team1[1].playerID + "　ポイント" + team1[1].point);
+                text[1].text = ("　ポイント" + team1[0].point + "　ポイント" + team1[1].point);
                 text[2].text = ("チーム2 得点" + point2);
-                text[3].text = ("プレイヤー" + team2[0].playerID + "　ポイント" + team2[0].point +
-                    "プレイヤー" + team2[1].playerID + "　ポイント" + team2[1].point);
+                text[3].text = ("　ポイント" + team2[0].point + "　ポイント" + team2[1].point);
             }
             else
             {
@@ -50,7 +48,7 @@ public class Sample : MonoBehaviour
             var list = m_PlayerData.OrderByDescending(c => c.point).ToList();
 
             for (int i = 0; i < list.Count; i++)
-                text[i].text = i + "位　プレイヤー" + list[i].playerID + "　ポイント" + list[i].point;
+                text[i].text = (i + 1) + "位　プレイヤー" + list[i].playerID + "　ポイント" + list[i].point;
 
         }
     }

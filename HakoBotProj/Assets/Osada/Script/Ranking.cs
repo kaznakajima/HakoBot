@@ -10,40 +10,47 @@ public class Ranking : MonoBehaviour
 {
     [SerializeField]
     private List<PlayerData> m_PlayerData = new List<PlayerData>();
-
     [SerializeField]
-    private Text[] m_PlayerText = new Text[4];
+    private Text[] text = new Text[4];
 
     private void Start()
     {
-        var list = m_PlayerData.OrderByDescending(c => c.point).ToList();
-        ChangeColorOfText(list);
-
-        m_PlayerText[0].text = "1位　プレイヤー" + list[0].playerID + "　ポイント" + list[0].point;
-        m_PlayerText[1].text = "2位　プレイヤー" + list[1].playerID + "　ポイント" + list[1].point;
-        m_PlayerText[2].text = "3位　プレイヤー" + list[2].playerID + "　ポイント" + list[2].point;
-        m_PlayerText[3].text = "4位　プレイヤー" + list[3].playerID + "　ポイント" + list[3].point;
-    }
-
-    private void ChangeColorOfText(List<PlayerData> playerData)
-    {
-        for(int i = 0; i < m_PlayerText.Length; i++)
+        if (m_PlayerData.Count(c => c.m_Team == PlayerData.Team.Team1) == 2)
         {
-            switch (playerData[i].playerID)
+            var team1 = m_PlayerData.Where(c => c.m_Team == PlayerData.Team.Team1).ToList();
+            var team2 = m_PlayerData.Where(c => c.m_Team == PlayerData.Team.Team2).ToList();
+
+            var point1 = 0;
+            var point2 = 0;
+            foreach (PlayerData team in team1)
+                point1 += team.point;
+            foreach (PlayerData team in team2)
+                point2 += team.point;
+
+            if (point1 >= point2)
             {
-                case 1:
-                    m_PlayerText[i].color = Color.red;
-                    break;
-                case 2:
-                    m_PlayerText[i].color = Color.blue;
-                    break;
-                case 3:
-                    m_PlayerText[i].color = Color.yellow;
-                    break;
-                case 4:
-                    m_PlayerText[i].color = Color.green;
-                    break;
+                text[0].text = ("チーム1 得点" + point1);
+                text[1].text = ("　ポイント" + team1[0].point + "　ポイント" + team1[1].point);
+                text[2].text = ("チーム2 得点" + point2);
+                text[3].text = ("　ポイント" + team2[0].point + "　ポイント" + team2[1].point);
             }
+            else
+            {
+                text[0].text = ("チーム2 得点" + point2);
+                text[1].text = ("プレイヤー" + team2[0].playerID + "　ポイント" + team2[0].point +
+                    "プレイヤー" + team2[1].playerID + "　ポイント" + team2[1].point);
+                text[2].text = ("チーム1 得点" + point1);
+                text[3].text = ("プレイヤー" + team1[0].playerID + "　ポイント" + team1[0].point +
+                    "プレイヤー" + team1[1].playerID + "　ポイント" + team1[1].point);
+            }
+        }
+        else
+        {
+            var list = m_PlayerData.OrderByDescending(c => c.point).ToList();
+
+            for (int i = 0; i < list.Count; i++)
+                text[i].text = (i + 1) + "位　プレイヤー" + list[i].playerID + "　ポイント" + list[i].point;
+
         }
     }
 }
