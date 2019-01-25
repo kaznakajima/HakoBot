@@ -35,14 +35,20 @@ namespace DigitalRuby.LightningBolt
         public override void EventEnd()
         {
             foreach (GameObject obj in m_EffectList)
+            {
+                m_EffectList.Remove(obj);
                 Destroy(obj);
+            }
 
             //指定された時間後ロッドも爆発させて破壊する
             Observable.Timer(System.TimeSpan.FromSeconds(1.0f)).
                 Subscribe(_ =>
                 {
                     foreach (GameObject rod in m_RodList)
+                    {
+                        m_RodList.Remove(rod);
                         rod.GetComponent<Rod>().Destroy();
+                    }
                 }).AddTo(this);
         }
 
