@@ -36,7 +36,6 @@ namespace DigitalRuby.LightningBolt
         {
             foreach (GameObject obj in m_EffectList)
             {
-                m_EffectList.Remove(obj);
                 Destroy(obj);
             }
 
@@ -46,10 +45,11 @@ namespace DigitalRuby.LightningBolt
                 {
                     foreach (GameObject rod in m_RodList)
                     {
-                        m_RodList.Remove(rod);
                         rod.GetComponent<Rod>().Destroy();
                     }
                 }).AddTo(this);
+            m_RodList.Clear();
+            m_EffectList.Clear();
         }
 
         /// <summary>
