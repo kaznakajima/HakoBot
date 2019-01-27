@@ -46,10 +46,10 @@ namespace DigitalRuby.LightningBolt
                     foreach (GameObject rod in m_RodList)
                     {
                         rod.GetComponent<Rod>().Destroy();
+                        m_RodList.Clear();
+                        m_EffectList.Clear();
                     }
                 }).AddTo(this);
-            m_RodList.Clear();
-            m_EffectList.Clear();
         }
 
         /// <summary>
