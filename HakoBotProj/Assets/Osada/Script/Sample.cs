@@ -75,5 +75,43 @@ public class Sample : MonoBehaviour
                 panel.m_Panel.SetActive(false);
         }
     }
+
+    public void PanelChange()
+    {
+        foreach (PanelData panel in m_PanelData)
+        {
+            if (panel.m_Type == Type.Sub)
+            {
+                panel.m_Panel.SetActive(true);
+                if (m_PlayerData.Count(c => c.m_Team == PlayerData.Team.Team1) == 2)
+                {
+                    var team1 = m_PlayerData.Where(c => c.m_Team == PlayerData.Team.Team1).ToList();
+                    var team2 = m_PlayerData.Where(c => c.m_Team == PlayerData.Team.Team2).ToList();
+
+                    var point1 = 0;
+                    var point2 = 0;
+                    foreach (PlayerData team in team1)
+                        point1 += team.point;
+                    foreach (PlayerData team in team2)
+                        point2 += team.point;
+
+                    if (point1 >= point2)
+                    {
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                    var list = m_PlayerData.OrderByDescending(c => c.point).ToList();
+                }
+            }
+            else
+            {
+                panel.m_Panel.SetActive(false);
+            }
+        }
+    }
 }
 
