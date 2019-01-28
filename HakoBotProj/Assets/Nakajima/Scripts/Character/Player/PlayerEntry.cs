@@ -7,7 +7,7 @@ using System;
 /// <summary>
 /// エントリー機能(仮実装)
 /// </summary>
-public class PlayerEntry : MonoBehaviour
+public class PlayerEntry : BaseSceneManager
 {
     // エントリー用アニメーション
     [SerializeField]
@@ -15,12 +15,6 @@ public class PlayerEntry : MonoBehaviour
 
     // プレイヤーが存在するか
     bool[] isEntry = new bool[4];
-
-    // 連続入力防止
-    bool isDown;
-
-    [SerializeField]
-    CRT noise;
 
     // TimeLine
     public TitleSystem title;
@@ -35,6 +29,8 @@ public class PlayerEntry : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        GetNoiseBase();
+        noiseAnim.SetTrigger("switchOff");
         title.m_TiteTimeline.Play();
     }
 	
@@ -61,32 +57,6 @@ public class PlayerEntry : MonoBehaviour
 
         if (title.m_StartTimeline.time < 4.0f)
             return;
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            // ゲームパッドの番号のプレイヤーをアクティブにする
-            PlayerSystem.Instance.isActive[0] = true;
-            playerEntryList[0].SetBool("isEntry", true);
-            AudioController.Instance.SEPlay("Entry");
-        }  if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            // ゲームパッドの番号のプレイヤーをアクティブにする
-            PlayerSystem.Instance.isActive[1] = true;
-            playerEntryList[1].SetBool("isEntry", true);
-            AudioController.Instance.SEPlay("Entry");
-        }if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            // ゲームパッドの番号のプレイヤーをアクティブにする
-            PlayerSystem.Instance.isActive[2] = true;
-            playerEntryList[2].SetBool("isEntry", true);
-            AudioController.Instance.SEPlay("Entry");
-        }if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            // ゲームパッドの番号のプレイヤーをアクティブにする
-            PlayerSystem.Instance.isActive[3] = true;
-            playerEntryList[3].SetBool("isEntry", true);
-            AudioController.Instance.SEPlay("Entry");
-        }
 
         for (int i = 0;i < 4; i++)
         {
@@ -123,35 +93,28 @@ public class PlayerEntry : MonoBehaviour
             if (PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive[i] == true)
             {
                 AudioController.Instance.SEPlay("Select");
-                noise.myAnim.SetTrigger("switchOn");
-                StartCoroutine(SceneNoise("Main", 2.0f));
-            }
-            // スペースボタンでゲームスタート
-            if (Input.GetKeyDown(KeyCode.Space) && PlayerSystem.Instance.isActive[i] == true)
-            {
-                AudioController.Instance.SEPlay("Select");
-                noise.myAnim.SetTrigger("switchOn");
-                StartCoroutine(SceneNoise("Main", 2.0f));
+                noiseAnim.SetTrigger("switchOn");
+                StartCoroutine(SceneNoise(2.0f, "Main"));
             }
         }
     }
+    
+    /// <summary>
+     /// ノイズ発生用キャンバスの設定
+     /// </summary>
+    public override void GetNoiseBase()
+    {
+        base.GetNoiseBase();
+    }
 
     /// <summary>
-    ///  シーン変更
+    /// シーン遷移ノイズ発生
     /// </summary>
-    /// <param name="sceneName">シーン名</param>
-    /// <param name="_interval">インターバル</param>
+    /// <param name="_interval">ノイズをかける時間</param>
+    /// <param name="sceneName">次のシーン名</param>
     /// <returns></returns>
-    public IEnumerator SceneNoise(string sceneName, float _interval)
+    public override IEnumerator SceneNoise(float _interval, string sceneName)
     {
-        float time = 0.0f;
-        while (time <= _interval)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        AudioController.Instance.BGMChange(sceneName);
-        SceneManager.LoadScene(sceneName);
+        return base.SceneNoise(_interval, sceneName);
     }
 }

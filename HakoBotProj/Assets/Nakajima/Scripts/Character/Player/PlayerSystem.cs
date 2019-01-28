@@ -130,7 +130,7 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     {
         if (state[playerNo] != null)
         {
-            return state[playerNo].Start;
+            return state[playerNo].Start_down;
         }
         else
         {

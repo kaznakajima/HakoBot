@@ -29,20 +29,16 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     [SerializeField]
     AnimationClip endClip;
 
+    // 音楽が再生されているか
     bool isPlay;
 
-    // シーン上のAudioSource
+    // シーン上のAudioSourceのリスト
     List<AudioSource> playingAudioSource = new List<AudioSource>();
 
 	// Use this for initialization
 	void Start () {
-        DontDestroyOnLoad(gameObject);
-
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
-
-        if (SceneManager.GetActiveScene().name != "Main")
-            return;
 
         // Character配置
         for (int i = 0;i < 4; i++)
@@ -92,26 +88,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // Update is called once per frame
     void Update () {
-        if (SceneManager.GetActiveScene().name != "Main")
-        {
-            GetNoiseBase();
-
-            for(int i = 0;i < 4; i++)
-            {
-                if (PlayerSystem.Instance.Button_A(i + 1))
-                {
-                    noiseAnim.SetTrigger("switchOn");
-                    StartCoroutine(SceneNoise(2.0f, "Title"));
-                }
-                if (PlayerSystem.Instance.Button_B(i + 1))
-                {
-                    noiseAnim.SetTrigger("switchOn");
-                    StartCoroutine(SceneNoise(2.0f, "Main"));
-                }
-            }
-           
-            return;
-        }
 
         CheckGameState();
 
@@ -129,18 +105,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 {
                     Resume();
                 }
-            }
-        }
-
-        // ポーズ処理
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (Time.timeScale != 0.0f) {
-                AudioController.Instance.SEPlay("Pause");
-                Pause();
-            }
-            else {
-                Resume();
             }
         }
 	}
@@ -164,7 +128,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     /// </summary>
     void Pause()
     {
-
         Time.timeScale = 0.0f;
 
         // 再生中なら一時停止
@@ -192,6 +155,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         playingAudioSource.Clear();
     }
 
+    // AudioSourceの取得
     AudioSource[] GetAudioSource()
     {
         return FindObjectsOfType<AudioSource>();
@@ -238,12 +202,12 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
         var disposable = new SingleAssignmentDisposable();
         // 1秒ごとにカウント
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(900)).Subscribe(time =>
         {
             AudioController.Instance.SEPlay("CountDown");
         }).AddTo(this);
 
-        // 3秒後に移動再開
+        // 3秒後に終了
         Observable.Timer(TimeSpan.FromSeconds(4.0f)).Subscribe(time =>
         {
             disposable.Dispose();
@@ -268,8 +232,5 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
         AudioController.Instance.BGMChange(sceneName);
         SceneManager.LoadScene(sceneName);
-
-        if (sceneName != "Result")
-            Destroy(gameObject);
     }
 }

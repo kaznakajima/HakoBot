@@ -11,7 +11,7 @@ namespace GamepadInput
     public static class GamePad
     {
 
-        public enum Button { A, B, B_up, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start }
+        public enum Button { A, B, B_up, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start, Start_down }
         public enum Trigger { LeftTrigger, RightTrigger }
         public enum Axis { LeftStick, RightStick, Dpad }
         public enum Index { Any, One, Two, Three, Four }
@@ -126,6 +126,7 @@ namespace GamepadInput
                         case Button.LeftShoulder: return KeyCode.Joystick1Button4;
                         case Button.Back: return KeyCode.Joystick1Button6;
                         case Button.Start: return KeyCode.Joystick1Button7;
+                        case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.Joystick1Button8;
                         case Button.RightStick: return KeyCode.Joystick1Button9;
                     }
@@ -141,6 +142,7 @@ namespace GamepadInput
                         case Button.LeftShoulder: return KeyCode.Joystick2Button4;
                         case Button.Back: return KeyCode.Joystick2Button6;
                         case Button.Start: return KeyCode.Joystick2Button7;
+                        case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.Joystick2Button8;
                         case Button.RightStick: return KeyCode.Joystick2Button9;
                     }
@@ -156,6 +158,7 @@ namespace GamepadInput
                         case Button.LeftShoulder: return KeyCode.Joystick3Button4;
                         case Button.Back: return KeyCode.Joystick3Button6;
                         case Button.Start: return KeyCode.Joystick3Button7;
+                        case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.Joystick3Button8;
                         case Button.RightStick: return KeyCode.Joystick3Button9;
                     }
@@ -172,6 +175,7 @@ namespace GamepadInput
                         case Button.LeftShoulder: return KeyCode.Joystick4Button4;
                         case Button.Back: return KeyCode.Joystick4Button6;
                         case Button.Start: return KeyCode.Joystick4Button7;
+                        case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.Joystick4Button8;
                         case Button.RightStick: return KeyCode.Joystick4Button9;
                     }
@@ -188,6 +192,7 @@ namespace GamepadInput
                         case Button.LeftShoulder: return KeyCode.JoystickButton4;
                         case Button.Back: return KeyCode.JoystickButton6;
                         case Button.Start: return KeyCode.JoystickButton7;
+                        case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.JoystickButton8;
                         case Button.RightStick: return KeyCode.JoystickButton9;
                     }
@@ -212,6 +217,7 @@ namespace GamepadInput
             state.LeftStick = GetButton(Button.LeftStick, controlIndex);
 
             state.Start = GetButton(Button.Start, controlIndex);
+            state.Start_down = GetButtonDown(Button.Start, controlIndex);
             state.Back = GetButton(Button.Back, controlIndex);
 
             state.LeftStickAxis = GetAxis(Axis.LeftStick, controlIndex, raw);
@@ -239,6 +245,7 @@ namespace GamepadInput
         public bool X = false;
         public bool Y = false;
         public bool Start = false;
+        public bool Start_down = false;
         public bool Back = false;
         public bool Left = false;
         public bool Right = false;

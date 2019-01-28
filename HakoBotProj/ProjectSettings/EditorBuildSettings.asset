@@ -14,7 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Nakajima/Scenes/Main.unity
     guid: dfce6b990d48a8b4c8c5f2fa88339fc7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Osada/Scene/Result.unity
     guid: 0156caccb0ee65444a45651fbdcf4774
+  - enabled: 1
+    path: Assets/Nakajima/Scenes/Result.unity
+    guid: 0269e8bf85c47be4697b3d4d0bb465ef
   m_configObjects: {}
