@@ -12,6 +12,8 @@ public class Ranking : MonoBehaviour
     private List<PlayerData> m_PlayerData = new List<PlayerData>();
     [SerializeField]
     private Text[] text = new Text[4];
+    [SerializeField]
+    private Text[] subText = new Text[2];
 
     private void Start()
     {
@@ -33,6 +35,9 @@ public class Ranking : MonoBehaviour
                 text[1].text = ("　ポイント" + team1[0].point + "　ポイント" + team1[1].point);
                 text[2].text = ("チーム2 得点" + point2);
                 text[3].text = ("　ポイント" + team2[0].point + "　ポイント" + team2[1].point);
+
+                subText[0].text = ("勝者");
+                subText[1].text = ("チーム1");
             }
             else
             {
@@ -42,6 +47,9 @@ public class Ranking : MonoBehaviour
                 text[2].text = ("チーム1 得点" + point1);
                 text[3].text = ("プレイヤー" + team1[0].playerID + "　ポイント" + team1[0].point +
                     "プレイヤー" + team1[1].playerID + "　ポイント" + team1[1].point);
+
+                subText[0].text = ("勝者");
+                subText[1].text = ("チーム２");
             }
         }
         else
@@ -51,6 +59,8 @@ public class Ranking : MonoBehaviour
             for (int i = 0; i < list.Count; i++)
                 text[i].text = (i + 1) + "位　プレイヤー" + list[i].playerID + "　ポイント" + list[i].point;
 
+            subText[0].text = ("勝者");
+            subText[1].text = ("プレイヤー" + list[0].playerID);
         }
     }
 }
