@@ -35,6 +35,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // シーン上のAudioSourceのリスト
     List<AudioSource> playingAudioSource = new List<AudioSource>();
 
+    // AIロボットの停止命令
+    public bool isStop;
+
 	// Use this for initialization
 	void Start () {
         GetNoiseBase();
@@ -213,6 +216,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             disposable.Dispose();
             AudioController.Instance.SEPlay("End");
             isStart = false;
+            isStop = true;
             noiseAnim.SetTrigger("switchOn");
             StartCoroutine(SceneNoise(2.0f, "Result"));
         }).AddTo(this);
