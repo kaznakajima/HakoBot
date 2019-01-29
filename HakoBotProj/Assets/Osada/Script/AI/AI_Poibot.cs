@@ -51,6 +51,12 @@ public class AI_Poibot : MonoBehaviour
 
     private void PrepareForThrowing()
     {
+        if (MainManager.Instance.isStop)
+        {
+            StopAllCoroutines();
+            return;
+        }
+
         m_Throwing = true;
 
         var objList = m_Item.Where(c => c.m_Event).ToList();
@@ -70,6 +76,12 @@ public class AI_Poibot : MonoBehaviour
                 Observable.FromCoroutine(Move, publishEveryYield: false).
                     Subscribe(_ =>
                     {
+                        if (MainManager.Instance.isStop)
+                        {
+                            StopAllCoroutines();
+                            return;
+                        }
+
                         var collider = obj.GetComponent<Collider>();
                         collider.isTrigger = false;
                         obj.transform.parent = null;
@@ -83,6 +95,12 @@ public class AI_Poibot : MonoBehaviour
                 Observable.FromCoroutine(Move, publishEveryYield: false).
                     Subscribe(_ =>
                     {
+                        if (MainManager.Instance.isStop)
+                        {
+                            StopAllCoroutines();
+                            return;
+                        }
+
                         var collider = obj.GetComponent<Collider>();
                         collider.isTrigger = false;
                         var missile = obj.GetComponent<Missile>();
