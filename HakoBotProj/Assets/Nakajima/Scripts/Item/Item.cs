@@ -37,7 +37,7 @@ public class Item : MonoBehaviour
 	// Use this for initialization
 	void Start () {
         isCatch = true;
-        isTarget = false;
+        isTarget = true;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
 

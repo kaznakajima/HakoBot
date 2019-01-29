@@ -52,7 +52,9 @@ public class LineRendererCollision : MonoBehaviour
 
                     // コントローラーのバイブレーション
                     VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
-                    AudioController.Instance.OtherAuioPlay(myAudio, "Sparke");
+
+                    if (myAudio.isPlaying == false)
+                        AudioController.Instance.OtherAuioPlay(myAudio, "Sparke");
                 }
             }
 

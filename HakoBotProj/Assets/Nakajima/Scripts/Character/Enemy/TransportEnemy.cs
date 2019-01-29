@@ -125,7 +125,7 @@ public class TransportEnemy : EnemyBase, Character
         if(_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
-            if (targetObj.GetComponent<Item>().isCatch == false) {
+            if (base.targetObj.GetComponent<Item>().isCatch == false) {
                 SetTarget();
                 return;
             }
@@ -133,7 +133,7 @@ public class TransportEnemy : EnemyBase, Character
         else if(_targetObj.GetComponentInParent<PointArea>() != null)
         {
             // ポイントエリアが機能していないならターゲット再設定
-            if (targetObj.GetComponentInParent<PointArea>().isActive == false) {
+            if (base.targetObj.GetComponentInParent<PointArea>().isActive == false) {
                 SetTarget();
                 return;
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
@@ -61,8 +62,6 @@ public class BalanceEnemy : EnemyBase, Character
     
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
-    // チャージエフェクト用マテリアル
-    ParticleSystem.MainModule chargeMaterial;
 
     // Use this for initialization
     void Start()
@@ -117,7 +116,7 @@ public class BalanceEnemy : EnemyBase, Character
         if (_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
-            if (targetObj.GetComponent<Item>().isCatch == false) {
+            if (_targetObj.GetComponent<Item>().isCatch == false) {
                 SetTarget();
                 return;
             }
@@ -125,7 +124,7 @@ public class BalanceEnemy : EnemyBase, Character
         else if (_targetObj.GetComponentInParent<PointArea>() != null)
         {
             // ポイントエリアが機能していないならターゲット再設定
-            if (targetObj.GetComponentInParent<PointArea>().isActive == false) {
+            if (_targetObj.GetComponentInParent<PointArea>().isActive == false) {
                 SetTarget();
                 return;
             }
@@ -154,10 +153,6 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
-        // 最短距離の初期化 (とりあえず100を入れてある)
-        minDistance = 100;
-        maxDistance = 0;
-
         if (itemObj == null) {
             SearchTarget();
         }
@@ -171,57 +166,41 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchTarget()
     {
-        // ステージ上のアイテムすべてにアクセス
-        for (int i = 0; i < GetItems().Length; i++)
-        {
-            // 高得点アイテムを最優先
-            if (GetItems()[i].point > 10 && GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
-                targetObj = null;
+        // アイテムをリスト化
+        var targetList = GetItems().Where(obj =>obj.isCatch == true && obj.isTarget == false)
+            .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).ToList();
 
-                if (GetItems()[i].isCarry == false && GetItems()[i].isTarget == false)
-                {
-                    minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
-                    targetObj = GetItems()[i].gameObject;
-                }
-                if (targetObj != null) break;
-            }
+        targetList.OrderByDescending(obj => obj.point).ToList();
 
-            // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
-                // 最短距離の格納
-                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
-                targetObj = GetItems()[i].gameObject;
-            }
-        }
-
-        // ステージ上のすべてのプレイヤーにアクセス
-        for (int i = 0; i < GetCharacter().Length; i++)
-        {
-            // 最短距離のプレイヤーをターゲット設定
-            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance &&
-                MainManager.Instance.playerData[i].m_Team != MainManager.Instance.playerData[myNumber - 1].m_Team)
-            {
-                var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
-                if (character.hasItem == true && GetCharacter()[i] != gameObject) {
-                    // 最短距離の格納
-                    minDistance = GetTargetDistance(GetCharacter()[i], gameObject);
-                    targetObj = GetCharacter()[i];
-                }
-            }
-        }
-
-        // ターゲットが設定されたらリターン
-        if (minDistance != 100)
-        {
-            if(targetObj.tag != "Character") {
-                targetObj.GetComponent<Item>().isTarget = true;
-            }
+        // 最短距離のアイテムをターゲット指定
+        foreach(Item item in targetList) {
+            targetObj = item.gameObject;
+            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
-            return;
+            break;
         }
 
-        // それでもターゲットが設定できないなら巡回
-        state = ENEMY_STATE.PATROL;
+        // 敵をリスト化
+        var enemyTarget = GetCharacter().OrderBy(obj => GetTargetDistance(obj, gameObject)).ToList();
+
+        // 最短距離の敵をターゲット指定
+        foreach (GameObject obj in enemyTarget) {
+            if (obj != gameObject)
+            {
+                var character = obj.GetComponent(typeof(Character)) as Character;
+                if (MainManager.Instance.playerData[character.myNumber - 1].m_Team == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
+
+                if (character.hasItem == true)
+                {
+                    targetObj = obj;
+                    state = ENEMY_STATE.TARGETMOVE;
+                    break;
+                }
+            } 
+        }
+
+        // ターゲットがいないならパトロール
+        if (targetObj == null) state = ENEMY_STATE.PATROL;
     }
 
     /// <summary>
@@ -229,58 +208,16 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
-        // 自身とポイントエリアの距離
-        float distance;
-        float[] averageDistance = new float[4];
-        float[] enemyDistacne = new float[4];
+        // ポイントエリアのリスト化
+        var targetList = GetPointArea().Where(obj => obj.isActive == true && obj.isTarget == false)
+            .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).ToList();
 
-        // すべてのポイントエリアにアクセス
-        for (int i = 0; i < GetPointArea().Length; i++)
-        {
-            if(GetPointArea()[i].isTarget == false)
-            {
-                distance = GetTargetDistance(GetPointArea()[i].gameObject, gameObject);
-                // 最短距離のポイントエリアをターゲットとする
-                if (distance < minDistance && GetPointArea()[i].isActive == true)
-                {
-                    minDistance = distance;
-                    targetObj = GetPointArea()[i].targetObj;
-                }
-
-                for (int j = 0; j < GetCharacter().Length; j++)
-                {
-                    // 他のプレイヤーの方が近いならターゲットから除外
-                    enemyDistacne[j] = GetTargetDistance(GetPointArea()[i].gameObject, GetCharacter()[j]);
-                    if (minDistance > enemyDistacne[j] && GetCharacter()[j] != this)
-                    {
-                        targetObj = null;
-                    }
-                    averageDistance[i] += enemyDistacne[j];
-                }
-                averageDistance[i] *= 0.3f;
-
-                // 平均的に一番遠い位置へ移動
-                if (averageDistance[i] > maxDistance && GetPointArea()[i].isActive == true)
-                {
-                    maxDistance = averageDistance[i];
-                    dummyTarget = GetPointArea()[i].targetObj;
-                }
-            }
-        }
-
-        // ターゲットが設定できたならリターン
-        if (targetObj != null) {
+        foreach(PointArea area in targetList) {
+            targetObj = area.gameObject;
+            targetObj.GetComponent<PointArea>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
-            if (targetObj.tag != "Character") {
-                targetObj.GetComponentInParent<PointArea>().isTarget = true;
-            }
-            return;
+            break;
         }
-
-        foreach (PointArea area in GetPointArea()) {
-            if (area.isTarget == false) targetObj = area.gameObject;
-        }
-
     }
 
     /// <summary>
@@ -354,7 +291,7 @@ public class BalanceEnemy : EnemyBase, Character
         }
 
         // 目標地点との距離が縮まったら
-        float distance = Vector3.SqrMagnitude(patrolPos - transform.position);
+        float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
         if (distance < 2.0f)
         {
             // 巡回座標を初期化
@@ -514,6 +451,10 @@ public class BalanceEnemy : EnemyBase, Character
         LayerChange(layerNum);
     }
 
+    /// <summary>
+    /// レイヤー変更
+    /// </summary>
+    /// <param name="layerNum">レイヤー番号</param>
     public void LayerChange(int layerNum)
     {
         gameObject.layer = layerNum;
