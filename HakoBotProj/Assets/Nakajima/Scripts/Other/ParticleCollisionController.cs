@@ -21,7 +21,7 @@ public class ParticleCollisionController : MonoBehaviour
         {
             var character = other.GetComponent(typeof(Character)) as Character;
             VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
-            character.Stan();
+            character.Stan("Stan");
         }
     }
 }

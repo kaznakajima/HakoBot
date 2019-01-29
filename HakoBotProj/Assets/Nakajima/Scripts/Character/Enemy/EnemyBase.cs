@@ -24,9 +24,6 @@ public abstract class EnemyBase : MonoBehaviour
     // 自身のAudio関連
     public AudioSource myAudio;
 
-    // ターゲットオブジェクトのリスト
-    public List<PointArea> targetList = new List<PointArea>();
-
     // ナビメッシュ
     [HideInInspector]
     public NavMeshAgent agent;
@@ -66,7 +63,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     // 巡回地点の一時保存
     [HideInInspector]
-    public Vector3 patrolPos;
+    public Vector3 patrolPos = Vector3.zero;
 
     /// <summary>
     /// ステージ上のすべてのプレイヤーを取得

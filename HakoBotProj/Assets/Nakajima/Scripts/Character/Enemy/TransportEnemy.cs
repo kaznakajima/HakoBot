@@ -78,12 +78,6 @@ public class TransportEnemy : EnemyBase, Character
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
         layerNum = gameObject.layer;
-        // emitter = GetComponentInChildren<EffekseerEmitter>();
-
-        for (int i = 0; i < GetPointArea().Length; i++)
-        {
-            targetList.Add(GetPointArea()[i]);
-        }
     }
 	
 	// Update is called once per frame
@@ -320,15 +314,15 @@ public class TransportEnemy : EnemyBase, Character
     }
 
     // スタン
-    public void Stan()
+    public void Stan(string audioStr)
     {
-        if (isStan == true)
+        if (isStan == true || _stanEffect != null)
             return;
 
         LayerChange(2);
 
         myAudio.loop = true;
-        AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
+        AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
 
         isStan = true;
         myRig.velocity = Vector3.zero;
@@ -344,7 +338,6 @@ public class TransportEnemy : EnemyBase, Character
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
             agent.updatePosition = true;
-            isStan = false;
 
             myAudio.loop = false;
             myAudio.Stop();
@@ -353,6 +346,8 @@ public class TransportEnemy : EnemyBase, Character
             // エナジーゲージの初期化
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
             Destroy(_stanEffect);
+
+            isStan = false;
 
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>

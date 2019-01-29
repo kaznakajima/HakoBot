@@ -44,15 +44,15 @@ public class LineRendererCollision : MonoBehaviour
             // 衝突判定
             if (Physics.Raycast(lineRay, out lineHit, distance)) {
                 if (lineHit.collider.gameObject.tag == "Character") {
-                    AudioSource hitObj_Audio = lineHit.collider.gameObject.GetComponent<AudioSource>();
 
                     // キャラクターのインターフェイスのインスタンス
                     var character = lineHit.collider.gameObject.GetComponent(typeof(Character)) as Character;
 
+                    character.Stan("Sparke");
+
                     // コントローラーのバイブレーション
                     VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
-                    AudioController.Instance.OtherAuioPlay(hitObj_Audio, "Sparke");
-                    character.Stan();
+                    AudioController.Instance.OtherAuioPlay(myAudio, "Sparke");
                 }
             }
 

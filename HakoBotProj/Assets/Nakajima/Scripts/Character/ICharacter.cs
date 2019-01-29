@@ -30,7 +30,7 @@ public interface Character
     void Jump();
 
     // スタン
-    void Stan();
+    void Stan(string audioStr);
 
     /// <summary>
     /// アイテムの取得

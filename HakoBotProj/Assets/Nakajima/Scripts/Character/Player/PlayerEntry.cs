@@ -56,6 +56,12 @@ public class PlayerEntry : BaseSceneManager
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
         title.m_TiteTimeline.Play();
+
+        // 個人戦に切り替え
+        pattern = 0;
+        teamPattern = (TEAM_PLAYER)pattern;
+
+        TeamBattle(teamPattern);
     }
 	
 	// Update is called once per frame

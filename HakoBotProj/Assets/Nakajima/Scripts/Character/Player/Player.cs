@@ -176,7 +176,7 @@ public class Player : PlayerBase, Character
 
             // オーバーヒート
             if (_myEnergy >= 9) {
-                Stan();
+                Stan("Stan");
             }
 
         }).AddTo(this);
@@ -189,15 +189,15 @@ public class Player : PlayerBase, Character
     }
 
     // スタン
-    public void Stan()
+    public void Stan(string audioStr)
     {
-        if (isStan == true)
+        if (isStan == true || _stanEffect != null)
             return;
-        
+
         LayerChange(2);
 
         myAudio.loop = true;
-        AudioController.Instance.OtherAuioPlay(myAudio, "Stan");
+        AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
 
         isStan = true;
         myRig.velocity = Vector3.zero;
@@ -218,6 +218,8 @@ public class Player : PlayerBase, Character
             // エナジーゲージの初期化
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
             Destroy(_stanEffect);
+
+            isStan = false;
 
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>

@@ -7,6 +7,8 @@ public class PointArea : MonoBehaviour
     // スコア加算
     ScoreController score;
 
+    // ターゲットにされているか
+    public bool isTarget = false;
     // ポイントエリアが機能しているか
     public bool isActive = true;
     // ランプ用のRenderer

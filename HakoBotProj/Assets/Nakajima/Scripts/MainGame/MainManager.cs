@@ -71,30 +71,33 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 // キャラクター用オブジェクトのインスタンス
                 character = Instantiate(PlayerSystem.Instance.enemyList[i]);
 
+                character.AddComponent<BalanceEnemy>();
+                character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
+
                 // ランダムで敵AIのタイプを決める
-                int enemyNum = UnityEngine.Random.Range(0, 3);
-                switch (enemyNum)
-                {
-                    // 攻撃AI
-                    case 0:
-                        character.AddComponent<AttackEnemy>();
-                        character.GetComponent<AttackEnemy>()._myNumber = i + 1;
-                        break;
-                    // バランスAI
-                    case 1:
-                        character.AddComponent<BalanceEnemy>();
-                        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
-                        break;
-                    // 荷物優先AI
-                    case 2:
-                        character.AddComponent<TransportEnemy>();
-                        character.GetComponent<TransportEnemy>()._myNumber = i + 1;
-                        break;
-                    default:
-                        character.AddComponent<BalanceEnemy>();
-                        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
-                        break;
-                }
+                // int enemyNum = UnityEngine.Random.Range(0, 3);
+                //switch (enemyNum)
+                //{
+                //    // 攻撃AI
+                //    case 0:
+                //        character.AddComponent<AttackEnemy>();
+                //        character.GetComponent<AttackEnemy>()._myNumber = i + 1;
+                //        break;
+                //    // バランスAI
+                //    case 1:
+                //        character.AddComponent<BalanceEnemy>();
+                //        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
+                //        break;
+                //    // 荷物優先AI
+                //    case 2:
+                //        character.AddComponent<TransportEnemy>();
+                //        character.GetComponent<TransportEnemy>()._myNumber = i + 1;
+                //        break;
+                //    default:
+                //        character.AddComponent<BalanceEnemy>();
+                //        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
+                //        break;
+                //}
             }
         }
 	}
