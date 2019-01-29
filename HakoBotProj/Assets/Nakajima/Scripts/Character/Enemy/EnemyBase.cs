@@ -16,6 +16,10 @@ public abstract class EnemyBase : MonoBehaviour
         TARGETMOVE // ターゲット追尾
     }
     public ENEMY_STATE state;
+    
+    // 自身のレイヤー番号
+    [HideInInspector]
+    public int layerNum;
 
     // 自身のAudio関連
     public AudioSource myAudio;

@@ -43,7 +43,7 @@ public class Timer : SingletonMonobeBehaviour<Timer> {
         }
 
         //制限時間が0になったら、EndGameメソッドを呼ぶ
-        if (totalTime <= 4.0f)
+        if (totalTime <= 4.5f)
         {
             EndGame();
             return;

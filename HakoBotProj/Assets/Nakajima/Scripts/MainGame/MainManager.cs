@@ -11,11 +11,16 @@ using UniRx;
 public class MainManager : SingletonMonobeBehaviour<MainManager>
 {
     // プレイヤーの得点
+    [HideInInspector]
     public int[] playerPoint = new int[4];
 
     // ゲームがスタートしているか
     [HideInInspector]
     public bool isStart;
+
+    // ポーズ画面表示
+    [SerializeField]
+    GameObject pauseImage;
 
     // ノイズ発生スクリプト参照
     CRT noise;
@@ -35,6 +40,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // シーン上のAudioSourceのリスト
     List<AudioSource> playingAudioSource = new List<AudioSource>();
 
+    // プレイヤーデータ
+    public List<PlayerData> playerData = new List<PlayerData>();
+
     // AIロボットの停止命令
     public bool isStop;
 
@@ -46,11 +54,13 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         // Character配置
         for (int i = 0;i < 4; i++)
         {
+            GameObject character;
+
             // プレイヤーがエントリーしているならプレイヤー操作にする
             if (PlayerSystem.Instance.isActive[i])
             {
                 // キャラクター用オブジェクトのインスタンス
-                GameObject character = Instantiate(PlayerSystem.Instance.playerList[i]);
+                character = Instantiate(PlayerSystem.Instance.playerList[i]);
 
                 character.AddComponent<Player>();
                 character.GetComponent<Player>()._myNumber = i + 1;
@@ -59,7 +69,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
             else
             {
                 // キャラクター用オブジェクトのインスタンス
-                GameObject character = Instantiate(PlayerSystem.Instance.enemyList[i]);
+                character = Instantiate(PlayerSystem.Instance.enemyList[i]);
 
                 // ランダムで敵AIのタイプを決める
                 int enemyNum = UnityEngine.Random.Range(0, 3);
@@ -133,6 +143,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     {
         Time.timeScale = 0.0f;
 
+        pauseImage.SetActive(true);
+
         // 再生中なら一時停止
         foreach(var audio in GetAudioSource())
         {
@@ -149,6 +161,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     void Resume()
     {
         Time.timeScale = 1.0f;
+
+        pauseImage.SetActive(false);
 
         // 再開
         foreach (var audio in playingAudioSource)
@@ -205,7 +219,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
         var disposable = new SingleAssignmentDisposable();
         // 1秒ごとにカウント
-        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(900)).Subscribe(time =>
+        disposable.Disposable = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(time =>
         {
             AudioController.Instance.SEPlay("CountDown");
         }).AddTo(this);

@@ -75,6 +75,7 @@ public class BalanceEnemy : EnemyBase, Character
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
         emitter.effectName = "Attack";
+        layerNum = gameObject.layer;
 
         for (int i = 0; i < GetPointArea().Length; i++)
         {
@@ -204,7 +205,8 @@ public class BalanceEnemy : EnemyBase, Character
         for (int i = 0; i < GetCharacter().Length; i++)
         {
             // 最短距離のプレイヤーをターゲット設定
-            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance)
+            if (GetTargetDistance(GetCharacter()[i], gameObject) < minDistance &&
+                MainManager.Instance.playerData[i].m_Team != MainManager.Instance.playerData[myNumber - 1].m_Team)
             {
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true && GetCharacter()[i] != gameObject) {
@@ -433,7 +435,7 @@ public class BalanceEnemy : EnemyBase, Character
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
-                LayerChange(11);
+                LayerChange(layerNum);
             }).AddTo(this);
 
             SetTarget();
@@ -478,7 +480,7 @@ public class BalanceEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
         ResetTarget();
     }
 
@@ -489,7 +491,7 @@ public class BalanceEnemy : EnemyBase, Character
     {
         itemObj = null;
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
     }
 
     public void LayerChange(int layerNum)
@@ -525,6 +527,10 @@ public class BalanceEnemy : EnemyBase, Character
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
+
+            // 同じチームだったらリターン
+            if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
+                MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)

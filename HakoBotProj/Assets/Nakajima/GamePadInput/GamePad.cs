@@ -210,8 +210,8 @@ namespace GamepadInput
             state.Y = GetButton(Button.Y, controlIndex);
             state.X = GetButton(Button.X, controlIndex);
 
-            state.RightShoulder = GetButton(Button.RightShoulder, controlIndex);
-            state.LeftShoulder = GetButton(Button.LeftShoulder, controlIndex);
+            state.RightShoulder = GetButtonDown(Button.RightShoulder, controlIndex);
+            state.LeftShoulder = GetButtonDown(Button.LeftShoulder, controlIndex);
             state.RightStick = GetButton(Button.RightStick, controlIndex);
             state.LeftStick = GetButton(Button.LeftStick, controlIndex);
 

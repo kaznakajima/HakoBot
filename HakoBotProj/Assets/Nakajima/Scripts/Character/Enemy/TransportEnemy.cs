@@ -77,6 +77,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
+        layerNum = gameObject.layer;
         // emitter = GetComponentInChildren<EffekseerEmitter>();
 
         for (int i = 0; i < GetPointArea().Length; i++)
@@ -356,7 +357,7 @@ public class TransportEnemy : EnemyBase, Character
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
-                LayerChange(11);
+                LayerChange(layerNum);
             }).AddTo(this);
 
             SetTarget();
@@ -401,7 +402,7 @@ public class TransportEnemy : EnemyBase, Character
         myAnim.SetInteger("PlayAnimNum", 10);
         itemObj.GetComponent<Item>().ReleaseItem();
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
         ResetTarget();
     }
 
@@ -412,7 +413,7 @@ public class TransportEnemy : EnemyBase, Character
     {
         itemObj = null;
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
     }
 
     public void LayerChange(int layerNum)
@@ -447,6 +448,10 @@ public class TransportEnemy : EnemyBase, Character
         {
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
+
+            // 同じチームだったらリターン
+            if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
+                MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)

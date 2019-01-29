@@ -74,6 +74,7 @@ public class Player : PlayerBase, Character
         myAnim = GetComponent<Animator>();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
+        layerNum = gameObject.layer;
 	}
 	
 	// Update is called once per frame
@@ -221,7 +222,7 @@ public class Player : PlayerBase, Character
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
-                LayerChange(11);
+                LayerChange(layerNum);
             }).AddTo(this);
         }).AddTo(this);
     }
@@ -265,7 +266,7 @@ public class Player : PlayerBase, Character
         itemObj.GetComponent<Item>().ReleaseItem();
         itemObj = null;
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
     }
 
     /// <summary>
@@ -275,7 +276,7 @@ public class Player : PlayerBase, Character
     {
         itemObj = null;
         hasItem = false;
-        LayerChange(11);
+        LayerChange(layerNum);
     }
 
     public void LayerChange(int layerNum)
@@ -298,6 +299,10 @@ public class Player : PlayerBase, Character
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
+
+            // 同じチームだったらリターン
+            if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
+                MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
             if (character.hasItem == false)

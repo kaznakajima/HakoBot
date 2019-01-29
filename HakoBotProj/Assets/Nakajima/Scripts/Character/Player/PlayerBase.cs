@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
+    // 自身のレイヤー番号
+    [HideInInspector]
+    public int layerNum;
+
     // 自身のAudio関連
     [HideInInspector]
     public AudioSource myAudio;

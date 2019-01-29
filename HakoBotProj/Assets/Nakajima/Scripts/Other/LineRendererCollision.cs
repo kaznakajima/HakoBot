@@ -7,9 +7,12 @@ public class LineRendererCollision : MonoBehaviour
     // 自身のLineRenderer
     LineRenderer myLine;
 
+    AudioSource myAudio;
+
 	// Use this for initialization
 	void Start () {
         myLine = GetComponent<LineRenderer>();
+        myAudio = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -38,17 +41,17 @@ public class LineRendererCollision : MonoBehaviour
             Ray lineRay = new Ray(rayPos, direction);
             RaycastHit lineHit;
 
-            // デバッグ表示
-            Debug.DrawRay(rayPos, direction, Color.blue);
-
             // 衝突判定
             if (Physics.Raycast(lineRay, out lineHit, distance)) {
                 if (lineHit.collider.gameObject.tag == "Character") {
+                    AudioSource hitObj_Audio = lineHit.collider.gameObject.GetComponent<AudioSource>();
+
                     // キャラクターのインターフェイスのインスタンス
                     var character = lineHit.collider.gameObject.GetComponent(typeof(Character)) as Character;
 
                     // コントローラーのバイブレーション
                     VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
+                    AudioController.Instance.OtherAuioPlay(hitObj_Audio, "Sparke");
                     character.Stan();
                 }
             }

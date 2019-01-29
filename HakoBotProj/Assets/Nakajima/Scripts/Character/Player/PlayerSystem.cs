@@ -22,6 +22,10 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     // プレイヤーがアクティブかどうか
     public bool[] isActive;
 
+    // チーム戦かどうか
+    [HideInInspector]
+    public bool isTeam;
+
 	// Use this for initialization
 	void Start () {
         DontDestroyOnLoad(this);
@@ -71,6 +75,23 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     }
 
     /// <summary>
+    /// Bボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool Button_B(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].B;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Xボタンの入力状態の確認
     /// </summary>
     /// <param name="playerNo">プレイヤー番号</param>
@@ -80,6 +101,40 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         if (state[playerNo] != null)
         {
             return state[playerNo].X;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Rトリガーボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool Button_RightShoulder(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].RightShoulder;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Lトリガーボタンの入力状態の確認
+    /// </summary>
+    /// <param name="playerNo">プレイヤー番号</param>
+    /// <returns></returns>
+    public bool Button_LeftShoulder(int playerNo)
+    {
+        if (state[playerNo] != null)
+        {
+            return state[playerNo].LeftShoulder;
         }
         else
         {
