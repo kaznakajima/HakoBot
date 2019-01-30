@@ -33,8 +33,7 @@ public class Player : PlayerBase, Character
     {
         set {
             _myEnergy += value;
-            if (_myEnergy > 9)
-                _myEnergy = 9;
+            if (_myEnergy > 9) _myEnergy = 9;
         }
         get { return _myEnergy; }
     }
@@ -59,9 +58,6 @@ public class Player : PlayerBase, Character
 
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
-    // チャージエフェクト用マテリアル
-    ParticleSystem.MainModule chargeMaterial;
-    
 
     // Use this for initialization
     void Start ()
@@ -80,20 +76,18 @@ public class Player : PlayerBase, Character
 	// Update is called once per frame
 	void Update () {
         // ポーズ中は動かない
-        if (Mathf.Approximately(Time.timeScale, 0.0f))
-            return;
+        if (Mathf.Approximately(Time.timeScale, 0.0f) || MainManager.Instance.isStart == false) return;
 
-            if (isStan || MainManager.Instance.isStart == false)
-            return;
+        // スタン中は動かない
+        if (isStan) return;
 
-         PlayerInput();
+        PlayerInput();
 	}
 
     // 入力判定
     void PlayerInput()
     {
-        if (isAttack)
-            return;
+        if (isAttack) return;
 
         /* ここから移動量判定 */
         if (system.LeftStickAxis(myNumber) != Vector2.zero)
@@ -104,20 +98,11 @@ public class Player : PlayerBase, Character
         else
         {
             myRig.velocity = Vector3.zero;
-            if (_hasItem)
-            {
-                myAnim.SetInteger("PlayAnimNum", 11);
-            }
-            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false)
-            {
-                myAnim.SetInteger("PlayAnimNum", 8);
-            }
+            if (hasItem) myAnim.SetInteger("PlayAnimNum", 11);
+            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false) myAnim.SetInteger("PlayAnimNum", 8);
         }
 
-        if (system.Button_B(myNumber))
-        {
-            Attack();
-        }
+        if (system.Button_B(myNumber)) Attack();
     }
 
     /// <summary>
@@ -133,14 +118,8 @@ public class Player : PlayerBase, Character
         // 方向キーの入力値とカメラの向きから、移動方向の決定
         Vector3 moveForward = cameraForward * vec.z + Camera.main.transform.right * vec.x;
 
-        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
-        {
-            myAnim.SetInteger("PlayAnimNum", 11);
-        }
-        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
-        {
-            myAnim.SetInteger("PlayAnimNum", 4);
-        }
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) myAnim.SetInteger("PlayAnimNum", 11);
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
 
         // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
         myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
@@ -153,8 +132,7 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (hasItem)
-            return;
+        if (hasItem) return;
 
         // エフェクト再生
         emitter.Play("Attack_Lv1");
@@ -175,9 +153,7 @@ public class Player : PlayerBase, Character
             isAttack = false;
 
             // オーバーヒート
-            if (_myEnergy >= 9) {
-                Stan("Stan");
-            }
+            if (_myEnergy >= 9) Stan("Stan");
 
         }).AddTo(this);
     }
@@ -191,8 +167,7 @@ public class Player : PlayerBase, Character
     // スタン
     public void Stan(string audioStr)
     {
-        if (isStan == true || _stanEffect != null)
-            return;
+        if (isStan == true || _stanEffect != null) return;
 
         LayerChange(2);
 
@@ -290,10 +265,7 @@ public class Player : PlayerBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.tag == "Item")
-        {
-            Catch(col.gameObject);
-        }
+        if (col.gameObject.tag == "Item") Catch(col.gameObject);
 
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
@@ -307,17 +279,11 @@ public class Player : PlayerBase, Character
                 MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
-            if (character.hasItem == false)
-                return;
+            if (character.hasItem == false) return;
 
             AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
             character.Release(false, Vector3.zero);
         }
-    }
-
-    void OnParticleCollision(GameObject other)
-    {
-        
     }
 }

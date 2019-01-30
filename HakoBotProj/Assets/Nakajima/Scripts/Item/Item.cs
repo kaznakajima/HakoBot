@@ -36,22 +36,16 @@ public class Item : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
-        isCatch = true;
+        isCatch = false;
         isTarget = true;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
-
-        // 1秒後に移動再開
-        //Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(time => {
-        //    ReleaseItem();
-        //}).AddTo(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (isCarry)
-            Move(dir);
-	}
+        if (isCarry) Move(dir);
+    }
 
     /// <summary>
     /// コンベアに乗せた後の処理
@@ -87,8 +81,7 @@ public class Item : MonoBehaviour
     /// <param name="point">持っている位置</param>
     public void GetItem(Transform point)
     {
-        if(isCatch == false)
-            return;
+        if(isCatch == false) return;
 
         // プレイヤーの取得位置に配置
         transform.position = point.position;
@@ -144,15 +137,9 @@ public class Item : MonoBehaviour
         // 斜方投射の公式を初速度について解く
         float speed = Mathf.Sqrt(-Physics.gravity.y * Mathf.Pow(x, 2) / (2 * Mathf.Pow(Mathf.Cos(rad), 2) * (x * Mathf.Tan(rad) + y)));
 
-        if (float.IsNaN(speed))
-        {
-            // 条件を満たす初速を算出できなければVector3.zeroを返す
-            return Vector3.zero;
-        }
-        else
-        {
-            return (new Vector3(pointB.x - pointA.x, x * Mathf.Tan(rad), pointB.z - pointA.z).normalized * speed);
-        }
+        // 条件を満たす初速を算出できなければVector3.zeroを返す
+        if (float.IsNaN(speed)) return Vector3.zero;
+        else return (new Vector3(pointB.x - pointA.x, x * Mathf.Tan(rad), pointB.z - pointA.z).normalized * speed);
     }
 
     void OnCollisionEnter(Collision col)
@@ -163,16 +150,11 @@ public class Item : MonoBehaviour
             isCatch = true;
             isTarget = false;
         }
-        if(col.gameObject.tag == "Pawn") {
-            ReleaseItem();
-        }
+        if(col.gameObject.tag == "Pawn") ReleaseItem();
     }
 
     void OnTriggerExit(Collider col)
     {
-        if(col.gameObject.GetComponent<PointArea>() != null)
-        {
-            Destroy(gameObject);
-        }
+        if(col.gameObject.GetComponent<PointArea>() != null) Destroy(gameObject);
     }
 }

@@ -31,6 +31,10 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     //SEにアクセスするためのテーブル
     Dictionary<string, AudioList> poolSe = new Dictionary<string, AudioList>();
 
+    // 消音判定
+    [HideInInspector]
+    public bool volumeZero;
+
     protected override void Awake()
     {
         base.Awake();
@@ -122,6 +126,8 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     /// <param name="otherAudio">流したい効果音をもっているAudioSource</param>
     public void OtherAuioPlay(AudioSource otherAudio, string key)
     {
+        if (volumeZero) otherAudio.volume = 0.0f;
+
         var _data = poolSe[key];
         otherAudio.clip = _data.Clip;
         otherAudio.Play();

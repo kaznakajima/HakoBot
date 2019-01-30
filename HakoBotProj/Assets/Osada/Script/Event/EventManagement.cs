@@ -14,8 +14,8 @@ public class EventManagement : MonoBehaviour
 
     private BoolReactiveProperty m_Action = new BoolReactiveProperty(false);
 
-    private float m_EventTime = 30f;
-    private float m_EventInterval = 30f;
+    private float m_EventTime = 20f;
+    private float m_EventInterval = 20f;
 
     private void Start()
     {

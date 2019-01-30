@@ -176,7 +176,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     }
 
     // AudioSourceの取得
-    AudioSource[] GetAudioSource()
+    public AudioSource[] GetAudioSource()
     {
         return FindObjectsOfType<AudioSource>();
     }

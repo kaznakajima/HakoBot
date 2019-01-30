@@ -88,19 +88,32 @@ public class BalanceEnemy : EnemyBase, Character
         if (MainManager.Instance.isStart == false || isStan)
             return;
 
+        AI_Move();
+    }
+
+    /// <summary>
+    /// AIを動かせる(Update)
+    /// </summary>
+    public override void AI_Move()
+    {
+        // AIの状態によって分岐
         switch (state)
         {
+            // パトロール
             case ENEMY_STATE.PATROL:
                 PatrolMove(patrolPos);
                 SetTarget();
                 break;
+            // ターゲット追従
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
-                if (targetObj != null) {
+                if (targetObj != null)
+                {
                     Move(targetObj.transform.position);
                 }
-                // ターゲットがいないならパトロール
-                else if (targetObj == null) {
+                // ターゲットを見失ったらパトロール
+                else if (targetObj == null)
+                {
                     state = ENEMY_STATE.PATROL;
                 }
                 break;
@@ -153,16 +166,20 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SetTarget()
     {
+        // 荷物を持っていないなら
         if (itemObj == null) {
+            // アイテム、敵探索
             SearchTarget();
         }
+        // 荷物を持っているなら
         else {
+            // 得点エリア探索
             SearchPointArea();
         }
     }
 
     /// <summary>
-    /// 他のキャラクターとの距離を取得
+    /// アイテム、敵を探索し、ターゲットにする
     /// </summary>
     public override void SearchTarget()
     {
@@ -188,8 +205,11 @@ public class BalanceEnemy : EnemyBase, Character
             if (obj != gameObject)
             {
                 var character = obj.GetComponent(typeof(Character)) as Character;
-                if (MainManager.Instance.playerData[character.myNumber - 1].m_Team == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
+                // チーム戦の場合、見方は除外
+                if (MainManager.Instance.playerData[character.myNumber - 1].m_Team 
+                    == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
+                // 荷物を持っているならターゲット指定
                 if (character.hasItem == true)
                 {
                     targetObj = obj;
@@ -204,7 +224,7 @@ public class BalanceEnemy : EnemyBase, Character
     }
 
     /// <summary>
-    /// ポイントエリアとの距離を取得
+    /// ポイントエリアを探索し、ターゲットにする
     /// </summary>
     public override void SearchPointArea()
     {
@@ -221,35 +241,29 @@ public class BalanceEnemy : EnemyBase, Character
     }
 
     /// <summary>
-    /// 移動メソッド
+    /// AIの移動
     /// </summary>
-    /// <param name="vec">移動方向</param>
+    /// <param name="vec">目標地点</param>
     public void Move(Vector3 vec)
     {
         CheckTarget(targetObj);
 
-        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11)
-        {
-            myAnim.SetInteger("PlayAnimNum", 11);
-        }
-        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4)
-        {
-            myAnim.SetInteger("PlayAnimNum", 4);
-        }
+        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) myAnim.SetInteger("PlayAnimNum", 11);
+        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
 
         // ターゲットがアイテムを持っていないならターゲット変更
         if (targetObj.tag == "Character")
         {
             var character = targetObj.GetComponent(typeof(Character)) as Character;
+
+            // ターゲットが荷物を失ったらターゲット再指定
             if (character.hasItem == false) {
                 SetTarget();
                 return;
             }
 
             // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) {
-                Attack();
-            }
+            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) Attack();
         }
 
         // 次の位置への方向を求める
@@ -267,17 +281,6 @@ public class BalanceEnemy : EnemyBase, Character
         transform.forward = rot * transform.forward;
 
         agent.SetDestination(vec);
-
-        //// ターゲットとの距離が近づいたら
-        //if (GetTargetDistance(targetObj, gameObject) < 6.0f)
-        //{
-        //    // キャラクターがターゲットでないならリターン
-        //    if (targetObj.gameObject.tag != "Character")
-        //        return;
-
-        //    // パワーチャージ
-        //    Charge();
-        //}
     }
 
     /// <summary>
@@ -286,23 +289,16 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="vec">目標地点</param>
     public override void PatrolMove(Vector3 vec)
     {
-        if (myAnim.GetInteger("PlayAnimNum") != 4) {
-            myAnim.SetInteger("PlayAnimNum", 4);
-        }
+        if (myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
 
         // 目標地点との距離が縮まったら
         float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
-        if (distance < 2.0f)
-        {
-            // 巡回座標を初期化
-            patrolPos = Vector3.zero;
-        }
+        // 巡回座標を初期化
+        if (distance < 2.0f) patrolPos = Vector3.zero;
 
         // 巡回座標が初期化されていたら
         // 再度設定
-        if (patrolPos == Vector3.zero) {
-            GetRandomPosition();
-        }
+        if (patrolPos == Vector3.zero) GetRandomPosition();
 
         agent.SetDestination(vec);
     }
@@ -312,6 +308,9 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public void Attack()
     {
+        // 連続攻撃しない
+        if (isAttack) return;
+
         // エフェクト再生
         emitter.Play("Attack_Lv1");
 
@@ -324,22 +323,20 @@ public class BalanceEnemy : EnemyBase, Character
         // アタック
         myRig.velocity += transform.forward * 7.5f;
 
-
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
             myAnim.SetInteger("PlayAnimNum", 8);
             myRig.velocity = Vector3.zero;
+
             // 移動制限解除
             isAttack = false;
 
             // オーバーヒート
-            if (_myEnergy >= 9) {
-                Stan("Stan");
-            }
-            else {
-                SetTarget();
-            }
+            if (_myEnergy >= 9) Stan("Stan");
+            // 攻撃終了後ターゲット探索
+            else SetTarget();
+
         }).AddTo(this);
     }
 
@@ -350,9 +347,8 @@ public class BalanceEnemy : EnemyBase, Character
 
     public void Stan(string audioStr)
     {
-        if (isStan == true || _stanEffect != null)
-            return;
-        
+        if (isStan == true || _stanEffect != null) return;
+
         LayerChange(2);
         if(audioStr == "Stan") {
             myAudio.loop = true;
@@ -402,8 +398,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="obj">アイテムのオブジェクト</param>
     public void Catch(GameObject obj)
     {
-        if (hasItem == true || obj.GetComponent<Item>().isCatch == false)
-            return;
+        if (hasItem == true || obj.GetComponent<Item>().isCatch == false) return;
 
         myRig.velocity = Vector3.zero;
 
@@ -477,10 +472,7 @@ public class BalanceEnemy : EnemyBase, Character
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.tag == "Item")
-        {
-            Catch(col.gameObject);
-        }
+        if (col.gameObject.tag == "Item") Catch(col.gameObject);
 
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
@@ -494,8 +486,7 @@ public class BalanceEnemy : EnemyBase, Character
                 MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 触れたプレイヤーがアイテムを持っていないならリターン
-            if (character.hasItem == false)
-                return;
+            if (character.hasItem == false) return;
 
             AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 

@@ -93,6 +93,14 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     /// <summary>
+    /// AIを動かせる(Update)
+    /// </summary>
+    public virtual void AI_Move()
+    {
+
+    }
+
+    /// <summary>
     /// ターゲットの状態を取得
     /// </summary>
     /// <param name="otherObj">他のプレイヤー</param>
@@ -170,9 +178,6 @@ public abstract class EnemyBase : MonoBehaviour
     public virtual void OnCollisionExit(Collision col)
     {
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null)
-        {
-            myRig.velocity = Vector3.zero;
-        }
+        if (col.gameObject.GetComponent(typeof(Character)) as Character != null) myRig.velocity = Vector3.zero;
     }
 }
