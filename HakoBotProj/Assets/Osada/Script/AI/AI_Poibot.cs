@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 
 public class AI_Poibot : MonoBehaviour
 {
+    [SerializeField]
+    private LuggageManagement luggageManagement;
+
     public enum ItemType
     {
         Baggage,
@@ -42,11 +46,22 @@ public class AI_Poibot : MonoBehaviour
     [SerializeField, Header("横の半径")]
     private float m_SizeX;
     [SerializeField, Header("奥行の半径")]
-    private float m_SizeZ; 
+    private float m_SizeZ;
+
+    private bool confirmation = false;
 
     private void Start()
     {
         PrepareForThrowing();
+
+        this.UpdateAsObservable().
+            Subscribe(_ =>
+            {
+                if (luggageManagement.GetCount() <= 7)
+                    confirmation = true;
+                else
+                    confirmation = false;
+            }).AddTo(this);
     }
 
     private void PrepareForThrowing()
