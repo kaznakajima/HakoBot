@@ -13,10 +13,6 @@ public class ThrowEnemy : MonoBehaviour
     [HideInInspector]
     public Item item;
 
-    float step = 0;
-    //向くスピード(秒速)
-    float speed = 0.01f;
-
     // Use this for initialization
     void Start () {
         // 自身のAnimatorを取得

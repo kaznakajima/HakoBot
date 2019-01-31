@@ -52,6 +52,15 @@ public class CurrentRodData : ScriptableObject
             d.m_MaxRodNumber = EditorGUILayout.IntSlider("内側のロッドの本数", d.m_MaxRodNumber, 1, 5);
             d.m_Distance = EditorGUILayout.FloatField("ロッド間の距離", d.m_Distance);
             d.m_Height = EditorGUILayout.FloatField("ロッドの出現高さ", d.m_Height);
+
+            if (GUILayout.Button("保存"))
+            {
+                //ダーティとしてマークする(変更があった事を記録する)
+                EditorUtility.SetDirty(d);
+
+                //保存する
+                AssetDatabase.SaveAssets();
+            }
         }
     }
 #endif

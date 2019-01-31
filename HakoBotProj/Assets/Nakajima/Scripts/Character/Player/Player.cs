@@ -55,6 +55,14 @@ public class Player : PlayerBase, Character
         get { return _isStan; }
     }
 
+    // ターゲットとされているか
+    private bool _isTarget;
+    public bool isTarget
+    {
+        set { _isTarget = value; }
+        get { return _isTarget; }
+    }
+
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
 

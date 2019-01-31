@@ -5215,6 +5215,7 @@ MonoBehaviour:
   myAudio:
   - {fileID: 1390360472}
   - {fileID: 1390360471}
+  volumeZero: 0
 --- !u!4 &1390360474
 Transform:
   m_ObjectHideFlags: 0

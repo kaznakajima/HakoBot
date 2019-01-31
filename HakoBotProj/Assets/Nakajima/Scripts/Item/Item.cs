@@ -16,10 +16,6 @@ public class Item : MonoBehaviour
     [HideInInspector]
     public bool isCatch;
 
-    // ターゲットにされているか
-    [HideInInspector]
-    public bool isTarget;
-
     // コンベアに乗ったかどうか
     [HideInInspector]
     public bool isCarry;
@@ -37,10 +33,15 @@ public class Item : MonoBehaviour
 	// Use this for initialization
 	void Start () {
         isCatch = false;
-        isTarget = true;
         myCol = GetComponent<Collider>();
         myRig = GetComponent<Rigidbody>();
-	}
+
+        // 4秒後に取得可能
+        Observable.Timer(TimeSpan.FromSeconds(4.0f)).Subscribe(time =>
+        {
+            isCatch = true;
+        }).AddTo(this);
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -87,9 +88,9 @@ public class Item : MonoBehaviour
         transform.position = point.position;
         // 向きを修正
         transform.rotation = point.rotation;
-        isCatch = false;
         myCol.isTrigger = true;
         myRig.useGravity = false;
+        isCatch = false;
 
         // 動き、向きを固定
         myRig.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ |
@@ -105,6 +106,7 @@ public class Item : MonoBehaviour
         transform.parent = null;
         myCol.isTrigger = false;
         myRig.useGravity = true;
+        isCatch = true;
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         // 目標地点
@@ -144,13 +146,8 @@ public class Item : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "st")
-        {
-            gameObject.layer = 9;
-            isCatch = true;
-            isTarget = false;
-        }
-        if(col.gameObject.tag == "Pawn") ReleaseItem();
+        if(col.gameObject.name == "st") gameObject.layer = 9;
+        if (col.gameObject.tag == "Pawn") ReleaseItem();
     }
 
     void OnTriggerExit(Collider col)

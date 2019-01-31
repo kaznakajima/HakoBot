@@ -6,6 +6,7 @@ using UniRx;
 using System;
 using System.Linq;
 
+
 public class AttackEnemy : EnemyBase, Character
 {
     // エフェクト再生
@@ -56,6 +57,14 @@ public class AttackEnemy : EnemyBase, Character
     {
         set { _isStan = value; }
         get { return _isStan; }
+    }
+
+    // ターゲットとされているか
+    private bool _isTarget;
+    public bool isTarget
+    {
+        set { _isTarget = value; }
+        get { return _isTarget; }
     }
 
     // 自身のAnimator
@@ -200,21 +209,15 @@ public class AttackEnemy : EnemyBase, Character
             return;
         }
 
-
-
         // アイテムのリスト
         List<Item> itemList = new List<Item>();
 
-        // 取得可能なアイテムを距離が一番近いアイテムを取得
+        // 取得可能かつ距離が一番近いアイテムを取得
         var _itemList = itemList.Where(item => item.isCatch)
             .OrderBy(item => GetTargetDistance(item.gameObject, gameObject)).FirstOrDefault();
 
         // 取得可能なアイテムがあるならターゲットにする
         if (_itemList != null) targetObj = _itemList.gameObject;
-
-
-
-
 
         // 誰もアイテムを所持していないなら
         // ステージ上のアイテムすべてにアクセス
@@ -231,7 +234,7 @@ public class AttackEnemy : EnemyBase, Character
             }
 
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -240,7 +243,6 @@ public class AttackEnemy : EnemyBase, Character
 
         // ターゲットが設定されたらリターン
         if (minDistance != 100) {
-            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }

@@ -126,7 +126,7 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     /// <summary>
-    /// ターゲットになりえるオブジェクトとの距離を取得
+    /// ターゲットになりえるオブジェクトを探す
     /// </summary>
     public virtual void SearchTarget()
     {
@@ -134,7 +134,15 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     /// <summary>
-    /// ポイントエリアとの距離を取得
+    /// ターゲットになりえる敵を探す
+    /// </summary>
+    public virtual void SearchEnemy()
+    {
+
+    }
+
+    /// <summary>
+    /// ターゲットになりえるポイントエリアを探す
     /// </summary>
     public virtual void SearchPointArea()
     {
@@ -177,7 +185,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     public virtual void OnCollisionExit(Collision col)
     {
-        // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null) myRig.velocity = Vector3.zero;
+        // プレイヤーから離れたとき
+        if (col.gameObject.GetComponent<Character>() != null) myRig.velocity = Vector3.zero;
     }
 }

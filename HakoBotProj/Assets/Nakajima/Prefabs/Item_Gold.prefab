@@ -230,4 +230,4 @@ MonoBehaviour:
   isTarget: 0
   isCarry: 0
   throwPos: {x: 0, y: 0, z: 0}
-  point: 50
+  point: 20

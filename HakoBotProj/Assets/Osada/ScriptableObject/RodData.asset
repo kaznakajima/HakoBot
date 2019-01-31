@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Name: RodData
   m_EditorClassIdentifier: 
   m_OuterRodPos:
-  - {x: 8, y: 0, z: 8}
-  - {x: -8, y: 0, z: 8}
-  - {x: 8, y: 0, z: -8}
-  - {x: -8, y: 0, z: -8}
-  m_CenterPos: {x: 0, y: 0, z: 0}
+  - {x: 6, y: 0, z: 2.5}
+  - {x: -6, y: 0, z: 2.5}
+  - {x: 6, y: 0, z: -7.5}
+  - {x: -6, y: 0, z: -7.5}
+  m_CenterPos: {x: 0, y: 0, z: -2.5}
   m_Range: 8
   m_MaxRodNumber: 3
   m_Distance: 4

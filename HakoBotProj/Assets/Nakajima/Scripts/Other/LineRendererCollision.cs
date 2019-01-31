@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using System;
 
 public class LineRendererCollision : MonoBehaviour
 {
@@ -13,12 +15,12 @@ public class LineRendererCollision : MonoBehaviour
 	void Start () {
         myLine = GetComponent<LineRenderer>();
         myAudio = GetComponent<AudioSource>();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
         CheckLineHit();
-	}
+    }
 
     public void CheckLineHit()
     {

@@ -62,6 +62,14 @@ public class TransportEnemy : EnemyBase, Character
         get { return _isStan; }
     }
 
+    // ターゲットとされているか
+    private bool _isTarget;
+    public bool isTarget
+    {
+        set { _isTarget = value; }
+        get { return _isTarget; }
+    }
+
     // 自身のAnimator
     Animator myAnim;
 
@@ -188,7 +196,7 @@ public class TransportEnemy : EnemyBase, Character
             }
 
             // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance && GetItems()[i].isTarget == false) {
+            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
                 // 最短距離の格納
                 minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
                 targetObj = GetItems()[i].gameObject;
@@ -197,7 +205,6 @@ public class TransportEnemy : EnemyBase, Character
 
         // ターゲットが設定されたらリターン
         if (minDistance != 100) {
-            targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
