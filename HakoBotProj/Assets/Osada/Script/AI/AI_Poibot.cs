@@ -7,60 +7,43 @@ using UniRx.Triggers;
 
 public class AI_Poibot : MonoBehaviour
 {
+    //投てき用データ
     [SerializeField]
-    private LuggageManagement luggageManagement;
+    private PoiBotData poiBotData;
+    //荷物管理用
+    [SerializeField]
+    private ItemManagement itemManagement;
 
-    public enum ItemType
-    {
-        Baggage,
-        HighBaggage,
-        Missile,
-        Keibot
-    }
-    //投てき物用構造体
-    [System.Serializable]
-    public class Item
-    {
-        [Header("投てき物")]
-        public GameObject m_ItemObj;
-        [Header("アイテムタイプ")]
-        public ItemType m_ItemType;
-        [Header("投げていいものかの判断（触るの禁止）")]
-        public bool m_Event;
-    }
-    [SerializeField,Header("投てき物リスト")]
-    public List<Item> m_Item;
-    [SerializeField,Header("投てき物出現地点")]
-    private Transform m_GenerationPosition;
+    [SerializeField, Header("投てき物出現地点")]
+    private Transform throwing_object_pop_point;
 
-    [SerializeField,Header("投てき位置")]
-    private Vector3 m_ThrowPosition;
+    [SerializeField, Header("投てき位置")]
+    private Vector3 throwing_position;
     [SerializeField, Header("補充位置")]
-    private Vector3 m_PreparationPosition;
+    private Vector3 replenishment_position;
 
-    private Vector3 m_Velocity = Vector3.zero;
-    private float m_Speed = 1.0f;
+    //速度保存用
+    private Vector3 velocity = Vector3.zero;
+    //移動速度
+    private float speed = 1.0f;
+    //投てき可能か判断
+    private bool throwing_possible;
 
-    private bool m_Throwing;
-
-    [SerializeField, Header("横の半径")]
-    private float m_SizeX;
-    [SerializeField, Header("奥行の半径")]
-    private float m_SizeZ;
-
-    private bool confirmation = false;
+    private BoolReactiveProperty startup = new BoolReactiveProperty(false);
 
     private void Start()
     {
-        PrepareForThrowing();
-
         this.UpdateAsObservable().
             Subscribe(_ =>
             {
-                if (luggageManagement.GetCount() <= 7)
-                    confirmation = true;
-                else
-                    confirmation = false;
+                if (!startup.Value && itemManagement.get_list_factor_count() <= 7)
+                    startup.Value = true;
+            }).AddTo(this);
+
+        startup.Where(c => c).
+            Subscribe(c =>
+            {
+                PrepareForThrowing();
             }).AddTo(this);
     }
 
@@ -72,19 +55,26 @@ public class AI_Poibot : MonoBehaviour
             return;
         }
 
-        m_Throwing = true;
+        if (itemManagement.get_list_factor_count() > 7)
+        {
+            startup.Value = false;
+            return;
+        }
 
-        var objList = m_Item.Where(c => c.m_Event).ToList();
+        throwing_possible = true;
+
+        var objList = poiBotData.item.Where(c => c.valid).ToList();
         var objNumber = Random.Range(0, objList.Count());
 
         var targetPos = GetCoordinate();
-        var obj = Instantiate(m_Item[objNumber].m_ItemObj, m_GenerationPosition.position, transform.rotation);
+        var obj = Instantiate(poiBotData.item[objNumber].items_object, throwing_object_pop_point.position, transform.rotation);
+        itemManagement.add_to_list(obj);
         obj.transform.parent = transform;
 
-        switch (m_Item[objNumber].m_ItemType)
+        switch (poiBotData.item[objNumber].itemType)
         {
-            case ItemType.Baggage:
-            case ItemType.HighBaggage:
+            case PoiBotData.ItemType.Baggage:
+            case PoiBotData.ItemType.HighBaggage:
                 Rigidbody rid = obj.GetComponent<Rigidbody>();
                 // 射出速度を算出
                 Vector3 velocity = CalculateVelocity(this.transform.position, targetPos, 60.0f);
@@ -106,52 +96,32 @@ public class AI_Poibot : MonoBehaviour
                         StartCoroutine(Move());
                     });
                 break;
-            case ItemType.Missile:
-                Observable.FromCoroutine(Move, publishEveryYield: false).
-                    Subscribe(_ =>
-                    {
-                        if (MainManager.Instance.isStop)
-                        {
-                            StopAllCoroutines();
-                            return;
-                        }
-
-                        var collider = obj.GetComponent<Collider>();
-                        collider.isTrigger = false;
-                        var missile = obj.GetComponent<Missile>();
-                        missile.Setting(targetPos);
-                        obj.transform.parent = null;
-                        StartCoroutine(Move());
-                    });
-                break;
-            case ItemType.Keibot:
-                break;
         }
     }
 
     private IEnumerator Move()
     {
-        var position = m_Throwing ? m_ThrowPosition : m_PreparationPosition;
+        var position = throwing_possible ? throwing_position : replenishment_position;
         while (true)
         {
             var dir = (position - transform.position).normalized;
             var dis = Vector3.Distance(transform.position, position);
-            var currentVelocity = m_Velocity;
-            m_Velocity = dis > 0.3f ? dir * m_Speed : Vector3.zero;
-            m_Velocity = Vector3.Lerp(currentVelocity, m_Velocity, Mathf.Min(Time.deltaTime + 5.0f, 1));
+            var currentVelocity = velocity;
+            velocity = dis > 0.3f ? dir * speed : Vector3.zero;
+            velocity = Vector3.Lerp(currentVelocity, velocity, Mathf.Min(Time.deltaTime + 5.0f, 1));
 
 
             Quaternion characterTargetRotation = Quaternion.LookRotation(dir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, characterTargetRotation, 360.0f * Time.deltaTime);
-            transform.position += m_Velocity * Time.deltaTime;
+            transform.position += velocity * Time.deltaTime;
 
             if (dis < 0.3f)
                 break;
 
             yield return null;
         }
-        if (m_Throwing)
-            m_Throwing = false;
+        if (throwing_possible)
+            throwing_possible = false;
         else
             PrepareForThrowing();
     }
@@ -182,11 +152,14 @@ public class AI_Poibot : MonoBehaviour
             return (new Vector3(pointB.x - pointA.x, x * Mathf.Tan(rad), pointB.z - pointA.z).normalized * speed);
         }
     }
-
+    /// <summary>
+    /// 投てき座標を取得
+    /// </summary>
+    /// <returns>投てき座標</returns>
     public Vector3 GetCoordinate()
     {
-        var x = Random.Range(-m_SizeX, m_SizeX);
-        var z = Random.Range(-m_SizeZ, m_SizeZ);
+        var x = Random.Range(-poiBotData.throwing_range_x, poiBotData.throwing_range_x);
+        var z = Random.Range(-poiBotData.throwing_range_z, poiBotData.throwing_range_z);
 
         var targetPos = new Vector3(x, 0.2f, z);
 
