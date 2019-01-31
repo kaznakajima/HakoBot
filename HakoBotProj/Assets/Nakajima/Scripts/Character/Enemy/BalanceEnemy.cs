@@ -10,11 +10,11 @@ public class BalanceEnemy : EnemyBase, Character
     EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    public int _myNumber;
+    private int _myNumber;
 
     public int myNumber
     {
-        set { }
+        set { _myNumber = value; }
         get { return _myNumber; }
     }
 
@@ -126,21 +126,26 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="_targetObj">ターゲットオブジェクト</param>
     public override void CheckTarget(GameObject _targetObj)
     {
-        if (_targetObj.GetComponent<Item>() != null)
+        // 荷物を所持していないなら
+        if(hasItem == false)
         {
-            // アイテムが入手不可能ならターゲット再設定
-            if (_targetObj.GetComponent<Item>().isCatch == false) {
-                SetTarget();
-                return;
-            }
+            // 高得点荷物を取得
+            var targetItem = GetItems().Where(obj => obj.point > 10 && obj.isCatch == true)
+                .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
+
+            // ターゲット変更
+            if (targetItem != null) targetObj = targetItem.gameObject;
+
+            // ターゲットがアイテムなら
+            // ターゲットが入手不能になったらターゲット再指定
+            var item = targetObj.GetComponent<Item>();
+            if (item != null && item.isCatch == false) SetTarget();
         }
-        else if (_targetObj.GetComponentInParent<PointArea>() != null)
+        // 荷物を所持しているなら
+        else
         {
-            // ポイントエリアが機能していないならターゲット再設定
-            if (_targetObj.GetComponentInParent<PointArea>().isActive == false) {
-                SetTarget();
-                return;
-            }
+            // ターゲットが稼働していないならターゲット再指定
+            if (targetObj.GetComponent<PointArea>().isActive == false) SetTarget();
         }
     }
 
@@ -183,44 +188,40 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchTarget()
     {
+        state = ENEMY_STATE.PATROL;
+
         // アイテムをリスト化
-        var targetList = GetItems().Where(obj =>obj.isCatch == true && obj.isTarget == false)
-            .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).ToList();
-
-        targetList.OrderByDescending(obj => obj.point).ToList();
-
+        var targetItem = GetItems().Where(obj =>obj.isCatch == true && obj.isTarget == false)
+            .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject))
+            .OrderByDescending(obj => obj.point).FirstOrDefault();
+        
         // 最短距離のアイテムをターゲット指定
-        foreach(Item item in targetList) {
-            targetObj = item.gameObject;
+        if (targetItem != null)
+        {
+            targetObj = targetItem.gameObject;
             targetObj.GetComponent<Item>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
-            break;
         }
 
         // 敵をリスト化
-        var enemyTarget = GetCharacter().OrderBy(obj => GetTargetDistance(obj, gameObject)).ToList();
+        var enemyTarget = GetCharacter().Where(obj => obj != gameObject)
+            .OrderBy(obj => GetTargetDistance(obj, gameObject)).ToList();
 
         // 最短距離の敵をターゲット指定
         foreach (GameObject obj in enemyTarget) {
-            if (obj != gameObject)
+            var character = obj.GetComponent<Character>();
+            // チーム戦の場合、見方は除外
+            if (MainManager.Instance.playerData[character.myNumber - 1].m_Team
+                == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
+
+            // 荷物を持っているならターゲット指定
+            if (character.hasItem == true)
             {
-                var character = obj.GetComponent(typeof(Character)) as Character;
-                // チーム戦の場合、見方は除外
-                if (MainManager.Instance.playerData[character.myNumber - 1].m_Team 
-                    == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
-
-                // 荷物を持っているならターゲット指定
-                if (character.hasItem == true)
-                {
-                    targetObj = obj;
-                    state = ENEMY_STATE.TARGETMOVE;
-                    break;
-                }
-            } 
+                targetObj = obj;
+                state = ENEMY_STATE.TARGETMOVE;
+                break;
+            }
         }
-
-        // ターゲットがいないならパトロール
-        if (targetObj == null) state = ENEMY_STATE.PATROL;
     }
 
     /// <summary>
@@ -228,11 +229,28 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
-        // ポイントエリアのリスト化
+        state = ENEMY_STATE.PATROL;
+
+        // ポイントエリアのリスト化(誰も狙っていないエリア)
         var targetList = GetPointArea().Where(obj => obj.isActive == true && obj.isTarget == false)
             .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).ToList();
 
         foreach(PointArea area in targetList) {
+            targetObj = area.gameObject;
+            targetObj.GetComponent<PointArea>().isTarget = true;
+            state = ENEMY_STATE.TARGETMOVE;
+            break;
+        }
+
+        // ターゲットがいるならリターン
+        if (state == ENEMY_STATE.TARGETMOVE) return;
+
+        // ポイントエリアのリスト化(やむを得ない場合)
+        var _targetList = GetPointArea().Where(obj => obj.isActive == true)
+            .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).ToList();
+
+        foreach (PointArea area in _targetList)
+        {
             targetObj = area.gameObject;
             targetObj.GetComponent<PointArea>().isTarget = true;
             state = ENEMY_STATE.TARGETMOVE;
@@ -254,7 +272,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ターゲットがアイテムを持っていないならターゲット変更
         if (targetObj.tag == "Character")
         {
-            var character = targetObj.GetComponent(typeof(Character)) as Character;
+            var character = targetObj.GetComponent<Character>();
 
             // ターゲットが荷物を失ったらターゲット再指定
             if (character.hasItem == false) {
@@ -340,11 +358,6 @@ public class BalanceEnemy : EnemyBase, Character
         }).AddTo(this);
     }
 
-    public void Jump()
-    {
-
-    }
-
     public void Stan(string audioStr)
     {
         if (isStan == true || _stanEffect != null) return;
@@ -415,9 +428,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// <summary>
     /// アイテムを放棄
     /// </summary>
-    /// <param name="isSteal">アイテムを奪うかどうか</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
-    public void Release(bool isSteal, Vector3 opponentPos)
+    public void Release()
     {
         if (itemObj == null || hasItem == false) {
             ResetTarget();
@@ -475,11 +486,10 @@ public class BalanceEnemy : EnemyBase, Character
         if (col.gameObject.tag == "Item") Catch(col.gameObject);
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
+        var character = col.gameObject.GetComponent<Character>();
+        if (character != null && isAttack)
         {
             myRig.velocity = Vector3.zero;
-
-            var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 同じチームだったらリターン
             if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
@@ -490,7 +500,7 @@ public class BalanceEnemy : EnemyBase, Character
 
             AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
-            character.Release(false, Vector3.zero);
+            character.Release();
         }
     }
 

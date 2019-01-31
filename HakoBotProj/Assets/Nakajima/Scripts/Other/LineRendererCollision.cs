@@ -22,7 +22,6 @@ public class LineRendererCollision : MonoBehaviour
 
     public void CheckLineHit()
     {
-
         // すべての線にRayを飛ばす
         for(int num = 0;num < myLine.positionCount; num++)
         {
@@ -46,7 +45,7 @@ public class LineRendererCollision : MonoBehaviour
                 if (lineHit.collider.gameObject.tag == "Character") {
 
                     // キャラクターのインターフェイスのインスタンス
-                    var character = lineHit.collider.gameObject.GetComponent(typeof(Character)) as Character;
+                    var character = lineHit.collider.gameObject.GetComponent<Character>();
 
                     character.Stan("Sparke");
 

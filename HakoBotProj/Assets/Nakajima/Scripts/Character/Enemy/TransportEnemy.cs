@@ -19,7 +19,7 @@ public class TransportEnemy : EnemyBase, Character
 
     public int myNumber
     {
-        set { }
+        set { _myNumber = value; }
         get { return _myNumber; }
     }
 
@@ -307,12 +307,6 @@ public class TransportEnemy : EnemyBase, Character
        
     }
 
-    // ジャンプ
-    public void Jump()
-    {
-
-    }
-
     // スタン
     public void Stan(string audioStr)
     {
@@ -383,9 +377,7 @@ public class TransportEnemy : EnemyBase, Character
     /// <summary>
     /// アイテムを放棄
     /// </summary>
-    /// <param name="isSteal">アイテムを奪うかどうか</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
-    public void Release(bool isSteal, Vector3 opponentPos)
+    public void Release()
     {
         if (itemObj == null || hasItem == false) {
             ResetTarget();
@@ -452,7 +444,7 @@ public class TransportEnemy : EnemyBase, Character
             if (character.hasItem == false)
                 return;
 
-            character.Release(false, Vector3.zero);
+            character.Release();
         }
     }
 

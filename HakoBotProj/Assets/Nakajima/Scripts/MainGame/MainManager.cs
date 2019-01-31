@@ -63,7 +63,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 character = Instantiate(PlayerSystem.Instance.playerList[i]);
 
                 character.AddComponent<Player>();
-                character.GetComponent<Player>()._myNumber = i + 1;
+                character.GetComponent<Player>().myNumber = i + 1;
             }
             // エントリーがされていないなら敵とする
             else
@@ -72,32 +72,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 character = Instantiate(PlayerSystem.Instance.enemyList[i]);
 
                 character.AddComponent<BalanceEnemy>();
-                character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
-
-                // ランダムで敵AIのタイプを決める
-                // int enemyNum = UnityEngine.Random.Range(0, 3);
-                //switch (enemyNum)
-                //{
-                //    // 攻撃AI
-                //    case 0:
-                //        character.AddComponent<AttackEnemy>();
-                //        character.GetComponent<AttackEnemy>()._myNumber = i + 1;
-                //        break;
-                //    // バランスAI
-                //    case 1:
-                //        character.AddComponent<BalanceEnemy>();
-                //        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
-                //        break;
-                //    // 荷物優先AI
-                //    case 2:
-                //        character.AddComponent<TransportEnemy>();
-                //        character.GetComponent<TransportEnemy>()._myNumber = i + 1;
-                //        break;
-                //    default:
-                //        character.AddComponent<BalanceEnemy>();
-                //        character.GetComponent<BalanceEnemy>()._myNumber = i + 1;
-                //        break;
-                //}
+                character.GetComponent<BalanceEnemy>().myNumber = i + 1;
             }
         }
 	}

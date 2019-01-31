@@ -19,7 +19,7 @@ public class ParticleCollisionController : MonoBehaviour
     {
         if (other.tag == "Character")
         {
-            var character = other.GetComponent(typeof(Character)) as Character;
+            var character = other.GetComponent<Character>();
             VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
             character.Stan("Stan");
         }

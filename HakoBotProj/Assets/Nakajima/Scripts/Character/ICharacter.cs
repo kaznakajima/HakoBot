@@ -26,9 +26,6 @@ public interface Character
     // タックル
     void Attack();
 
-    // ジャンプ
-    void Jump();
-
     // スタン
     void Stan(string audioStr);
 
@@ -41,9 +38,7 @@ public interface Character
     /// <summary>
     /// アイテムを放棄
     /// </summary>
-    /// <param name="isSteal">アイテムを奪うかどうか</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
-    void Release(bool isSteal, Vector3 opponentPos);
+    void Release();
 
     /// <summary>
     /// 荷物配達完了

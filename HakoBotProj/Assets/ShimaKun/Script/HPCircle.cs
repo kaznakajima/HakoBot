@@ -41,7 +41,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     public void CheckOverHeat(GameObject playerObj, int playerNum)
     {
         // キャラクターのインターフェイスを取得
-        var character = playerObj.GetComponent(typeof(Character)) as Character;
+        var character = playerObj.GetComponent<Character>();
 
         // Hpゲージの値を格納
         character.myEnergy = 2;
@@ -62,7 +62,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     //public IEnumerator CheckOverHeat(GameObject playerObj, int playerNum)
     //{
     //    // キャラクターのインターフェイスを取得
-    //    var character = playerObj.GetComponent(typeof(Character)) as Character;
+    //    var character = playerObj.GetComponent<Character>();
     //    //if (character.myEnergy >= 100)
     //    //    return;
 
@@ -89,7 +89,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     public void EnergyReset(GameObject playerObj, int playerNum)
     {
         // キャラクターのインターフェイスを取得
-        var character = playerObj.GetComponent(typeof(Character)) as Character;
+        var character = playerObj.GetComponent<Character>();
 
         int num = _param[playerNum - 1].energyImage.Length - 1;
 
@@ -107,7 +107,7 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
     }
     //public IEnumerator EnergyReset(GameObject playerObj, int playerNum)
     //{
-    //    var character = playerObj.GetComponent(typeof(Character)) as Character;
+    //    var character = playerObj.GetComponent<Character>();
 
     //    float time = 0.0f;
     //    float energy = 10.0f;

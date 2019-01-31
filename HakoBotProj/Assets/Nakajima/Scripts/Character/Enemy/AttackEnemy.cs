@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UniRx;
 using System;
+using System.Linq;
 
 public class AttackEnemy : EnemyBase, Character
 {
@@ -15,7 +16,7 @@ public class AttackEnemy : EnemyBase, Character
 
     public int myNumber
     {
-        set { }
+        set { _myNumber = value; }
         get { return _myNumber; }
     }
 
@@ -198,6 +199,22 @@ public class AttackEnemy : EnemyBase, Character
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
+
+
+
+        // アイテムのリスト
+        List<Item> itemList = new List<Item>();
+
+        // 取得可能なアイテムを距離が一番近いアイテムを取得
+        var _itemList = itemList.Where(item => item.isCatch)
+            .OrderBy(item => GetTargetDistance(item.gameObject, gameObject)).FirstOrDefault();
+
+        // 取得可能なアイテムがあるならターゲットにする
+        if (_itemList != null) targetObj = _itemList.gameObject;
+
+
+
+
 
         // 誰もアイテムを所持していないなら
         // ステージ上のアイテムすべてにアクセス
@@ -383,11 +400,6 @@ public class AttackEnemy : EnemyBase, Character
         }).AddTo(this);
     }
 
-    public void Jump()
-    {
-
-    }
-
     public void Stan(string audioStr)
     {
         if (isStan == true || _stanEffect != null)
@@ -457,9 +469,7 @@ public class AttackEnemy : EnemyBase, Character
     /// <summary>
     /// アイテムを放棄
     /// </summary>
-    /// <param name="isSteal">アイテムを奪うかどうか</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
-    public void Release(bool isSteal, Vector3 opponentPos)
+    public void Release()
     {
         if (itemObj == null || hasItem == false) {
             ResetTarget();
@@ -507,14 +517,13 @@ public class AttackEnemy : EnemyBase, Character
         return nextPos;
     }
 
+
+
     // 当たり判定
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
-        if (col.gameObject.tag == "Item")
-        {
-            Catch(col.gameObject);
-        }
+        if (col.gameObject.tag == "Item") Catch(col.gameObject);
 
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
@@ -534,7 +543,7 @@ public class AttackEnemy : EnemyBase, Character
 
             AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
-            character.Release(false, Vector3.zero);
+            character.Release();
         }
     }
 

@@ -10,7 +10,6 @@ using XInputDotNetPure;
 /// </summary>
 public class Player : PlayerBase, Character
 {
-
     // インプット処理
     PlayerSystem system;
 
@@ -158,12 +157,6 @@ public class Player : PlayerBase, Character
         }).AddTo(this);
     }
 
-    // ジャンプ
-    public void Jump()
-    {
-
-    }
-
     // スタン
     public void Stan(string audioStr)
     {
@@ -225,9 +218,7 @@ public class Player : PlayerBase, Character
     /// <summary>
     /// アイテムを放棄
     /// </summary>
-    /// <param name="isSteal">アイテムを奪うかどうか</param>
-    /// <param name="opponentPos">ぶつかってきたプレイヤーの座標</param>
-    public void Release(bool isSteal, Vector3 opponentPos)
+    public void Release()
     {
         // アイテムを持っていないならリターン
         if (itemObj == null || hasItem == false) {
@@ -268,11 +259,10 @@ public class Player : PlayerBase, Character
         if (col.gameObject.tag == "Item") Catch(col.gameObject);
 
         // タックル中にプレイヤーに触れたとき
-        if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
+        var character = col.gameObject.GetComponent<Character>();
+        if (character != null && isAttack)
         {
             myRig.velocity = Vector3.zero;
-
-            var character = col.gameObject.GetComponent(typeof(Character)) as Character;
 
             // 同じチームだったらリターン
             if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
@@ -283,7 +273,7 @@ public class Player : PlayerBase, Character
 
             AudioController.Instance.OtherAuioPlay(myAudio, "Damage");
 
-            character.Release(false, Vector3.zero);
+            character.Release();
         }
     }
 }
