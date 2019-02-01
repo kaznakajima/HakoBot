@@ -11,6 +11,10 @@ using System;
 public class PlayerEntry : BaseSceneManager
 {
     int pattern = 0;
+
+    // スタートしたか
+    bool isStart = false;
+
     enum TEAM_PLAYER
     {
         PATTERN_1 = 0,
@@ -53,6 +57,13 @@ public class PlayerEntry : BaseSceneManager
     // Use this for initialization
     void Start () {
         PlayerSystem.Instance.isTeam = false;
+
+        // 初期化
+        for(int i = 0;i < PlayerSystem.Instance.isActive.Length; i++)
+        {
+            PlayerSystem.Instance.isActive[i] = false;
+        }
+
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
         title.m_TiteTimeline.Play();
@@ -85,11 +96,11 @@ public class PlayerEntry : BaseSceneManager
             }
         }
 
-        if (title.m_StartTimeline.time < 4.0f)
-            return;
+        if (title.m_StartTimeline.time < 4.0f) return;
 
         for (int i = 0;i < 4; i++)
         {
+            if (isStart) return;
 
             // エントリー解除
             if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i])
@@ -151,6 +162,7 @@ public class PlayerEntry : BaseSceneManager
             // Xボタンでゲームスタート
             if (PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive[i] == true)
             {
+                isStart = true;
                 AudioController.Instance.SEPlay("Select");
                 noiseAnim.SetTrigger("switchOn");
                 StartCoroutine(SceneNoise(2.0f, "Main"));

@@ -64,9 +64,6 @@ public class BalanceEnemy : EnemyBase, Character
         set { _isTarget = value; }
         get { return _isTarget; }
     }
-
-    // 自身のAnimator
-    Animator myAnim;
     
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
@@ -79,6 +76,8 @@ public class BalanceEnemy : EnemyBase, Character
         pointPos = emitter.gameObject.transform;
         myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
+        flashAnim = GetComponentsInChildren<Animator>()
+            .Where(obj => obj.GetComponent<SkinnedMeshRenderer>() != null).FirstOrDefault();
         agent = GetComponent<NavMeshAgent>();
         myRig = GetComponent<Rigidbody>();
         emitter.effectName = "Attack";
@@ -248,6 +247,8 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchPointArea()
     {
+        state = ENEMY_STATE.PATROL;
+
         // 最短のポイントエリアの取得(誰も狙っていないエリア)
         var targetArea = GetPointArea().Where(obj => obj.isActive == true && obj.isTarget == false)
             .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
@@ -389,6 +390,7 @@ public class BalanceEnemy : EnemyBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
+            flashAnim.SetBool("IsFlash_p" + myNumber, true);
             agent.updatePosition = true;
 
             if(audioStr == "Stan") {
@@ -406,7 +408,9 @@ public class BalanceEnemy : EnemyBase, Character
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
+                flashAnim.SetBool("IsFlash_p" + myNumber, false);
                 isStan = false;
+                LayerChange(layerNum);
             }).AddTo(this);
 
         }).AddTo(this);
@@ -441,6 +445,10 @@ public class BalanceEnemy : EnemyBase, Character
             ResetTarget();
             return;
         }
+
+        // ターゲットリセット
+        var pointArea = targetObj.GetComponentInParent<PointArea>();
+        if (pointArea != null) pointArea.isTarget = false;
 
         AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 

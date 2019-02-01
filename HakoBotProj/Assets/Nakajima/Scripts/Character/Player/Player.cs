@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using System.Linq;
 using XInputDotNetPure;
 
 /// <summary>
@@ -75,6 +76,8 @@ public class Player : PlayerBase, Character
         pointPos = emitter.gameObject.transform;
         myAudio = GetComponent<AudioSource>();
         myAnim = GetComponent<Animator>();
+        flashAnim = GetComponentsInChildren<Animator>()
+            .Where(obj => obj.GetComponent<SkinnedMeshRenderer>() != null).FirstOrDefault();
         myRig = GetComponent<Rigidbody>();
         system = FindObjectOfType<PlayerSystem>();
         layerNum = gameObject.layer;
@@ -172,8 +175,10 @@ public class Player : PlayerBase, Character
 
         LayerChange(2);
 
-        myAudio.loop = true;
-        AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
+        if (audioStr == "Stan") {
+            myAudio.loop = true;
+            AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
+        }
 
         isStan = true;
         myRig.velocity = Vector3.zero;
@@ -187,8 +192,12 @@ public class Player : PlayerBase, Character
         // しばらく動けなくなる
         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(time =>
         {
-            myAudio.loop = false;
-            myAudio.Stop();
+            flashAnim.SetBool("IsFlash_p" + myNumber, true);
+
+            if (audioStr == "Stan") {
+                myAudio.loop = false;
+                myAudio.Stop();
+            }
 
             _myEnergy = 0;
             // エナジーゲージの初期化
@@ -198,7 +207,9 @@ public class Player : PlayerBase, Character
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
+                flashAnim.SetBool("IsFlash_p" + myNumber, false);
                 isStan = false;
+                LayerChange(layerNum);
             }).AddTo(this);
 
         }).AddTo(this);

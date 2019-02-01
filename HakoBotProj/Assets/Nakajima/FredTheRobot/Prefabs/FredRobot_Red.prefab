@@ -503,6 +503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4645439536048108}
   - component: {fileID: 137767686494191344}
+  - component: {fileID: 95586994443521048}
   m_Layer: 11
   m_Name: FredTheRobot
   m_TagString: Untagged
@@ -1343,6 +1344,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &95586994443521048
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1815994527973896}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 69320fb87ae0c4046a8542bd8ee6ade2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95834160078210648
 Animator:
   serializedVersion: 3

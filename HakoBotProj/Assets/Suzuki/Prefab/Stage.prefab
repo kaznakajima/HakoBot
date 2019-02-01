@@ -2900,7 +2900,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
+  m_Size: {x: 1.5, y: 2, z: 1}
   m_Center: {x: 0, y: -1, z: 0}
 --- !u!65 &65355119508971036
 BoxCollider:
@@ -2912,7 +2912,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
+  m_Size: {x: 1.5, y: 2, z: 1}
   m_Center: {x: 0, y: -1, z: 0}
 --- !u!65 &65485695726738008
 BoxCollider:
@@ -2960,7 +2960,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
+  m_Size: {x: 1.5, y: 2, z: 1}
   m_Center: {x: 0, y: -1, z: 0}
 --- !u!65 &65889460559057542
 BoxCollider:
@@ -2972,7 +2972,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
+  m_Size: {x: 1.5, y: 2, z: 1}
   m_Center: {x: 0, y: -1, z: 0}
 --- !u!65 &65959882939999888
 BoxCollider:
@@ -4149,6 +4149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30be461abec4f4396352fdcdeb0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTarget: 0
   isActive: 1
   lampRenderer:
   - {fileID: 23820589001989018}
@@ -4202,6 +4203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30be461abec4f4396352fdcdeb0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTarget: 0
   isActive: 1
   lampRenderer:
   - {fileID: 23919725110144162}
@@ -4231,6 +4233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30be461abec4f4396352fdcdeb0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTarget: 0
   isActive: 1
   lampRenderer:
   - {fileID: 23158674652964260}
@@ -4262,6 +4265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30be461abec4f4396352fdcdeb0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTarget: 0
   isActive: 1
   lampRenderer:
   - {fileID: 23051726779511412}

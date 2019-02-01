@@ -21,6 +21,14 @@ public abstract class EnemyBase : MonoBehaviour
     [HideInInspector]
     public int layerNum;
 
+
+
+    // 自身のAnimator
+    [HideInInspector]
+    protected Animator myAnim;
+    [HideInInspector]
+    public Animator flashAnim;
+
     // 自身のAudio関連
     public AudioSource myAudio;
 

@@ -14,7 +14,9 @@ public class PlayerBase : MonoBehaviour
 
     // 自身のAnimator
     [HideInInspector]
-    public Animator myAnim;
+    protected Animator myAnim;
+    [HideInInspector]
+    public Animator flashAnim;
     // 入力判定
     [HideInInspector]
     public Vector3 inputVec;

@@ -42,11 +42,11 @@ public class Ranking : MonoBehaviour
             else if (point2 > point1) 
             {
                 text[0].text = ("チーム2 得点" + point2);
-                text[1].text = ("プレイヤー" + team2[0].playerID + "　ポイント" + team2[0].point +
-                    "プレイヤー" + team2[1].playerID + "　ポイント" + team2[1].point);
+                text[1].text = ("P" + team2[0].playerID + "　ポイント" + team2[0].point +
+                    " P" + team2[1].playerID + "　ポイント" + team2[1].point);
                 text[2].text = ("チーム1 得点" + point1);
-                text[3].text = ("プレイヤー" + team1[0].playerID + "　ポイント" + team1[0].point +
-                    "プレイヤー" + team1[1].playerID + "　ポイント" + team1[1].point);
+                text[3].text = ("P" + team1[0].playerID + "　ポイント" + team1[0].point +
+                    " P" + team1[1].playerID + "　ポイント" + team1[1].point);
 
                 subText[0].text = ("勝者");
                 subText[1].text = ("チーム２");
@@ -54,11 +54,11 @@ public class Ranking : MonoBehaviour
             else
             {
                 text[0].text = ("チーム2 得点" + point2);
-                text[1].text = ("プレイヤー" + team2[0].playerID + "　ポイント" + team2[0].point +
-                    "プレイヤー" + team2[1].playerID + "　ポイント" + team2[1].point);
+                text[1].text = ("P" + team2[0].playerID + "　ポイント" + team2[0].point +
+                    " P" + team2[1].playerID + "　ポイント" + team2[1].point);
                 text[2].text = ("チーム1 得点" + point1);
-                text[3].text = ("プレイヤー" + team1[0].playerID + "　ポイント" + team1[0].point +
-                    "プレイヤー" + team1[1].playerID + "　ポイント" + team1[1].point);
+                text[3].text = ("P" + team1[0].playerID + "　ポイント" + team1[0].point +
+                    " P" + team1[1].playerID + "　ポイント" + team1[1].point);
 
                 subText[0].text = ("結果");
                 subText[1].text = ("引き分け");
@@ -73,15 +73,21 @@ public class Ranking : MonoBehaviour
             for (int i = 0; i < list.Count; i++)
             {
                 text[i].text = count + "位　プレイヤー" + list[i].playerID + "　ポイント" + list[i].point;
-                if (list[i].point != list[i + 1].point)
+
+                if(i < list.Count - 1)
                 {
-                    count = count + 1 + add;
-                    add = 0;
+
+                    if (list[i].point != list[i + 1].point)
+                    {
+                        count = count + 1 + add;
+                        add = 0;
+                    }
+                    else
+                    {
+                        add += 1;
+                    }
                 }
-                else
-                {
-                    add += 1;
-                }
+
             }
 
             if (list[0].point != list[1].point)

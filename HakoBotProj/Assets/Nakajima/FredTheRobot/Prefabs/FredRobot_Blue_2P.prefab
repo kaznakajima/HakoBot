@@ -171,6 +171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4975228261653660}
   - component: {fileID: 137675982144452414}
+  - component: {fileID: 95377602612760880}
   m_Layer: 11
   m_Name: FredTheRobot
   m_TagString: Untagged
@@ -1354,6 +1355,24 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: 9e9e088933061514c8a44ddab2018d98, type: 3}
   m_Controller: {fileID: 9100000, guid: 72258f43e22637242b01e94074486dae, type: 2}
   m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!95 &95377602612760880
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1239995746312096}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 69320fb87ae0c4046a8542bd8ee6ade2, type: 2}
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0

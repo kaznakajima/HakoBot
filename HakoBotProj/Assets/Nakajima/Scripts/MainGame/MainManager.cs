@@ -74,6 +74,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 character.AddComponent<BalanceEnemy>();
                 character.GetComponent<BalanceEnemy>().myNumber = i + 1;
             }
+
+            playerData[i].m_Team = (PlayerData.Team)i;
         }
 	}
 
