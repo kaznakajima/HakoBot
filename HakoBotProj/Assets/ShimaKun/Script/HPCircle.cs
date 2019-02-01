@@ -50,10 +50,11 @@ public class HPCircle : SingletonMonobeBehaviour<HPCircle>
         IDisposable disposable = new SingleAssignmentDisposable();
         disposable = Observable.Interval(TimeSpan.FromMilliseconds(50)).Subscribe(l =>
         {
+            if (num > _param[playerNum - 1].energyImage.Length - 1) num = _param[playerNum - 1].energyImage.Length - 1;
+
             _param[playerNum - 1].energyImage[num].SetActive(true);
 
-            if (num == character.myEnergy)
-                disposable.Dispose();
+            if (num == character.myEnergy) disposable.Dispose();
 
             num++;
         }).AddTo(this);

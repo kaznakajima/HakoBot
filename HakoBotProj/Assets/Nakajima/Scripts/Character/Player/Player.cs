@@ -195,13 +195,12 @@ public class Player : PlayerBase, Character
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
             Destroy(_stanEffect);
 
-            isStan = false;
-
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
-                LayerChange(layerNum);
+                isStan = false;
             }).AddTo(this);
+
         }).AddTo(this);
     }
 

@@ -92,7 +92,7 @@ public class BalanceEnemy : EnemyBase, Character
         if (Mathf.Approximately(Time.timeScale, 0.0f)) return;
 
         // オーバーヒート中はリターン
-        if (MainManager.Instance.isStart == false || isStan) return;
+        if (MainManager.Instance.isStart == false) return;
 
         AI_Move();
     }
@@ -150,8 +150,8 @@ public class BalanceEnemy : EnemyBase, Character
             // ターゲットがアイテムを持っていないならターゲット再指定
             var character = targetObj.GetComponent<Character>();
             if (character != null && character.hasItem == false) {
-                SetTarget();
                 character.isTarget = false;
+                SetTarget();
             }
         }
         // 荷物を所持しているなら
@@ -222,7 +222,7 @@ public class BalanceEnemy : EnemyBase, Character
         }
 
         // 敵をリスト化
-        var enemyTarget = GetCharacter().Where(obj => obj != gameObject)
+        var enemyTarget = GetCharacter().Where(obj => obj != gameObject && GetTargetDistance(obj, gameObject) < minDistance)
             .OrderBy(obj => GetTargetDistance(obj, gameObject)).ToList();
 
         // 最短距離の敵をターゲット指定
@@ -232,10 +232,6 @@ public class BalanceEnemy : EnemyBase, Character
             // チーム戦の場合、見方は除外
             if (MainManager.Instance.playerData[character.myNumber - 1].m_Team
                 == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
-
-            // アイテムより遠いならリターン
-            float distance = GetTargetDistance(obj, gameObject);
-            if (minDistance < distance) return; 
 
             // 荷物を持っているならターゲット指定
             if (character.hasItem == true && character.isTarget == false)
@@ -284,6 +280,8 @@ public class BalanceEnemy : EnemyBase, Character
     public void Move(Vector3 vec)
     {
         CheckTarget(targetObj);
+
+        if (isStan) return;
 
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) myAnim.SetInteger("PlayAnimNum", 11);
         else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
@@ -403,15 +401,14 @@ public class BalanceEnemy : EnemyBase, Character
             HPCircle.Instance.EnergyReset(gameObject, _myNumber);
             Destroy(_stanEffect);
 
-            isStan = false;
+            SetTarget();
 
             // 2秒間無敵
             Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(t =>
             {
-                LayerChange(layerNum);
+                isStan = false;
             }).AddTo(this);
 
-            SetTarget();
         }).AddTo(this);
     }
 
@@ -460,7 +457,8 @@ public class BalanceEnemy : EnemyBase, Character
     public void ItemCarry()
     {
         // ターゲットリセット
-        targetObj.GetComponentInParent<PointArea>().isTarget = false;
+        var pointArea = targetObj.GetComponentInParent<PointArea>();
+        if(pointArea != null) pointArea.isTarget = false;
 
         itemObj = null;
         hasItem = false;
@@ -492,15 +490,25 @@ public class BalanceEnemy : EnemyBase, Character
     // 当たり判定
     void OnCollisionEnter(Collision col)
     {
+        myRig.velocity = Vector3.zero;
+
         // アイテムだったらアイテム取得
-        if (col.gameObject.tag == "Item") Catch(col.gameObject);
+        Item item = col.gameObject.GetComponent<Item>();
+        if(item != null)
+        {
+            // スタン中はアイテムを取得しない
+            if (isStan) {
+                item.ReleaseItem();
+                return;
+            }
+
+            Catch(col.gameObject);
+        }
 
         // タックル中にプレイヤーに触れたとき
         var character = col.gameObject.GetComponent<Character>();
         if (character != null && isAttack)
         {
-            myRig.velocity = Vector3.zero;
-
             // 同じチームだったらリターン
             if (MainManager.Instance.playerData[character.myNumber - 1].m_Team ==
                 MainManager.Instance.playerData[myNumber - 1].m_Team) return;

@@ -38,8 +38,7 @@ public class VibrationController : SingletonMonobeBehaviour<VibrationController>
         // 1秒後にバイブレーションを止める
         Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
-            if (isVibration == false)
-                return;
+            if (isVibration == false) return;
 
             PlayVibration((int)index, false);
         }).AddTo(this);
