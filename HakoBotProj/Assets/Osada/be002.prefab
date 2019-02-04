@@ -38,7 +38,6 @@ GameObject:
   - component: {fileID: 4859055861319592}
   - component: {fileID: 208248022550606386}
   - component: {fileID: 65634017663217146}
-  - component: {fileID: 114556820583670376}
   - component: {fileID: 114397936051192382}
   m_Layer: 0
   m_Name: be002
@@ -212,20 +211,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30be461abec4f4396352fdcdeb0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTarget: 0
   isActive: 1
---- !u!114 &114556820583670376
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1281872304432220}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f60245ef11fc1c34fba269167c156ace, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rate: 1
-  open: 1
+  lampRenderer: []
+  dir: {x: 0, y: 0, z: 0}
+  targetObj: {fileID: 0}
 --- !u!208 &208248022550606386
 NavMeshObstacle:
   m_ObjectHideFlags: 1

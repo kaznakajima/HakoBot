@@ -25,6 +25,10 @@ public class SoundVolumeController : MonoBehaviour
     // 変更する音量の要素番号
     int state = 0;
 
+    // 入力しているか
+    int inputNum;
+    Vector2 inputVec = Vector2.zero;
+
     // Use this for initialization
     void Start () {
         bgmAudio = AudioController.Instance.myAudio[0];
@@ -45,24 +49,57 @@ public class SoundVolumeController : MonoBehaviour
     {
         // 入力
         for(int num = 0;num < 4; num++) {
-            volumeType[0].color = new Color(255, 255, 255);
-            volumeType[1].color = new Color(255, 255, 255);
 
-            // どっちの音量変更するか決定
-            if (PlayerSystem.Instance.LeftStickAxis(num).y > 0) state--;
-            else if (PlayerSystem.Instance.LeftStickAxis(num).y < 0) state++;
+            for (int i = 0;i < volumeType.Length; i++)
+            {
+                volumeType[i].color = new Color(255, 255, 255);
+            }
+
+            // 連続入力防止
+            if(inputVec.y == 0.0f)
+            {
+                // どっちの音量変更するか決定
+                if (PlayerSystem.Instance.LeftStickAxis(num).y > 0){
+                    inputNum = num;
+                    inputVec.y = 1.0f;
+                    state--;
+                }
+                else if (PlayerSystem.Instance.LeftStickAxis(num).y < 0){
+                    inputNum = num;
+                    inputVec.y = 1.0f;
+                    state++;
+                }
+            }
 
             // 要素数をはみ出さないよう調整
-            if (state > 1) state = 1;
+            if (state > volumeType.Length - 1) state = 2;
             else if (state < 0) state = 0;
 
             // 現在変更中の音量を指定
             volumeType[state].color = new Color(255, 0, 0);
 
-            // 音量変更
-            if (PlayerSystem.Instance.Button_RightShoulder(num)) volume[state] += 0.05f;
-            else if (PlayerSystem.Instance.Button_LeftShoulder(num)) volume[state] -= 0.05f;
+            // 連続入力防止
+            if (inputVec.x == 0.0f)
+            {
+                // 音量変更
+                if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x > 0.0f){
+                    inputNum = num;
+                    inputVec.x = 1.0f;
+                    volume[state] += 0.05f;
+                }
+                else if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x < 0.0f){
+                    inputNum = num;
+                    inputVec.x = 1.0f;
+                    volume[state] -= 0.05f;
+                } 
+            }
+
+            if (state == 2 && PlayerSystem.Instance.Button_A(num)){
+                MainManager.Instance.PauseToTitle();
+            }
         }
+
+        if (PlayerSystem.Instance.LeftStickAxis(inputNum) == Vector2.zero) inputVec = Vector2.zero;
 
         // Sliderに反映
         bgmSlider.value = volume[0];

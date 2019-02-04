@@ -74,8 +74,6 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 character.AddComponent<BalanceEnemy>();
                 character.GetComponent<BalanceEnemy>().myNumber = i + 1;
             }
-
-            playerData[i].m_Team = (PlayerData.Team)i;
         }
 	}
 
@@ -114,6 +112,17 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 noiseAnim = noise.gameObject.GetComponent<Animator>();
             }
         }
+    }
+
+    /// <summary>
+    /// ポーズ画面からタイトルへ
+    /// </summary>
+    public void PauseToTitle()
+    {
+        Resume();
+        isStop = true;
+        noiseAnim.SetTrigger("switchOn");
+        StartCoroutine(SceneNoise(2.0f, "Title"));
     }
 
     /// <summary>
@@ -190,8 +199,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // ゲーム終了
     public void GameEnd()
     {
-        if (isPlay)
-            return;
+        if (isPlay) return;
 
         Animation endAnim = countDown.GetComponent<Animation>();
         countDown.SetActive(true);

@@ -187,7 +187,7 @@ public class PlayerEntry : BaseSceneManager
             // パターン(1P 2Pペア, 3P 4Pペア)
             case TEAM_PLAYER.PATTERN_2:
                 for (int teamNum = 0; teamNum < 2; teamNum++) {
-                    playerData[teamNum].m_Team = 0;
+                    playerData[teamNum].m_Team = (PlayerData.Team)0;
                     numImage[teamNum].sprite = numSprite[0];
                     numImage[teamNum + 4].sprite = numSprite[0];
                 }
