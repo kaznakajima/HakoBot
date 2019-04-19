@@ -20,7 +20,10 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     public List<GameObject> enemyList;
 
     // プレイヤーがアクティブかどうか
-    public bool[] isActive;
+    [HideInInspector]
+    public bool isActive_KeyBoard;
+    [HideInInspector]
+    public bool[] isActive_GamePad;
 
     // チーム戦かどうか
     [HideInInspector]
@@ -28,6 +31,7 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 
 	// Use this for initialization
 	void Start () {
+        isActive_GamePad = new bool[4];
         DontDestroyOnLoad(this);
         // Update
         this.UpdateAsObservable().Subscribe(c =>
@@ -53,7 +57,21 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         }
         else
         {
-            return new Vector3(0, 0);
+            return new Vector2(0, 0);
+        }
+    }
+
+    /// <summary>
+    /// キーボードの入力状態の確認
+    /// </summary>
+    /// <returns>キーボードのAxis</returns>
+    public Vector2 KeyboardAxis()
+    {
+        if(state[0] != null) {
+            return state[0].KeyboardAxis;
+        }
+        else {
+            return new Vector2(0, 0);
         }
     }
 
@@ -157,6 +175,37 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// キーボードでの入力検知(エントリー用)
+    /// </summary>
+    /// <param name="isEntry">エントリーをしてるか</param>
+    /// <returns></returns>
+    public bool Button_Keyboard(bool isEntry)
+    {
+        // エントリーしているならキャンセル
+        if (state[0] != null && isEntry) {
+            return state[0].BackSpace;
+        }
+        // エントリーしていないならエントリー
+        else if (state[0] != null && isEntry == false) {
+            return state[0].Entry;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// キーボードでの入力検知(決定ボタン用)
+    /// </summary>
+    /// <returns></returns>
+    public bool Keyboard_X()
+    {
+        // エントリーしているなら押しているか返す
+        if (state[0] != null)　{
+            return state[0].Next;
+        }
+        return false;
     }
 
     // Update is called once per frame

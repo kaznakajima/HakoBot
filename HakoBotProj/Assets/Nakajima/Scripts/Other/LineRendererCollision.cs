@@ -22,6 +22,7 @@ public class LineRendererCollision : MonoBehaviour
         CheckLineHit();
     }
 
+    // ヒット検出
     public void CheckLineHit()
     {
         // すべての線にRayを飛ばす
@@ -53,8 +54,7 @@ public class LineRendererCollision : MonoBehaviour
                     // コントローラーのバイブレーション
                     VibrationController.Instance.PlayVibration(character.myNumber - 1, true);
 
-                    if (myAudio.isPlaying == false)
-                        AudioController.Instance.OtherAuioPlay(myAudio, "Sparke");
+                    if (myAudio.isPlaying == false) AudioController.Instance.OtherAuioPlay(myAudio, "Sparke");
                 }
             }
 

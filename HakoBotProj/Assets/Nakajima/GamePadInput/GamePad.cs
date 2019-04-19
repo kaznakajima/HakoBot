@@ -11,9 +11,9 @@ namespace GamepadInput
     public static class GamePad
     {
 
-        public enum Button { A, B, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start, Start_down }
+        public enum Button { A, B, Y, X, RightShoulder, LeftShoulder, RightStick, LeftStick, Back, Start, Start_down , BackSpace, Entry, Next}
         public enum Trigger { LeftTrigger, RightTrigger }
-        public enum Axis { LeftStick, RightStick, Dpad }
+        public enum Axis { LeftStick, RightStick, Dpad , KeyboardAxis}
         public enum Index { Any, One, Two, Three, Four }
 
         public static bool GetButtonDown(Button button, Index controlIndex)
@@ -58,6 +58,10 @@ namespace GamepadInput
                 case Axis.RightStick:
                     xName = "R_XAxis_" + (int)controlIndex;
                     yName = "R_YAxis_" + (int)controlIndex;
+                    break;
+                case Axis.KeyboardAxis:
+                    xName = "Horizontal";
+                    yName = "Vertical";
                     break;
             }
 
@@ -184,10 +188,10 @@ namespace GamepadInput
                 case Index.Any:
                     switch (button)
                     {
-                        case Button.A: return KeyCode.JoystickButton0;
-                        case Button.B: return KeyCode.JoystickButton1;
-                        case Button.X: return KeyCode.JoystickButton2;
-                        case Button.Y: return KeyCode.JoystickButton3;
+                        case Button.A: return KeyCode.A;
+                        case Button.B: return KeyCode.S;
+                        case Button.X: return KeyCode.X;
+                        case Button.Y: return KeyCode.Z;
                         case Button.RightShoulder: return KeyCode.JoystickButton5;
                         case Button.LeftShoulder: return KeyCode.JoystickButton4;
                         case Button.Back: return KeyCode.JoystickButton6;
@@ -195,6 +199,10 @@ namespace GamepadInput
                         case Button.Start_down: return KeyCode.Joystick1Button7;
                         case Button.LeftStick: return KeyCode.JoystickButton8;
                         case Button.RightStick: return KeyCode.JoystickButton9;
+
+                        case Button.BackSpace: return KeyCode.Backspace;
+                        case Button.Entry: return KeyCode.Space;
+                        case Button.Next: return KeyCode.X;
                     }
                     break;
             }
@@ -219,9 +227,14 @@ namespace GamepadInput
             state.Start_down = GetButtonDown(Button.Start, controlIndex);
             state.Back = GetButton(Button.Back, controlIndex);
 
+            state.BackSpace = GetButtonDown(Button.BackSpace, controlIndex);
+            state.Entry = GetButtonDown(Button.Entry, controlIndex);
+            state.Next = GetButtonDown(Button.Next, controlIndex);
+
             state.LeftStickAxis = GetAxis(Axis.LeftStick, controlIndex, raw);
             state.rightStickAxis = GetAxis(Axis.RightStick, controlIndex, raw);
             state.dPadAxis = GetAxis(Axis.Dpad, controlIndex, raw);
+            state.KeyboardAxis = GetAxis(Axis.KeyboardAxis, 0, raw);
 
             state.Left = (state.dPadAxis.x < 0);
             state.Right = (state.dPadAxis.x > 0);
@@ -238,6 +251,7 @@ namespace GamepadInput
 
     public class GamepadState
     {
+        // ゲームパッドの入力判定
         public bool A = false;
         public bool B = false;
         public bool X = false;
@@ -254,9 +268,15 @@ namespace GamepadInput
         public bool RightShoulder = false;
         public bool LeftShoulder = false;
 
+        // キーボードの入力判定
+        public bool BackSpace = false;
+        public bool Entry = false;
+        public bool Next = false;
+
         public Vector2 LeftStickAxis = Vector2.zero;
         public Vector2 rightStickAxis = Vector2.zero;
         public Vector2 dPadAxis = Vector2.zero;
+        public Vector2 KeyboardAxis = Vector2.zero;
 
         public float LeftTrigger = 0;
         public float RightTrigger = 0;

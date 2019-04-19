@@ -26,6 +26,9 @@ public class Player : PlayerBase, Character
         get { return _myNumber; }
     }
 
+    // 自身のインプットステート
+    public int myInputState;
+
     // 自身のエネルギー割合
     private int _myEnergy = 0;
 
@@ -100,19 +103,29 @@ public class Player : PlayerBase, Character
         if (isAttack) return;
 
         /* ここから移動量判定 */
-        if (system.LeftStickAxis(myNumber) != Vector2.zero)
-        {
-            inputVec = new Vector3(system.LeftStickAxis(myNumber).x, 0, system.LeftStickAxis(myNumber).y);
+        if(myInputState == 0 && system.KeyboardAxis() != Vector2.zero) {
+            inputVec = new Vector3(system.KeyboardAxis().x, 0, system.KeyboardAxis().y);
             Move(inputVec);
         }
-        else
+        else if(myInputState == 0 && system.KeyboardAxis() == Vector2.zero) {
+            myRig.velocity = Vector3.zero;
+            if (hasItem) myAnim.SetInteger("PlayAnimNum", 11);
+            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false) myAnim.SetInteger("PlayAnimNum", 8);
+        }
+        // ゲームパッド
+        if (myInputState != 0 && system.LeftStickAxis(myInputState) != Vector2.zero) {
+            inputVec = new Vector3(system.LeftStickAxis(myInputState).x, 0, system.LeftStickAxis(myInputState).y);
+            Move(inputVec);
+        }
+        else if(myInputState != 0 && system.LeftStickAxis(myInputState) == Vector2.zero)
         {
             myRig.velocity = Vector3.zero;
             if (hasItem) myAnim.SetInteger("PlayAnimNum", 11);
             else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false) myAnim.SetInteger("PlayAnimNum", 8);
         }
 
-        if (system.Button_B(myNumber)) Attack();
+        if (myInputState == 0 && system.Keyboard_X()) Attack();
+        else if (myInputState != 0 && system.Button_B(myInputState)) Attack();
     }
 
     /// <summary>
@@ -132,7 +145,7 @@ public class Player : PlayerBase, Character
         else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
 
         // 移動方向にスピードを掛ける。ジャンプや落下がある場合は、別途Y軸方向の速度ベクトルを足す。
-        myRig.velocity = moveForward * runSpeed + new Vector3(0, myRig.velocity.y, 0);
+        myRig.velocity = moveForward.normalized * runSpeed + new Vector3(0, myRig.velocity.y, 0);
 
         // キャラクターの向きを進行方向に
         transform.rotation = Quaternion.LookRotation(moveForward);
@@ -265,6 +278,10 @@ public class Player : PlayerBase, Character
         LayerChange(layerNum);
     }
 
+    /// <summary>
+    /// レイヤー変更
+    /// </summary>
+    /// <param name="layerNum">インデックス番号</param>
     public void LayerChange(int layerNum)
     {
         gameObject.layer = layerNum;

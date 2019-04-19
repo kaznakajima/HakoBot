@@ -7736,7 +7736,8 @@ MonoBehaviour:
   - {fileID: 197136, guid: 574da1ad1487cf04da87918bf21c3091, type: 2}
   - {fileID: 185094, guid: 6caa0d53573c42547bc66c5cea68a972, type: 2}
   - {fileID: 187418, guid: 3af55a5e539e6bf4da26358097092d37, type: 2}
-  isActive: 00000000
+  isActive_KeyBoard: 0
+  isActive_GamePad: 0000000000
   isTeam: 0
 --- !u!4 &2050853425
 Transform:

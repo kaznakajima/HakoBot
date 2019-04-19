@@ -25,8 +25,7 @@ public class BalanceEnemy : EnemyBase, Character
     {
         set {
             _myEnergy += value;
-            if (_myEnergy > 9)
-                _myEnergy = 9;
+            if (_myEnergy > 9) _myEnergy = 9;
         }
         get { return _myEnergy; }
     }
@@ -40,10 +39,7 @@ public class BalanceEnemy : EnemyBase, Character
         {
             _hasItem = value;
 
-            if (_hasItem == false)
-            {
-                ResetTarget();
-            }
+            if (_hasItem == false) ResetTarget();
         }
         get { return _hasItem; }
     }
@@ -111,15 +107,9 @@ public class BalanceEnemy : EnemyBase, Character
             // ターゲット追従
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
-                if (targetObj != null)
-                {
-                    Move(targetObj.transform.position);
-                }
+                if (targetObj != null) Move(targetObj.transform.position);
                 // ターゲットを見失ったらパトロール
-                else if (targetObj == null)
-                {
-                    state = ENEMY_STATE.PATROL;
-                }
+                else if (targetObj == null) ResetTarget();
                 break;
         }
     }
@@ -262,7 +252,7 @@ public class BalanceEnemy : EnemyBase, Character
         // ターゲットがいるならリターン
         if (state == ENEMY_STATE.TARGETMOVE) return;
 
-        // ポイントエリアの取得(やむを得ない場合)
+        // ポイントエリアの取得(誰も狙っていないエリアがない場合)
         targetArea = GetPointArea().Where(obj => obj.isActive == true)
             .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
 
@@ -280,6 +270,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// <param name="vec">目標地点</param>
     public void Move(Vector3 vec)
     {
+        // ターゲットの状態をチェック
         CheckTarget(targetObj);
 
         if (isStan) return;
@@ -367,6 +358,10 @@ public class BalanceEnemy : EnemyBase, Character
         }).AddTo(this);
     }
 
+    /// <summary>
+    /// スタン状態
+    /// </summary>
+    /// <param name="audioStr">流す音</param>
     public void Stan(string audioStr)
     {
         if (isStan == true || _stanEffect != null) return;
@@ -489,9 +484,9 @@ public class BalanceEnemy : EnemyBase, Character
     public override Vector3 GetRandomPosition()
     {
         // ステージのサイズ
-        float stageSizeX = 10.0f, stageSizeZ = 8.0f;
+        float stageSizeX = 12.0f, stageSizeZ = 8.0f;
         // 巡回用の座標を保存
-        Vector3 nextPos = new Vector3(UnityEngine.Random.Range(-stageSizeX, stageSizeX), transform.position.y, UnityEngine.Random.Range(-stageSizeZ, stageSizeZ));
+        Vector3 nextPos = new Vector3(UnityEngine.Random.Range(-stageSizeX, stageSizeX), transform.position.y, UnityEngine.Random.Range(-10.0f, stageSizeZ));
         return nextPos;
     }
 
