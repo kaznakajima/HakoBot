@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// PlayerBaseクラス
+/// </summary>
 public class PlayerBase : MonoBehaviour
 {
     // 自身のレイヤー番号
     [HideInInspector]
-    public int layerNum;
+    protected int layerNum;
 
     // 自身のAudio関連
     [HideInInspector]
@@ -19,22 +22,22 @@ public class PlayerBase : MonoBehaviour
     public Animator flashAnim;
     // 入力判定
     [HideInInspector]
-    public Vector3 inputVec;
+    protected Vector3 inputVec;
     // アイテムを所持するための座標
     [HideInInspector]
-    public Transform pointPos;
+    protected Transform pointPos;
 
     // 攻撃判定
     [HideInInspector]
-    public bool isAttack;
+    protected bool isAttack;
 
     // 移動スピード
     [HideInInspector]
-    public float runSpeed = 7.0f;
+    protected float runSpeed = 7.0f;
 
     // 自身のRig
     [HideInInspector]
-    public Rigidbody myRig;
+    protected Rigidbody myRig;
 
     // 自身が持っているアイテム
     [HideInInspector]
@@ -42,14 +45,4 @@ public class PlayerBase : MonoBehaviour
 
     // エフェクト用オブジェクト
     protected GameObject stanEffect;
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

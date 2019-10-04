@@ -20,14 +20,12 @@ public abstract class EnemyBase : MonoBehaviour
     // 自身のレイヤー番号
     [HideInInspector]
     public int layerNum;
-
-
-
+    
     // 自身のAnimator
     [HideInInspector]
     protected Animator myAnim;
     [HideInInspector]
-    public Animator flashAnim;
+    protected Animator flashAnim;
 
     // 自身のAudio関連
     public AudioSource myAudio;
@@ -71,7 +69,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     // 巡回地点の一時保存
     [HideInInspector]
-    public Vector3 patrolPos = Vector3.zero;
+    protected Vector3 patrolPos = Vector3.zero;
 
     /// <summary>
     /// ステージ上のすべてのプレイヤーを取得

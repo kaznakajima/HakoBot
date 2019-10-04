@@ -10,19 +10,23 @@ using System;
 /// </summary>
 public class PlayerEntry : BaseSceneManager
 {
-    int pattern = 0;
 
     // スタートしたか
     bool isStart = false;
 
+    /// <summary>
+    /// 対戦形式
+    /// </summary>
     enum TEAM_PLAYER
     {
-        PATTERN_1 = 0,
-        PATTERN_2,
-        PATTERN_3,
-        PATTERN_4,
+        PATTERN_1 = 0, // 個人戦
+        PATTERN_2,       // チーム戦(1P 2Pペア VS 3P 4Pペア)
+        PATTERN_3,       // チーム戦(1P 3Pペア VS 2P 4Pペア)
+        PATTERN_4,       // チーム戦(1P 4Pペア VS 2P 3Pペア)
     }
     TEAM_PLAYER teamPattern;
+    // 対戦形式パターン用変数
+    int pattern = 0;
 
     // それぞれのプレイヤーデータ
     [SerializeField]
@@ -52,8 +56,12 @@ public class PlayerEntry : BaseSceneManager
     [SerializeField]
     Sprite[] numSprite;
 
-    int num = 0;
+    // エントリーしているプレイヤー数
+    int playerCount = 0;
 
+    /// <summary>
+    /// 初回処理
+    /// </summary>
     void Start () {
         // ゲームパッドの初期化
         for(int i = 0;i < PlayerSystem.Instance.isActive_GamePad.Length; i++)
@@ -73,6 +81,9 @@ public class PlayerEntry : BaseSceneManager
         TeamBattle(teamPattern);
     }
 
+    /// <summary>
+    /// 更新処理
+    /// </summary>
 	void Update () {
         EntrySystem();
 	}
@@ -99,6 +110,7 @@ public class PlayerEntry : BaseSceneManager
         // ゲームパッドでのエントリー
         for (int i = 0; i < 4; i++)
         {
+            // ゲームスタートが実行中はエントリー不可
             if (isStart) return;
 
             // エントリー解除
@@ -110,8 +122,8 @@ public class PlayerEntry : BaseSceneManager
                 AudioController.Instance.SEPlay("Cancel");
                 isEntry[i] = false;
 
-                num--;
-                if (num == 0) startAnim.SetActive(false);
+                playerCount--;
+                if (playerCount == 0) startAnim.SetActive(false);
             }
             // エントリーさせる
             if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
@@ -125,8 +137,8 @@ public class PlayerEntry : BaseSceneManager
                 AudioController.Instance.SEPlay("Entry");
 
                 isEntry[i] = true;
-                num++;
-                if (num == 1)  startAnim.SetActive(true);
+                playerCount++;
+                if (playerCount == 1)  startAnim.SetActive(true);
             }
 
             // チーム戦切り替え

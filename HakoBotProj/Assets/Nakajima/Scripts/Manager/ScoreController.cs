@@ -5,27 +5,28 @@ using UnityEngine.UI;
 using UniRx;
 using System;
 
+/// <summary>
+/// 得点管理クラス
+/// </summary>
 public class ScoreController : MonoBehaviour
 {
     // 点数
-    int[] score = new int[4];
+    private int[] score = new int[4];
 
+    // プレイヤーデータ
     [SerializeField]
     private List<PlayerData> playerData = new List<PlayerData>();
 
+    // スコア用Text
     [SerializeField]
     private Text[] scoreTex;
 
-    AudioSource myAudio;
+    // 自身のオーディオ
+    private AudioSource myAudio;
 
-	// Use this for initialization
+	// 初回処理
 	void Start () {
         myAudio = GetComponent<AudioSource>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
     /// <summary>

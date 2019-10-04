@@ -3,23 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// SceneManagerクラス
+/// </summary>
 public class BaseSceneManager : MonoBehaviour
 {
     // ノイズ発生スクリプト参照
-    CRT noise;
+    private CRT noise;
     // ノイズ用アニメーション
     [HideInInspector]
     public Animator noiseAnim;
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     /// <summary>
     /// ノイズ発生用キャンバスの設定

@@ -4,10 +4,13 @@ using UnityEngine;
 using UniRx;
 using System;
 
+/// <summary>
+/// アイテムを投げ込んでくるEnemy(バトルには参加しない)
+/// </summary>
 public class ThrowEnemy : MonoBehaviour
 {
     // 自身のAnimator
-    Animator myAnim;
+    private Animator myAnim;
 
     // 投げるアイテム
     [HideInInspector]
@@ -19,7 +22,7 @@ public class ThrowEnemy : MonoBehaviour
         myAnim = GetComponent<Animator>();
 	}
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
         if (item == null)
             return;
@@ -30,10 +33,11 @@ public class ThrowEnemy : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(throwDir);
     }
 
-    // 荷物を投げる
+    /// <summary>
+    /// 荷物を投下していく
+    /// </summary>
     public void Throw()
     {
-
         myAnim.SetInteger("PlayAnimNum", 1);
 
         // 待機状態にする

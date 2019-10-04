@@ -11,15 +11,14 @@ using XInputDotNetPure;
 /// </summary>
 public class Player : PlayerBase, Character
 {
-    // インプット処理
-    PlayerSystem system;
+    // インプット機能
+    private PlayerSystem system;
 
     // エフェクト再生
-    EffekseerEmitter emitter;
+    private EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    public int _myNumber;
-
+    private int _myNumber;
     public int myNumber
     {
         set { _myNumber = value; }
@@ -29,9 +28,8 @@ public class Player : PlayerBase, Character
     // 自身のインプットステート
     public int myInputState;
 
-    // 自身のエネルギー割合
+    // 自身のエネルギー使用量
     private int _myEnergy = 0;
-
     public int myEnergy
     {
         set {
@@ -43,7 +41,6 @@ public class Player : PlayerBase, Character
 
     // アイテムを所持しているか
     private bool _hasItem;
-
     public bool hasItem
     {
         set { _hasItem = value; }
@@ -52,17 +49,15 @@ public class Player : PlayerBase, Character
 
     // オーバーヒート
     private bool _isStan;
-
     public bool isStan
     {
         set{ _isStan = value; }
         get { return _isStan; }
     }
-
     // スタンエフェクトの一時保存用
-    GameObject _stanEffect;
+    private GameObject _stanEffect;
 
-    // Use this for initialization
+    // 初回処理
     void Start ()
     {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
@@ -78,7 +73,7 @@ public class Player : PlayerBase, Character
         layerNum = gameObject.layer;
 	}
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
         // ポーズ中は動かない
         if (Mathf.Approximately(Time.timeScale, 0.0f) || MainManager.Instance.isStart == false) return;
@@ -89,7 +84,9 @@ public class Player : PlayerBase, Character
         PlayerInput();
 	}
 
-    // 入力判定
+    /// <summary>
+    /// 入力処理
+    /// </summary>
     void PlayerInput()
     {
         if (isAttack) return;
@@ -123,6 +120,7 @@ public class Player : PlayerBase, Character
         // 方向キーの入力値とカメラの向きから、移動方向の決定
         Vector3 moveForward = cameraForward * vec.z + Camera.main.transform.right * vec.x;
 
+        // 状態に合わせてアニメーション
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) myAnim.SetInteger("PlayAnimNum", 11);
         else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
 
@@ -134,7 +132,9 @@ public class Player : PlayerBase, Character
 
     }
 
-    // タックル
+    /// <summary>
+    /// 攻撃メソッド
+    /// </summary>
     public void Attack()
     {
         if (isAttack || hasItem) return;
@@ -148,7 +148,7 @@ public class Player : PlayerBase, Character
         // エネルギー計算
         HPCircle.Instance.CheckOverHeat(gameObject, _myNumber);
 
-        myRig.velocity += transform.forward * 8.5f;
+        myRig.velocity += transform.forward * 7.5f;
 
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
@@ -163,18 +163,20 @@ public class Player : PlayerBase, Character
         }).AddTo(this);
     }
 
-    // スタン
+    /// <summary>
+    /// スタンメソッド
+    /// </summary>
+    /// <param name="audioStr">流す音声ファイル名</param>
     public void Stan(string audioStr)
     {
         if (isStan == true || _stanEffect != null) return;
 
         LayerChange(2);
-
         if (audioStr == "Stan") {
             myAudio.loop = true;
             AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
         }
-
+        // スタンフラグを有効にする
         isStan = true;
         myRig.velocity = Vector3.zero;
 
@@ -240,6 +242,7 @@ public class Player : PlayerBase, Character
             return;
         }
 
+        // コントローラーのバイブレーション
         VibrationController.Instance.PlayVibration(myNumber - 1, true);
         AudioController.Instance.OtherAuioPlay(myAudio, "Release");
 
@@ -269,7 +272,10 @@ public class Player : PlayerBase, Character
         gameObject.layer = layerNum;
     }
 
-    // 当たり判定
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="col">当たったCollision</param>
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得

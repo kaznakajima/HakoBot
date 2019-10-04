@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// ステージのランプを管理するクラス
+/// </summary>
 public class LampController : SingletonMonobeBehaviour<LampController>
 {
     // ランプの発光色
@@ -13,17 +16,7 @@ public class LampController : SingletonMonobeBehaviour<LampController>
 
     // ランプの発光色マテリアル
     [SerializeField]
-    Material[] lampLight;
-
-	// Use this for initialization
-	void Start () {
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private Material[] lampLight;
 
     /// <summary>
     /// ランプの発光色変更

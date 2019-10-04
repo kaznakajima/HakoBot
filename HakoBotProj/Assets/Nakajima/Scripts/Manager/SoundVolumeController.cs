@@ -4,32 +4,36 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 音量ボリュームクラス
+/// </summary>
 public class SoundVolumeController : MonoBehaviour
 { 
     // BGMのAudioSource
-    AudioSource bgmAudio;
+    private AudioSource bgmAudio;
 
     // 音量変更用Slider
     [SerializeField]
-    Slider bgmSlider;
+    private Slider bgmSlider;
     [SerializeField]
-    Slider seSlider;
+    private Slider seSlider;
 
     // 音量調整用Text
     [SerializeField]
-    Text[] volumeType;
+    private Text[] volumeType;
     
     // 現在の音量
-    float[] volume = new float[2];
+    private float[] volume = new float[2];
 
     // 変更する音量の要素番号
-    int state = 0;
+    private int state = 0;
 
     // 入力しているか
-    int inputNum;
-    Vector2 inputVec = Vector2.zero;
+    private int inputNum;
+    private float axisTime;
+    private Vector2 inputVec = Vector2.zero;
 
-    // Use this for initialization
+    // 初回処理
     void Start () {
         bgmAudio = AudioController.Instance.myAudio[0];
 
@@ -37,7 +41,7 @@ public class SoundVolumeController : MonoBehaviour
         volume[1] = seSlider.value;
     }
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
         VolumeChange();
 	}
@@ -83,17 +87,21 @@ public class SoundVolumeController : MonoBehaviour
             if (inputVec.x == 0.0f)
             {
                 // 音量変更
-                if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x > 0.0f)
+                if (state < volumeType.Length - 1)
                 {
-                    inputNum = num;
-                    inputVec.x = 1.0f;
-                    volume[state] += 0.05f;
+                    if(inputVec.x > 0.0f && axisTime == 0.0f || inputVec.x > 0.0f && axisTime > 0.25f)
+                    {
+                        inputNum = num;
+                        volume[state] += 0.05f;
+                    }
                 }
-                else if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x < 0.0f)
+                else if (state < volumeType.Length - 1)
                 {
-                    inputNum = num;
-                    inputVec.x = 1.0f;
-                    volume[state] -= 0.05f;
+                    if (inputVec.x < 0.0f && axisTime == 0.0f || inputVec.x < 0.0f && axisTime > 0.25f)
+                    {
+                        inputNum = num;
+                        volume[state] -= 0.05f;
+                    }
                 } 
             }
 
@@ -123,5 +131,25 @@ public class SoundVolumeController : MonoBehaviour
             // 音量が0なら消音
             if (_audio.volume == 0.0f && AudioController.Instance.volumeZero == false) AudioController.Instance.volumeZero = true;
         }
+
+        // インプットの入力時間の更新
+        axisTime = GetInputTime();
+    }
+
+    /// <summary>
+    /// 入力時間を返す
+    /// </summary>
+    /// <returns>入力し続けている時間</returns>
+    private float GetInputTime()
+    {
+        // 入力がないなら0を返す
+        if (inputVec == Vector2.zero) return 0.0f;
+
+        // 時間の更新
+        var time = axisTime;
+        time += Time.unscaledDeltaTime;
+
+        // 入力時間を返す
+        return time;
     }
 }

@@ -4,25 +4,30 @@ using UnityEngine;
 using UniRx;
 using System;
 
+/// <summary>
+/// LineRendererクラス
+/// </summary>
 public class LineRendererCollision : MonoBehaviour
 {
     // 自身のLineRenderer
-    LineRenderer myLine;
+    private LineRenderer myLine;
+    // 自身のAudoSource
+    private AudioSource myAudio;
 
-    AudioSource myAudio;
-
-	// Use this for initialization
+	// 初回処理
 	void Start () {
         myLine = GetComponent<LineRenderer>();
         myAudio = GetComponent<AudioSource>();
     }
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
         CheckLineHit();
     }
 
-    // ヒット検出
+    /// <summary>
+    /// ヒット検出
+    /// </summary>
     public void CheckLineHit()
     {
         // すべての線にRayを飛ばす

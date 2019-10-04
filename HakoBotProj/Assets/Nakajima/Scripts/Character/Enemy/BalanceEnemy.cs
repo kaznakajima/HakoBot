@@ -4,6 +4,9 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// バランス型Enemy
+/// </summary>
 public class BalanceEnemy : EnemyBase, Character
 {
     // エフェクト再生
@@ -11,16 +14,14 @@ public class BalanceEnemy : EnemyBase, Character
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
     private int _myNumber;
-
     public int myNumber
     {
         set { _myNumber = value; }
         get { return _myNumber; }
     }
 
-    // 自身のエネルギー残量
+    // 自身のエネルギー使用量
     private int _myEnergy = 0;
-
     public int myEnergy
     {
         set {
@@ -32,7 +33,6 @@ public class BalanceEnemy : EnemyBase, Character
 
     // アイテムを所持しているか
     private bool _hasItem;
-
     public bool hasItem
     {
         set
@@ -46,16 +46,15 @@ public class BalanceEnemy : EnemyBase, Character
 
     // オーバーヒート
     private bool _isStan;
-
     public bool isStan
     {
         set { _isStan = value; }
         get { return _isStan; }
     }
     // スタンエフェクトの一時保存用
-    GameObject _stanEffect;
+    private GameObject _stanEffect;
 
-    // Use this for initialization
+    // 初回処理
     void Start()
     {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
@@ -71,14 +70,11 @@ public class BalanceEnemy : EnemyBase, Character
         layerNum = gameObject.layer;
     }
 
-    // Update is called once per frame
+    // 更新処理
     void Update()
     {
-        // ポーズ中は動かない
-        if (Mathf.Approximately(Time.timeScale, 0.0f)) return;
-
-        // オーバーヒート中はリターン
-        if (MainManager.Instance.isStart == false) return;
+        // ポーズ中、ゲーム開始していない場合はリターン
+        if (Mathf.Approximately(Time.timeScale, 0.0f) || MainManager.Instance.isStart == false) return;
 
         AI_Move();
     }
@@ -99,7 +95,7 @@ public class BalanceEnemy : EnemyBase, Character
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
                 if (targetObj != null) Move(targetObj.transform.position);
-                // ターゲットを見失ったらパトロール
+                // ターゲットを見失ったら再設定
                 else if (targetObj == null) ResetTarget();
                 break;
         }
@@ -191,6 +187,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// </summary>
     public override void SearchTarget()
     {
+        // あらかじめパトロールにする
         state = ENEMY_STATE.PATROL;
 
         // 最短距離アイテムを取得
@@ -249,7 +246,6 @@ public class BalanceEnemy : EnemyBase, Character
         // 最短のポイントエリアの取得(誰も狙っていないエリア)
         var targetArea = GetPointArea().Where(obj => obj.isActive == true && obj.isTarget == false)
             .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
-
         if(targetArea != null) {
             targetObj = targetArea.gameObject;
             targetObj.GetComponent<PointArea>().isTarget = true;
@@ -262,7 +258,6 @@ public class BalanceEnemy : EnemyBase, Character
         // ポイントエリアの取得(誰も狙っていないエリアがない場合)
         targetArea = GetPointArea().Where(obj => obj.isActive == true)
             .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
-
         if (targetArea != null)
         {
             targetObj = targetArea.gameObject;
@@ -373,7 +368,7 @@ public class BalanceEnemy : EnemyBase, Character
     /// <returns>攻撃するかどうか</returns>
     bool AttackCheck()
     {
-        int attack = UnityEngine.Random.Range(0, 101);
+        int attack = UnityEngine.Random.Range(0, 100);
 
         // オーバーヒートしそうなら確率低め
         if (myEnergy >= 7)
@@ -383,7 +378,6 @@ public class BalanceEnemy : EnemyBase, Character
         // それ以外は確率高め
         else {
             if (attack <= 50) return true;
-            else ResetTarget();
         }
 
         // 攻撃しない
@@ -393,9 +387,10 @@ public class BalanceEnemy : EnemyBase, Character
     /// <summary>
     /// スタン状態
     /// </summary>
-    /// <param name="audioStr">流す音</param>
+    /// <param name="audioStr">流す音声ファイル名</param>
     public void Stan(string audioStr)
     {
+        // すでにスタン中ならリターン
         if (isStan == true || _stanEffect != null) return;
 
         LayerChange(2);
@@ -403,7 +398,7 @@ public class BalanceEnemy : EnemyBase, Character
             myAudio.loop = true;
             AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
         }
-
+        // スタンフラグを有効にする
         isStan = true;
         myRig.velocity = Vector3.zero;
         agent.updatePosition = false;
@@ -522,7 +517,10 @@ public class BalanceEnemy : EnemyBase, Character
         return nextPos;
     }
 
-    // 当たり判定
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="col">当たったCollision</param>
     void OnCollisionEnter(Collision col)
     {
         myRig.velocity = Vector3.zero;
@@ -557,6 +555,10 @@ public class BalanceEnemy : EnemyBase, Character
         }
     }
 
+    /// <summary>
+    /// 離れた場合の判定
+    /// </summary>
+    /// <param name="col">離れたCollision</param>
     public override void OnCollisionExit(Collision col)
     {
         base.OnCollisionExit(col);

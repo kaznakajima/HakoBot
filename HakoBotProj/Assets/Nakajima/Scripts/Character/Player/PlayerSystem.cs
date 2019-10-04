@@ -9,6 +9,9 @@ using UniRx.Triggers;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// Playerの入力を管理するクラス
+/// </summary>
 public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
 {
     // 4人のプレイヤー用の入力状態の保存変数

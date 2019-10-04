@@ -3,32 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 
+/// <summary>
+/// Resultクラス
+/// </summary>
 public class Result : BaseSceneManager
 {
     // リザルト用TimeLine
     [SerializeField]
-    PlayableDirector tl_Result;
+    private PlayableDirector tl_Result;
 
     // リザルト用テキスト
     [SerializeField]
-    GameObject[] resultText;
+    private GameObject[] resultText;
 
     // TimeLineが再生されているか
-    bool isPlay;
+    private bool isPlay;
 
-	// Use this for initialization
+	// 初回処理
 	void Start () {
         GetNoiseBase();
         isPlay = true;
     }
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
+        // タイムラインが再生中はリターン
         if (tl_Result.time < 7.0f)
             return;
 
+        // 入力処理
         ResultInput();
 
+        // タイムラインが再生されていないならリターン
         if (isPlay == false)
             return;
 

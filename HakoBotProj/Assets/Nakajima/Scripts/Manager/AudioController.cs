@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// オーディオを格納するクラス
+/// </summary>
 class AudioList
 {
     //アクセス用のキー
@@ -21,6 +24,9 @@ class AudioList
     }
 }
 
+/// <summary>
+/// オーディオを管理するクラス
+/// </summary>
 public class AudioController : SingletonMonobeBehaviour<AudioController>
 {
     // BGM、SE用のAudioSource
@@ -35,12 +41,15 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     [HideInInspector]
     public bool volumeZero;
 
+    /// <summary>
+    /// 事前準備
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
     }
 
-    // Use this for initialization
+    // 初回処理
     void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -68,38 +77,58 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         LoadSe("Pause", "Pause");                 // ポーズ
     }
 
-    //サウンドのロード
+    /// <summary>
+    /// BGMロード(外部アクセス)
+    /// </summary>
+    /// <param name="key">keyネーム</param>
+    /// <param name="resName">ファイル名</param>
     public void LoadBgm(string key, string resName)
     {
         LoadBGM(key, resName);
     }
 
+    /// <summary>
+    /// SEロード(外部アクセス)
+    /// </summary>
+    /// <param name="key">keyネーム</param>
+    /// <param name="resName">ファイル名</param>
     public void LoadSe(string key, string resName)
     {
         LoadSE(key, resName);
     }
 
+    /// <summary>
+    /// BGMロード
+    /// </summary>
+    /// <param name="key">keyネーム</param>
+    /// <param name="resName">ファイル名</param>
     void LoadBGM(string key, string resName)
     {
-        if (poolBgm.ContainsKey(key))
-        {
-            //すでに登録済みなのでいったん消す
+        // 登録済みの場合削除
+        if (poolBgm.ContainsKey(key)) {
             poolBgm.Remove(key);
         }
         poolBgm.Add(key, new AudioList(key, resName));
     }
 
+    /// <summary>
+    /// SEロード
+    /// </summary>
+    /// <param name="key">keyネーム</param>
+    /// <param name="resName">ファイル名</param>
     void LoadSE(string key, string resName)
     {
-        if (poolSe.ContainsKey(key))
-        {
-            //すでに登録済みなのでいったん消す
+        // 登録済みの場合削除
+        if (poolSe.ContainsKey(key)) {
             poolSe.Remove(key);
         }
         poolSe.Add(key, new AudioList(key, resName));
     }
 
-    // BGMの変更
+    /// <summary>
+    /// BGMの再生
+    /// </summary>
+    /// <param name="key">keyネーム</param>
     public void BGMChange(string key)
     {
         // リソース作成
@@ -108,7 +137,10 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
         myAudio[0].Play();
     }
 
-    // SEの再生
+    /// <summary>
+    /// SEの再生
+    /// </summary>
+    /// <param name="key">keyネーム</param>
     public void SEPlay(string key)
     {
         if (myAudio[1].isPlaying == true && myAudio[1].clip == poolSe[key].Clip)
@@ -128,6 +160,7 @@ public class AudioController : SingletonMonobeBehaviour<AudioController>
     {
         if (volumeZero) otherAudio.volume = 0.0f;
 
+        // リソース作成
         var _data = poolSe[key];
         otherAudio.clip = _data.Clip;
         otherAudio.Play();

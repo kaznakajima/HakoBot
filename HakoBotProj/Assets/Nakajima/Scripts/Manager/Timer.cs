@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class Timer : SingletonMonobeBehaviour<Timer> {
+
+/// <summary>
+/// Timerクラス
+/// </summary>
+public class Timer : SingletonMonobeBehaviour<Timer>
+{
     //制限時間
     private float totalTime;
     //分
@@ -13,20 +18,21 @@ public class Timer : SingletonMonobeBehaviour<Timer> {
     private float oldseconds;
     //タイマー表示用のText
     public Text TimerText;
-	// Use this for initialization
+
+    /// <summary>
+    /// 初回処理
+    /// </summary>
 	void Start () {
         //制限時間の設定
         totalTime = minute * 60 + seconds;
         //oldsecondsの初期化
         oldseconds = 0f;
-
 	}
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
 
-        if (MainManager.Instance.isStart == false)
-            return;
+        if (MainManager.Instance.isStart == false) return;
 
         //一旦制限時間を計測する
         totalTime = minute * 60 + seconds;
@@ -51,7 +57,10 @@ public class Timer : SingletonMonobeBehaviour<Timer> {
         //oldsecondsを設定する
         oldseconds = seconds;
 	}
-    //制限時間が0になったら呼ばれる
+
+    /// <summary>
+    /// ゲーム終了
+    /// </summary>
     void EndGame()
     {
         //ここに処理を書き込む

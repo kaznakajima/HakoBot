@@ -4,13 +4,16 @@ using UnityEngine;
 using UniRx;
 using System;
 
+/// <summary>
+/// Itemクラス
+/// </summary>
 public class Item : MonoBehaviour
 {
     // 自身のCollider
-    Collider myCol;
+    private Collider myCol;
 
     // 自身のRigidbbody
-    Rigidbody myRig;
+    private Rigidbody myRig;
 
     // 取得できるかどうか
     [HideInInspector]
@@ -22,15 +25,15 @@ public class Item : MonoBehaviour
 
     // 目標地点
     [HideInInspector]
-    public Vector3 throwPos = Vector3.zero;
+    private Vector3 throwPos = Vector3.zero;
 
     // 移動方向
-    Vector3 dir;
+    private Vector3 dir;
 
     // 得点
     public int point;
 
-	// Use this for initialization
+	// 初回処理
 	void Start () {
         isCatch = false;
         myCol = GetComponent<Collider>();
@@ -43,8 +46,9 @@ public class Item : MonoBehaviour
         }).AddTo(this);
     }
 	
-	// Update is called once per frame
+	// 更新処理
 	void Update () {
+        // コンベアに運ばれる
         if (isCarry) Move(dir);
     }
 
@@ -52,7 +56,7 @@ public class Item : MonoBehaviour
     /// コンベアに乗せた後の処理
     /// </summary>
     /// <param name="parent">乗せたコンベアのオブジェクト</param>
-    /// <param name="dir">方向</param>
+    /// <param name="_dir">方向</param>
     public void ItemCarry(GameObject parent, Vector3 _dir)
     {
         // 向きを取得
@@ -70,10 +74,10 @@ public class Item : MonoBehaviour
     /// <summary>
     /// 移動処理
     /// </summary>
-    /// <param name="dir">方向</param>
-    void Move(Vector3 dir)
+    /// <param name="_dir">方向</param>
+    void Move(Vector3 _dir)
     {
-        transform.position += dir * 2.0f * Time.deltaTime;
+        transform.position += _dir * 2.0f * Time.deltaTime;
     }
 
     /// <summary>
@@ -148,12 +152,20 @@ public class Item : MonoBehaviour
         else return (new Vector3(pointB.x - pointA.x, x * Mathf.Tan(rad), pointB.z - pointA.z).normalized * speed);
     }
 
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="col">当たったCollision</param>
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.name == "st") gameObject.layer = 9;
         if (col.gameObject.tag == "Pawn") ReleaseItem();
     }
 
+    /// <summary>
+    /// 離れた場合の判定
+    /// </summary>
+    /// <param name="col">離れたCollision</param>
     void OnTriggerExit(Collider col)
     {
         if(col.gameObject.GetComponent<PointArea>() != null) Destroy(gameObject);

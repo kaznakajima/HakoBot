@@ -6,24 +6,24 @@ using UniRx;
 using System;
 using System.Linq;
 
-
+/// <summary>
+/// 攻撃優先型Enemy
+/// </summary>
 public class AttackEnemy : EnemyBase, Character
 {
     // エフェクト再生
     EffekseerEmitter emitter;
 
     // 自身の番号(1 → 1P, 2 → 2P, 3 → 3P, 4 → 4P)
-    public int _myNumber;
-
+    private int _myNumber;
     public int myNumber
     {
         set { _myNumber = value; }
         get { return _myNumber; }
     }
 
-    // 自身のエネルギー残量
+    // 自身のエネルギー使用率
     private int _myEnergy = 0;
-
     public int myEnergy
     {
         set {
@@ -36,7 +36,6 @@ public class AttackEnemy : EnemyBase, Character
 
     // アイテムを所持しているか
     private bool _hasItem;
-
     public bool hasItem
     {
         set
@@ -50,9 +49,8 @@ public class AttackEnemy : EnemyBase, Character
         get { return _hasItem; }
     }
 
-    // オーバーヒート
+    // スタンフラグ
     private bool _isStan;
-
     public bool isStan
     {
         set { _isStan = value; }
@@ -68,15 +66,17 @@ public class AttackEnemy : EnemyBase, Character
     }
 
     // 自身のAnimator
-    Animator myAnim;
+    private Animator myAnim;
 
     // スタンエフェクトの一時保存用
-    GameObject _stanEffect;
+    private GameObject _stanEffect;
     // チャージエフェクト用マテリアル
-    ParticleSystem.MainModule chargeMaterial;
-   
+    private ParticleSystem.MainModule chargeMaterial;
 
-    // Use this for initialization
+
+    /// <summary>
+    /// 初回処理
+    /// </summary>
     void Start()
     {
         stanEffect = Resources.Load("PlayerStan") as GameObject;
@@ -90,22 +90,21 @@ public class AttackEnemy : EnemyBase, Character
         layerNum = gameObject.layer;
     }
 
-    // Update is called once per frame
+    // 更新処理
     void Update ()
     {
-        // ポーズ中は動かない
-        if (Mathf.Approximately(Time.timeScale, 0.0f))
-            return;
-
-        if (MainManager.Instance.isStart == false)
+        // ポーズ中、ゲーム開始していない場合動かない
+        if (Mathf.Approximately(Time.timeScale, 0.0f) || MainManager.Instance.isStart == false)
             return;
 
         // オーバーヒート中はリターン
         if (isStan)
             return;
 
+        // ステートごとに処理実行
         switch (state)
         {
+            // 目標地点がない場合
             case ENEMY_STATE.PATROL:
                 // 目標地点との距離が縮まったら
                 float distance = Vector3.SqrMagnitude(transform.position - patrolPos);
@@ -116,6 +115,7 @@ public class AttackEnemy : EnemyBase, Character
                 PatrolMove(patrolPos);
                 SetTarget();
                 break;
+            // 目標地点がある場合
             case ENEMY_STATE.TARGETMOVE:
                 // ターゲットがいるなら追従
                 if (targetObj != null) {
@@ -135,20 +135,37 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="_targetObj">ターゲットオブジェクト</param>
     public override void CheckTarget(GameObject _targetObj)
     {
+        // ターゲットがアイテムの場合
         if (_targetObj.GetComponent<Item>() != null)
         {
             // アイテムが入手不可能ならターゲット再設定
-            if (base.targetObj.GetComponent<Item>().isCatch == false) {
+            if (targetObj.GetComponent<Item>().isCatch == false) {
                 SetTarget();
                 return;
             }
         }
+        // ターゲットがポイントエリアの場合
         else if (_targetObj.GetComponentInParent<PointArea>() != null)
         {
             // ポイントエリアが機能していないならターゲット再設定
             if (base.targetObj.GetComponentInParent<PointArea>().isActive == false) {
                 SetTarget();
                 return;
+            }
+        }
+
+        // ターゲットがアイテムを持っていないならターゲット変更
+        if (_targetObj.tag == "Character")
+        {
+            var character = _targetObj.GetComponent(typeof(Character)) as Character;
+            if (character.hasItem == false) {
+                SetTarget();
+                return;
+            }
+
+            // 攻撃範囲に入ったら攻撃
+            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) {
+                Attack();
             }
         }
     }
@@ -174,26 +191,29 @@ public class AttackEnemy : EnemyBase, Character
         minDistance = 100;
         maxDistance = 0;
 
+        // アイテムを所持していない場合(他プレイヤーかアイテムを索敵)
         if (itemObj == null) {
             SearchTarget();
         }
+        // アイテムを所持している場合(ポイントエリアを索敵)
         else {
             SearchPointArea();
         }
     }
 
     /// <summary>
-    /// 他のキャラクターとの距離を取得
+    /// 他プレイヤーかアイテムを索敵
     /// </summary>
     public override void SearchTarget()
     {
         // ステージ上のすべてのプレイヤーにアクセス
         for (int i = 0; i < GetCharacter().Length; i++)
         {
-            // 最短距離のプレイヤーをターゲット設定
+            // 最短距離のプレイヤーをターゲット設定(チーム戦の場合、味方は除外)
             if (GetTargetDistance(gameObject, GetCharacter()[i]) < minDistance && 
                 MainManager.Instance.playerData[i].m_Team != MainManager.Instance.playerData[myNumber - 1].m_Team)
             {
+                // アイテムを所持していないならターゲットから除外
                 var character = GetCharacter()[i].GetComponent(typeof(Character)) as Character;
                 if (character.hasItem == true && GetCharacter()[i] != gameObject) {
                     // 最短距離の格納
@@ -213,36 +233,19 @@ public class AttackEnemy : EnemyBase, Character
         List<Item> itemList = new List<Item>();
 
         // 取得可能かつ距離が一番近いアイテムを取得
-        var _itemList = itemList.Where(item => item.isCatch)
+        var closeItem = GetItems().Where(item => item.isCatch)
+            .OrderBy(item => GetTargetDistance(item.gameObject, gameObject)).FirstOrDefault();
+        var highScoreItem = GetItems().Where(item => item.point > 10)
             .OrderBy(item => GetTargetDistance(item.gameObject, gameObject)).FirstOrDefault();
 
-        // 取得可能なアイテムがあるならターゲットにする
-        if (_itemList != null) targetObj = _itemList.gameObject;
-
-        // 誰もアイテムを所持していないなら
-        // ステージ上のアイテムすべてにアクセス
-        for (int i = 0; i < GetItems().Length; i++)
-        {
-            // 高得点アイテムを最優先
-            if (GetItems()[i].point > 10 && GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
-                if (GetItems()[i].isCarry == false)
-                {
-                    minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
-                    targetObj = GetItems()[i].gameObject;
-                }
-                break;
-            }
-
-            // 最短距離のアイテムをターゲットに設定
-            if (GetTargetDistance(GetItems()[i].gameObject, gameObject) < minDistance) {
-                // 最短距離の格納
-                minDistance = GetTargetDistance(GetItems()[i].gameObject, gameObject);
-                targetObj = GetItems()[i].gameObject;
-            }
+        // 取得可能な高得点アイテムがあるならターゲットにする
+        if (highScoreItem != null) {
+            targetObj = highScoreItem.gameObject;
+            state = ENEMY_STATE.TARGETMOVE;
+            return;
         }
-
-        // ターゲットが設定されたらリターン
-        if (minDistance != 100) {
+        else if(highScoreItem == null && closeItem != null) {
+            targetObj = closeItem.gameObject;
             state = ENEMY_STATE.TARGETMOVE;
             return;
         }
@@ -295,6 +298,7 @@ public class AttackEnemy : EnemyBase, Character
             return;
         }
 
+        // ターゲットが設定できなかったら平均のポイントエリアにターゲット
         targetObj = dummyTarget;
     }
 
@@ -304,29 +308,15 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-
+        // ターゲットの状態をチェック
         CheckTarget(targetObj);
 
-        if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) {
+        // アイテム所持している場合のアニメーション
+        if (hasItem && myAnim.GetInteger("PlayAnimNum") != 11) {
             myAnim.SetInteger("PlayAnimNum", 11);
         }
-        else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) {
+        else if (!hasItem && myAnim.GetInteger("PlayAnimNum") != 4) {
             myAnim.SetInteger("PlayAnimNum", 4);
-        }
-
-        // ターゲットがアイテムを持っていないならターゲット変更
-        if (targetObj.tag == "Character")
-        {
-            var character = targetObj.GetComponent(typeof(Character)) as Character;
-            if (character.hasItem == false) {
-                SetTarget();
-                return;
-            }
-
-            // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) {
-                Attack();
-            }
         }
         
         // 次の位置への方向を求める
@@ -352,6 +342,7 @@ public class AttackEnemy : EnemyBase, Character
     /// <param name="vec">目標地点</param>
     public override void PatrolMove(Vector3 vec)
     {
+        // 巡回はアイテムを所持していないアニメーション
         if (myAnim.GetInteger("PlayAnimNum") != 4) {
             myAnim.SetInteger("PlayAnimNum", 4);
         }
@@ -382,7 +373,6 @@ public class AttackEnemy : EnemyBase, Character
         // アタック
         myRig.velocity += transform.forward * 7.5f;
 
-
         // 1秒後に移動再開
         Observable.Timer(TimeSpan.FromSeconds(1.0f)).Subscribe(time =>
         {
@@ -402,8 +392,13 @@ public class AttackEnemy : EnemyBase, Character
         }).AddTo(this);
     }
 
+    /// <summary>
+    /// スタン処理
+    /// </summary>
+    /// <param name="audioStr">スタン中のオーディオ名</param>
     public void Stan(string audioStr)
     {
+        // すでにスタンしているならリターン
         if (isStan == true || _stanEffect != null)
             return;
 
@@ -412,6 +407,7 @@ public class AttackEnemy : EnemyBase, Character
         myAudio.loop = true;
         AudioController.Instance.OtherAuioPlay(myAudio, audioStr);
 
+        // スタンフラグを有効にする
         isStan = true;
         myRig.velocity = Vector3.zero;
         agent.updatePosition = false;
@@ -473,6 +469,7 @@ public class AttackEnemy : EnemyBase, Character
     /// </summary>
     public void Release()
     {
+        // アイテムを持っていないならリターン
         if (itemObj == null || hasItem == false) {
             ResetTarget();
             return;
@@ -519,9 +516,10 @@ public class AttackEnemy : EnemyBase, Character
         return nextPos;
     }
 
-
-
-    // 当たり判定
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="col">当たったCollision</param>
     void OnCollisionEnter(Collision col)
     {
         // アイテムだったらアイテム取得
@@ -530,7 +528,6 @@ public class AttackEnemy : EnemyBase, Character
         // タックル中にプレイヤーに触れたとき
         if (col.gameObject.GetComponent(typeof(Character)) as Character != null && isAttack)
         {
-
             myRig.velocity = Vector3.zero;
 
             var character = col.gameObject.GetComponent(typeof(Character)) as Character;
@@ -549,6 +546,10 @@ public class AttackEnemy : EnemyBase, Character
         }
     }
 
+    /// <summary>
+    /// 離れた場合の判定
+    /// </summary>
+    /// <param name="col">離れたCollision</param>
     public override void OnCollisionExit(Collision col)
     {
         base.OnCollisionExit(col);

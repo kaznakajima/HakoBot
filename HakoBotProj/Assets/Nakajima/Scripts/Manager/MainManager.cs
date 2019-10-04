@@ -20,25 +20,25 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // ポーズ画面表示
     [SerializeField]
-    GameObject pauseImage;
+    private GameObject pauseImage;
 
     // ノイズ発生スクリプト参照
-    CRT noise;
+    private CRT noise;
     // ノイズ用アニメーション
-    Animator noiseAnim;
+    private Animator noiseAnim;
     // カウントダウン用アニメーション
     [SerializeField]
-    GameObject countDown;
+    private GameObject countDown;
 
     // ゲーム終了処理
     [SerializeField]
-    AnimationClip endClip;
+    private AnimationClip endClip;
 
     // 音楽が再生されているか
-    bool isPlay;
+    private bool isPlay;
 
     // シーン上のAudioSourceのリスト
-    List<AudioSource> playingAudioSource = new List<AudioSource>();
+    private List<AudioSource> playingAudioSource = new List<AudioSource>();
 
     // プレイヤーデータ
     public List<PlayerData> playerData = new List<PlayerData>();
@@ -46,8 +46,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     // AIロボットの停止命令
     public bool isStop;
 
-	// Use this for initialization
+	// 初回処理
 	void Start () {
+        // ノイズフェード
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
 
@@ -84,18 +85,20 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         }
 	}
 
-    // Update is called once per frame
+    // 更新処理
     void Update () {
-        CheckGameState();
+        GameStart();
 
         // ポーズ処理
         for(int i = 0;i < 4; i++) {
             if(PlayerSystem.Instance.Button_Pause(i + 1))
             {
+                // ポーズ解除
                 if (Time.timeScale != 0.0f) {
                     AudioController.Instance.SEPlay("Pause");
                     Pause();
                 }
+                // ポーズ実行
                 else {
                     Resume();
                 }
@@ -167,15 +170,21 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         playingAudioSource.Clear();
     }
 
-    // AudioSourceの取得
+    /// <summary>
+    /// AudioSourceの取得
+    /// </summary>
+    /// <returns></returns>
     public AudioSource[] GetAudioSource()
     {
         return FindObjectsOfType<AudioSource>();
     }
 
-    // ゲームの状況を判断
-    void CheckGameState()
+    /// <summary>
+    /// ゲーム開始
+    /// </summary>
+    void GameStart()
     {
+        // ゲーム開始時、ポーズ時はリターン
         if (isStart || isPlay) return;
 
         // ノイズがかかっていない状態に実行
@@ -202,7 +211,9 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
         }
     }
 
-    // ゲーム終了
+    /// <summary>
+    /// ゲーム終了
+    /// </summary>
     public void GameEnd()
     {
         if (isPlay) return;

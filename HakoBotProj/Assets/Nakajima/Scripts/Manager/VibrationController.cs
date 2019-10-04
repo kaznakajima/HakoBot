@@ -5,6 +5,9 @@ using UniRx;
 using System;
 using XInputDotNetPure;
 
+/// <summary>
+/// コントローラー振動クラス
+/// </summary>
 public class VibrationController : SingletonMonobeBehaviour<VibrationController>
 {
     protected override void Awake()
@@ -12,14 +15,9 @@ public class VibrationController : SingletonMonobeBehaviour<VibrationController>
         base.Awake();
     }
 
-    // Use this for initialization
+    // 初回処理
     void Start () {
         DontDestroyOnLoad(gameObject);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
     /// <summary>
@@ -29,7 +27,6 @@ public class VibrationController : SingletonMonobeBehaviour<VibrationController>
     /// <param name="isVibration">バイブレーションをさせるかどうか</param>
     public void PlayVibration(int playerNum, bool isVibration)
     {
-
         // バイブレーションの強度を決める
         float value = isVibration ? 1.0f : 0.0f;
         PlayerIndex index = (PlayerIndex)playerNum;

@@ -2,26 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// ミサイル発射口クラス
+/// </summary>
 public class SpaceArea : MonoBehaviour
 {
     // 自身のAnimator
-    Animator myAnim;
+    private Animator myAnim;
 
     // 自身のAudioSource;
-    AudioSource myAudio;
+    private AudioSource myAudio;
 
+    // アクティブかどうか
     public bool isActive;
 
-	// Use this for initialization
+	// 初回処理
 	void Start () {
         myAnim = GetComponent<Animator>();
         myAudio = GetComponent<AudioSource>();
 
-        if (isActive == false) {
-            Close();
-            AudioController.Instance.OtherAuioPlay(myAudio, "Shutter");
-        }
-	}
+        // 初回は閉じる
+        Close();
+        AudioController.Instance.OtherAuioPlay(myAudio, "Shutter");
+    }
 
     /// <summary>
     /// シャッターを閉じる
@@ -48,9 +51,4 @@ public class SpaceArea : MonoBehaviour
         // 機能しているフラグ
         isActive = true;
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }
