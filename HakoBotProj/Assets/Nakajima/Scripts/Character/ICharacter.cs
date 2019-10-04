@@ -17,9 +17,6 @@ public interface Character
     // オーバーヒートしたか
     bool isStan { get; set; }
 
-    // ターゲットとされているか
-    bool isTarget { get; set; }
-
     /// <summary>
     /// 移動メソッド
     /// </summary>

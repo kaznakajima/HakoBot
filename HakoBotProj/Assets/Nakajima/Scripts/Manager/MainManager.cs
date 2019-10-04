@@ -62,12 +62,15 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 // キャラクター用オブジェクトのインスタンス
                 character = Instantiate(PlayerSystem.Instance.playerList[i]);
 
+                // プレイヤークラスの追加
                 character.AddComponent<Player>();
-                character.GetComponent<Player>().myNumber = i + 1;
+
+                // プレイヤ－番号の定義
+                var player = character.GetComponent<Player>();
+                player.myNumber = i + 1;
 
                 // 自身のインプットステートを格納
-                if (PlayerSystem.Instance.isActive_KeyBoard && i == 0) character.GetComponent<Player>().myInputState = 0;
-                else if (PlayerSystem.Instance.isActive_KeyBoard == false || i != 0) character.GetComponent<Player>().myInputState = i + 1;
+                player.myInputState = player.myNumber;
             }
             // エントリーがされていないなら敵とする
             else
@@ -83,13 +86,11 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
 
     // Update is called once per frame
     void Update () {
-
         CheckGameState();
 
         // ポーズ処理
-        for (int i = 0; i < 4; i++)
-        {
-            if (PlayerSystem.Instance.Button_Pause(i + 1))
+        for(int i = 0;i < 4; i++) {
+            if(PlayerSystem.Instance.Button_Pause(i + 1))
             {
                 if (Time.timeScale != 0.0f) {
                     AudioController.Instance.SEPlay("Pause");
@@ -100,7 +101,8 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
                 }
             }
         }
-	}
+       
+    }
 
     /// <summary>
     /// ノイズ発生用キャンバスの設定
@@ -132,7 +134,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     /// <summary>
     /// ポーズ処理
     /// </summary>
-    void Pause()
+    public void Pause()
     {
         Time.timeScale = 0.0f;
 
@@ -151,7 +153,7 @@ public class MainManager : SingletonMonobeBehaviour<MainManager>
     /// <summary>
     /// ポーズ解除
     /// </summary>
-    void Resume()
+    public void Resume()
     {
         Time.timeScale = 1.0f;
 

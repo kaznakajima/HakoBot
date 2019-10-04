@@ -27,24 +27,34 @@ public class Result : BaseSceneManager
         if (tl_Result.time < 7.0f)
             return;
 
+        ResultInput();
+
+        if (isPlay == false)
+            return;
+
+        ShowResultText();
+    }
+
+    /// <summary>
+    /// キー入力処理
+    /// </summary>
+    void ResultInput()
+    {
         for (int i = 0; i < 4; i++)
         {
+            // タイトルへ戻る(ゲームパッド)
             if (PlayerSystem.Instance.Button_A(i + 1))
             {
                 noiseAnim.SetTrigger("switchOn");
                 StartCoroutine(SceneNoise(2.0f, "Title"));
             }
+            // タイトルへ戻る(ゲームパッド)
             if (PlayerSystem.Instance.Button_B(i + 1))
             {
                 noiseAnim.SetTrigger("switchOn");
                 StartCoroutine(SceneNoise(2.0f, "Main"));
             }
         }
-
-        if (isPlay == false)
-            return;
-
-        ShowResultText();
     }
 
     /// <summary>

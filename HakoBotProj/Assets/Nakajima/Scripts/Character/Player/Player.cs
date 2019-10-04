@@ -59,14 +59,6 @@ public class Player : PlayerBase, Character
         get { return _isStan; }
     }
 
-    // ターゲットとされているか
-    private bool _isTarget;
-    public bool isTarget
-    {
-        set { _isTarget = value; }
-        get { return _isTarget; }
-    }
-
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
 
@@ -103,29 +95,20 @@ public class Player : PlayerBase, Character
         if (isAttack) return;
 
         /* ここから移動量判定 */
-        if(myInputState == 0 && system.KeyboardAxis() != Vector2.zero) {
-            inputVec = new Vector3(system.KeyboardAxis().x, 0, system.KeyboardAxis().y);
-            Move(inputVec);
-        }
-        else if(myInputState == 0 && system.KeyboardAxis() == Vector2.zero) {
-            myRig.velocity = Vector3.zero;
-            if (hasItem) myAnim.SetInteger("PlayAnimNum", 11);
-            else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false) myAnim.SetInteger("PlayAnimNum", 8);
-        }
-        // ゲームパッド
-        if (myInputState != 0 && system.LeftStickAxis(myInputState) != Vector2.zero) {
+        // ゲームパッドでの入力
+        if (system.LeftStickAxis(myInputState) != Vector2.zero) {
             inputVec = new Vector3(system.LeftStickAxis(myInputState).x, 0, system.LeftStickAxis(myInputState).y);
             Move(inputVec);
         }
-        else if(myInputState != 0 && system.LeftStickAxis(myInputState) == Vector2.zero)
+        else if(system.LeftStickAxis(myInputState) == Vector2.zero)
         {
             myRig.velocity = Vector3.zero;
             if (hasItem) myAnim.SetInteger("PlayAnimNum", 11);
             else if (myAnim.GetInteger("PlayAnimNum") != 8 && isAttack == false) myAnim.SetInteger("PlayAnimNum", 8);
         }
 
-        if (myInputState == 0 && system.Keyboard_X()) Attack();
-        else if (myInputState != 0 && system.Button_B(myInputState)) Attack();
+        // 攻撃
+        if (system.Button_B(myInputState)) Attack();
     }
 
     /// <summary>
@@ -134,7 +117,6 @@ public class Player : PlayerBase, Character
     /// <param name="vec">移動方向</param>
     public void Move(Vector3 vec)
     {
-
         // カメラの方向から、x-z平面の単位ベクトルを取得
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
 
@@ -155,7 +137,7 @@ public class Player : PlayerBase, Character
     // タックル
     public void Attack()
     {
-        if (hasItem) return;
+        if (isAttack || hasItem) return;
 
         // エフェクト再生
         emitter.Play("Attack_Lv1");

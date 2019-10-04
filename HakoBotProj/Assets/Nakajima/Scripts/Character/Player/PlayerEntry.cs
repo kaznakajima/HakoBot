@@ -6,13 +6,11 @@ using UnityEngine.SceneManagement;
 using System;
 
 /// <summary>
-/// エントリー機能(仮実装)
+/// エントリー機能
 /// </summary>
 public class PlayerEntry : BaseSceneManager
 {
     int pattern = 0;
-
-    int keyboardPlayer = 0;
 
     // スタートしたか
     bool isStart = false;
@@ -56,28 +54,25 @@ public class PlayerEntry : BaseSceneManager
 
     int num = 0;
 
-    // Use this for initialization
     void Start () {
-        PlayerSystem.Instance.isTeam = false;
-
-        // 初期化
+        // ゲームパッドの初期化
         for(int i = 0;i < PlayerSystem.Instance.isActive_GamePad.Length; i++)
         {
             PlayerSystem.Instance.isActive_GamePad[i] = false;
         }
 
+        // シーンフェード
         GetNoiseBase();
         noiseAnim.SetTrigger("switchOff");
         title.m_TiteTimeline.Play();
-
-        // 個人戦に切り替え
+        
+        // 初期は個人戦
         pattern = 0;
         teamPattern = (TEAM_PLAYER)pattern;
-
+        PlayerSystem.Instance.isTeam = false;
         TeamBattle(teamPattern);
     }
-	
-	// Update is called once per frame
+
 	void Update () {
         EntrySystem();
 	}
@@ -87,12 +82,7 @@ public class PlayerEntry : BaseSceneManager
     /// </summary>
     void EntrySystem()
     {
-        if (PlayerSystem.Instance.Button_Keyboard(isEntry[0])) {
-            title.m_TiteTimeline.time = 12.5f;
-            title.m_StartTimeline.Play();
-            titleAnim[0].SetActive(false);
-            titleAnim[1].SetActive(false);
-        }
+        // タイムラインのスキップ(ゲームパッド)
         for (int i = 0; i < 4; i++)
         {
             if (PlayerSystem.Instance.Button_A(i + 1) && title.m_TiteTimeline.time != 0.0f)
@@ -106,79 +96,47 @@ public class PlayerEntry : BaseSceneManager
 
         if (title.m_StartTimeline.time < 4.0f) return;
 
-        // キーボードでのエントリー
-        if (PlayerSystem.Instance.Button_Keyboard(isEntry[0]) && isEntry[0]) {
-            if (isStart) return;
-
-            // キーボードのプレイヤーを非アクティブにする
-            PlayerSystem.Instance.isActive_GamePad[0] = false;
-            PlayerSystem.Instance.isActive_KeyBoard = false;
-            playerEntryList[0].SetBool("isEntry", false);
-            AudioController.Instance.SEPlay("Cancel");
-
-            keyboardPlayer = 0;
-            isEntry[0] = false;
-
-            num--;
-            if (num == 0) startAnim.SetActive(false);
-        }
-        if(PlayerSystem.Instance.Button_Keyboard(isEntry[0]) && isEntry[0] == false) {
-
-            // キーボードのプレイヤーをアクティブにする
-            PlayerSystem.Instance.isActive_GamePad[0] = true;
-            PlayerSystem.Instance.isActive_KeyBoard = true;
-            playerEntryList[0].SetBool("isEntry", true);
-            AudioController.Instance.SEPlay("Entry");
-
-            keyboardPlayer = 1;
-            isEntry[0] = true;
-
-            num++;
-            if (num == 1) startAnim.SetActive(true);
-        }
-
         // ゲームパッドでのエントリー
         for (int i = 0; i < 4; i++)
         {
-            if (isStart || i + keyboardPlayer > 3) return;
+            if (isStart) return;
 
             // エントリー解除
-            if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i + keyboardPlayer])
+            if (PlayerSystem.Instance.Button_B(i + 1) && isEntry[i])
             {
                 // ゲームパッドの番号のプレイヤーを非アクティブにする
-                PlayerSystem.Instance.isActive_GamePad[i + keyboardPlayer] = false;
-                playerEntryList[i + keyboardPlayer].SetBool("isEntry", false);
+                PlayerSystem.Instance.isActive_GamePad[i] = false;
+                playerEntryList[i].SetBool("isEntry", false);
                 AudioController.Instance.SEPlay("Cancel");
-                isEntry[i + keyboardPlayer] = false;
+                isEntry[i] = false;
 
                 num--;
                 if (num == 0) startAnim.SetActive(false);
             }
             // エントリーさせる
-            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i + keyboardPlayer] == false)
+            if (PlayerSystem.Instance.Button_A(i + 1) && isEntry[i] == false)
             {
                 // コントローラーの振動
                 VibrationController.Instance.PlayVibration(i, true);
 
                 // ゲームパッドの番号のプレイヤーをアクティブにする
-                PlayerSystem.Instance.isActive_GamePad[i + keyboardPlayer] = true;
-                playerEntryList[i + keyboardPlayer].SetBool("isEntry", true);
+                PlayerSystem.Instance.isActive_GamePad[i] = true;
+                playerEntryList[i].SetBool("isEntry", true);
                 AudioController.Instance.SEPlay("Entry");
 
-                isEntry[i + keyboardPlayer] = true;
+                isEntry[i] = true;
                 num++;
                 if (num == 1)  startAnim.SetActive(true);
             }
 
             // チーム戦切り替え
-            if(PlayerSystem.Instance.Button_RightShoulder(i + 1) && PlayerSystem.Instance.isActive_GamePad[i + keyboardPlayer] == true)
+            if(PlayerSystem.Instance.Button_RightShoulder(i + 1) && PlayerSystem.Instance.isActive_GamePad[i] == true)
             {
                 if (PlayerSystem.Instance.isTeam == false) PlayerSystem.Instance.isTeam = true;
 
                 // パターン変更
                 pattern++;
-                if (pattern > 3)
-                    pattern = 1;
+                if (pattern > 3) pattern = 1;
 
                 foreach(GameObject obj in teamLogo) obj.SetActive(true);
 
@@ -186,7 +144,7 @@ public class PlayerEntry : BaseSceneManager
                 TeamBattle(teamPattern);
             }
             // 個人戦切り替え
-            if (PlayerSystem.Instance.Button_LeftShoulder(i + 1) && PlayerSystem.Instance.isActive_GamePad[i + keyboardPlayer] == true)
+            if (PlayerSystem.Instance.Button_LeftShoulder(i + 1) && PlayerSystem.Instance.isActive_GamePad[i] == true)
             {
                 if (PlayerSystem.Instance.isTeam == true) PlayerSystem.Instance.isTeam = false;
 
@@ -200,8 +158,7 @@ public class PlayerEntry : BaseSceneManager
             }
 
             // Xボタンでゲームスタート
-            if (PlayerSystem.Instance.Keyboard_X() ||
-                PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive_GamePad[i + keyboardPlayer] == true)
+            if (PlayerSystem.Instance.Button_X(i + 1) && PlayerSystem.Instance.isActive_GamePad[i] == true)
             {
                 isStart = true;
                 AudioController.Instance.SEPlay("Select");

@@ -52,15 +52,6 @@ public class BalanceEnemy : EnemyBase, Character
         set { _isStan = value; }
         get { return _isStan; }
     }
-
-    // ターゲットとされているか
-    private bool _isTarget;
-    public bool isTarget
-    {
-        set { _isTarget = value; }
-        get { return _isTarget; }
-    }
-    
     // スタンエフェクトの一時保存用
     GameObject _stanEffect;
 
@@ -130,17 +121,23 @@ public class BalanceEnemy : EnemyBase, Character
             // ターゲット変更
             if (targetItem != null) targetObj = targetItem.gameObject;
 
-            // ターゲットがアイテムなら
-            // ターゲットが入手不能になったら敵を探す
-            var item = targetObj.GetComponent<Item>();
-            if (item != null && item.isCatch == false) SetTarget();
+            if(targetObj != null)
+            {
+                // ターゲットがアイテムなら
+                // ターゲットが入手不能になったら敵を探す
+                var item = targetObj.GetComponent<Item>();
+                if (item != null && item.isCatch == false) {
+                    ResetTarget();
+                    return;
+                }
 
-            // ターゲットがキャラクターなら
-            // ターゲットがアイテムを持っていないならターゲット再指定
-            var character = targetObj.GetComponent<Character>();
-            if (character != null && character.hasItem == false) {
-                character.isTarget = false;
-                SetTarget();
+                // ターゲットがキャラクターなら
+                // ターゲットがアイテムを持っていないならターゲット再指定
+                var character = targetObj.GetComponent<Character>();
+                if (character != null && character.hasItem == false) {
+                    ResetTarget();
+                    return;
+                }
             }
         }
         // 荷物を所持しているなら
@@ -202,12 +199,23 @@ public class BalanceEnemy : EnemyBase, Character
             .OrderByDescending(obj => obj.point).FirstOrDefault();
 
         // 最短距離のアイテムをターゲット指定
-        if(targetItem != null)
-        {
+        if(targetItem != null) {
             // 最短距離を保存
             minDistance = GetTargetDistance(targetItem.gameObject, gameObject);
             targetObj = targetItem.gameObject;
             state = ENEMY_STATE.TARGETMOVE;
+
+            // ターゲットより近い敵がいるかチェック
+            var enemy = GetCharacter().Where(obj => obj != gameObject && GetTargetDistance(targetItem.gameObject, gameObject) < minDistance)
+                .OrderBy(obj => GetTargetDistance(targetItem.gameObject, gameObject)).FirstOrDefault();
+            // ターゲットより近い敵がいるなら再検索
+            if(enemy != null) {
+                var nextTarget = GetItems().Where(obj => obj != targetItem)
+                    .OrderBy(obj => GetTargetDistance(obj.gameObject, gameObject)).FirstOrDefault();
+
+                targetObj = nextTarget.gameObject;
+            }
+            return;
         }
 
         // 敵をリスト化
@@ -218,16 +226,15 @@ public class BalanceEnemy : EnemyBase, Character
         foreach (GameObject obj in enemyTarget)
         {
             var character = obj.GetComponent<Character>();
-            // チーム戦の場合、見方は除外
+            // チーム戦の場合、味方は除外
             if (MainManager.Instance.playerData[character.myNumber - 1].m_Team
                 == MainManager.Instance.playerData[myNumber - 1].m_Team) return;
 
             // 荷物を持っているならターゲット指定
-            if (character.hasItem == true && character.isTarget == false)
-            {
-                character.isTarget = true;
+            if (character.hasItem == true) {
                 targetObj = obj;
                 state = ENEMY_STATE.TARGETMOVE;
+                break;
             }
         }
     }
@@ -277,13 +284,14 @@ public class BalanceEnemy : EnemyBase, Character
 
         if (_hasItem && myAnim.GetInteger("PlayAnimNum") != 11) myAnim.SetInteger("PlayAnimNum", 11);
         else if (!_hasItem && myAnim.GetInteger("PlayAnimNum") != 4) myAnim.SetInteger("PlayAnimNum", 4);
-        
-        var character = targetObj.GetComponent<Character>();
+
         // ターゲットがキャラクターなら
-        if (character != null)
-        {
-            // 攻撃範囲に入ったら攻撃
-            if (GetTargetDistance(targetObj, gameObject) < 6.0f && isAttack == false) Attack();
+        if (targetObj != null) {
+            var character = targetObj.GetComponent<Character>();
+            if (character != null) {
+                // 攻撃範囲に入ったら攻撃
+                if (GetTargetDistance(targetObj, gameObject) < 6.0f) Attack();
+            }
         }
 
         // 次の位置への方向を求める
@@ -327,7 +335,7 @@ public class BalanceEnemy : EnemyBase, Character
     public void Attack()
     {
         // 連続攻撃しない
-        if (isAttack) return;
+        if (isAttack || hasItem || AttackCheck() == false) return;
 
         // エフェクト再生
         emitter.Play("Attack_Lv1");
@@ -350,12 +358,36 @@ public class BalanceEnemy : EnemyBase, Character
             // 移動制限解除
             isAttack = false;
 
+            // 攻撃終了後ターゲット探索
+            ResetTarget();
+
             // オーバーヒート
             if (_myEnergy >= 9) Stan("Stan");
-            // 攻撃終了後ターゲット探索
-            else SetTarget();
 
         }).AddTo(this);
+    }
+    
+    /// <summary>
+    /// 攻撃するかチェック
+    /// </summary>
+    /// <returns>攻撃するかどうか</returns>
+    bool AttackCheck()
+    {
+        int attack = UnityEngine.Random.Range(0, 101);
+
+        // オーバーヒートしそうなら確率低め
+        if (myEnergy >= 7)
+        {
+            if (attack <= 30) return true;
+        }
+        // それ以外は確率高め
+        else {
+            if (attack <= 50) return true;
+            else ResetTarget();
+        }
+
+        // 攻撃しない
+        return false;
     }
 
     /// <summary>

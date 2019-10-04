@@ -64,7 +64,8 @@ public class SoundVolumeController : MonoBehaviour
                     inputVec.y = 1.0f;
                     state--;
                 }
-                else if (PlayerSystem.Instance.LeftStickAxis(num).y < 0){
+                else if (PlayerSystem.Instance.LeftStickAxis(num).y < 0)
+                {
                     inputNum = num;
                     inputVec.y = 1.0f;
                     state++;
@@ -82,19 +83,22 @@ public class SoundVolumeController : MonoBehaviour
             if (inputVec.x == 0.0f)
             {
                 // 音量変更
-                if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x > 0.0f){
+                if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x > 0.0f)
+                {
                     inputNum = num;
                     inputVec.x = 1.0f;
                     volume[state] += 0.05f;
                 }
-                else if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x < 0.0f){
+                else if (state < volumeType.Length - 1 && PlayerSystem.Instance.LeftStickAxis(num).x < 0.0f)
+                {
                     inputNum = num;
                     inputVec.x = 1.0f;
                     volume[state] -= 0.05f;
                 } 
             }
 
-            if (state == 2 && PlayerSystem.Instance.Button_A(num)){
+            if (state == 2 && PlayerSystem.Instance.Button_A(num))
+            {
                 MainManager.Instance.PauseToTitle();
             }
         }

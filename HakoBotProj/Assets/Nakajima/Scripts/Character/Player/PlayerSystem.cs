@@ -62,20 +62,6 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
     }
 
     /// <summary>
-    /// キーボードの入力状態の確認
-    /// </summary>
-    /// <returns>キーボードのAxis</returns>
-    public Vector2 KeyboardAxis()
-    {
-        if(state[0] != null) {
-            return state[0].KeyboardAxis;
-        }
-        else {
-            return new Vector2(0, 0);
-        }
-    }
-
-    /// <summary>
     /// Aボタンの入力状態の確認
     /// </summary>
     /// <param name="playerNo">プレイヤー番号</param>
@@ -176,51 +162,4 @@ public class PlayerSystem : SingletonMonobeBehaviour<PlayerSystem>
             return false;
         }
     }
-
-    /// <summary>
-    /// キーボードでの入力検知(エントリー用)
-    /// </summary>
-    /// <param name="isEntry">エントリーをしてるか</param>
-    /// <returns></returns>
-    public bool Button_Keyboard(bool isEntry)
-    {
-        // エントリーしているならキャンセル
-        if (state[0] != null && isEntry) {
-            return state[0].BackSpace;
-        }
-        // エントリーしていないならエントリー
-        else if (state[0] != null && isEntry == false) {
-            return state[0].Entry;
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// キーボードでの入力検知(決定ボタン用)
-    /// </summary>
-    /// <returns></returns>
-    public bool Keyboard_X()
-    {
-        // エントリーしているなら押しているか返す
-        if (state[0] != null)　{
-            return state[0].Next;
-        }
-        return false;
-    }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }
-
-//#if UNITY_EDITOR
-//[CustomEditor(typeof(PlayerSystem))]
-//public class Editor_PlayerSystem : Editor
-//{
-//    public override void OnInspectorGUI()
-//    {
-
-//    }
-//}
-//#endif

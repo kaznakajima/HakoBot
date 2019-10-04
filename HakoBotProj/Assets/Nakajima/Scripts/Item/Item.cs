@@ -106,8 +106,12 @@ public class Item : MonoBehaviour
         transform.parent = null;
         myCol.isTrigger = false;
         myRig.useGravity = true;
-        isCatch = true;
         myRig.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        // 2秒後に取得可能
+        Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(time =>
+        {
+            isCatch = true;
+        }).AddTo(this);
 
         // 目標地点
         throwPos = new Vector3(UnityEngine.Random.Range(-15.0f, 15.0f), 0.5f, UnityEngine.Random.Range(-7.0f, 7.1f));
@@ -146,7 +150,7 @@ public class Item : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "st") gameObject.layer = 9;
+        if (col.gameObject.name == "st") gameObject.layer = 9;
         if (col.gameObject.tag == "Pawn") ReleaseItem();
     }
 
